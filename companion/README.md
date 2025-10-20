@@ -75,6 +75,8 @@ companion/
    这样会同时启动HTTP服务（http://localhost:8000/）和HTTPS服务（https://localhost:8443/）
 
    > 注意：自签名证书在浏览器中可能会显示安全警告，您可以选择信任该证书以继续使用。
+   > 
+   > 如果您在Android设备上使用时遇到SSL证书错误，请参考项目中的`ANDROID-SSL-SETUP.md`文件获取详细的解决方案。
 
 ### 对话步骤
 1. 点击"开始录音"按钮，说出您的问题或指令
