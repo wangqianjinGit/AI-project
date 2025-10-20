@@ -1,0 +1,169 @@
+/* 全局样式重置 */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+    background-color: #f5f5f5;
+    color: #333;
+    line-height: 1.6;
+}
+
+/* 容器样式 */
+.container {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+/* 标题样式 */
+h1 {
+    text-align: center;
+    margin-bottom: 30px;
+    color: #2c3e50;
+    font-size: 2.5rem;
+    font-weight: 600;
+}
+
+/* 聊天容器样式 */
+.chat-container {
+    background-color: #fff;
+    border-radius: 12px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+}
+
+/* 聊天消息区域样式 */
+#chat-messages {
+    height: 400px;
+    overflow-y: auto;
+    padding: 20px;
+    background-color: #f9f9f9;
+}
+
+/* 消息气泡样式 */
+.message {
+    margin-bottom: 15px;
+    padding: 12px 16px;
+    border-radius: 18px;
+    max-width: 70%;
+    word-wrap: break-word;
+}
+
+.user-message {
+    background-color: #3498db;
+    color: white;
+    margin-left: auto;
+    border-bottom-right-radius: 4px;
+}
+
+.assistant-message {
+    background-color: #e0e0e0;
+    color: #333;
+    border-bottom-left-radius: 4px;
+}
+
+/* 输入区域样式 */
+.input-area {
+    display: flex;
+    gap: 10px;
+    padding: 20px;
+    background-color: #fff;
+    border-top: 1px solid #eee;
+}
+
+/* 按钮样式 */
+.btn {
+    padding: 12px 24px;
+    border: none;
+    border-radius: 24px;
+    font-size: 16px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    flex: 1;
+}
+
+#start-btn {
+    background-color: #27ae60;
+    color: white;
+}
+
+#start-btn:hover:not(:disabled) {
+    background-color: #229954;
+    transform: translateY(-1px);
+}
+
+#stop-btn {
+    background-color: #e74c3c;
+    color: white;
+}
+
+#stop-btn:hover:not(:disabled) {
+    background-color: #c0392b;
+    transform: translateY(-1px);
+}
+
+.btn:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    transform: none;
+}
+
+/* 手动输入区域样式 */
+.manual-input-container {
+    display: flex;
+    gap: 10px;
+    padding: 0 20px 20px;
+    background-color: #fff;
+}
+
+#manual-input {
+    flex: 1;
+    padding: 12px 16px;
+    border: 2px solid #e0e0e0;
+    border-radius: 24px;
+    font-size: 16px;
+    outline: none;
+    transition: border-color 0.3s ease;
+}
+
+#manual-input:focus {
+    border-color: #3498db;
+}
+
+#send-btn {
+    background-color: #3498db;
+    color: white;
+}
+
+#send-btn:hover {
+    background-color: #2980b9;
+    transform: translateY(-1px);
+}
+
+/* 响应式设计 */
+@media (max-width: 600px) {
+    .container {
+        padding: 10px;
+    }
+    
+    h1 {
+        font-size: 2rem;
+    }
+    
+    #chat-messages {
+        height: 300px;
+    }
+    
+    .input-area {
+        flex-direction: column;
+    }
+    
+    .btn {
+        padding: 10px 20px;
+    }
+}

@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>H5语音对话项目</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <h1>语音对话助手</h1>
+        
+        <div class="chat-container">
+            <div id="chat-messages"></div>
+            <div class="input-area">
+                <button id="start-btn" class="btn">开始录音</button>
+                <button id="stop-btn" class="btn" disabled>停止录音</button>
+            </div>
+            
+            <!-- 文本输入区域 -->
+            <div id="manual-input-container" class="manual-input-container">
+                <input type="text" id="manual-input" placeholder="输入您的问题...">
+                <button id="send-btn" class="btn">发送</button>
+            </div>
+        </div>
+
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
