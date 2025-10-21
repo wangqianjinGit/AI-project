@@ -15,6 +15,39 @@ body {
     overflow: auto;
 }
 
+/* 用户信息区域样式 */
+.user-info {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+/* 性格特质信息样式 */
+.personality-info {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background-color: rgba(255, 255, 255, 0.2);
+    padding: 8px 16px;
+    border-radius: 20px;
+    margin-top: 10px;
+    font-size: 1rem;
+}
+
+.personality-label {
+    font-weight: 500;
+    color: #ecf0f1;
+    margin-right: 5px;
+}
+
+.personality-value {
+    font-weight: 600;
+    color: #fff;
+    background: linear-gradient(135deg, #64DFDF 0%, #3DB8B8 100%);
+    padding: 4px 12px;
+    border-radius: 12px;
+    font-size: 0.9rem;
+}
+
 /* 背景装饰 */
 body::before {
     content: '';

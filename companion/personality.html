@@ -1,0 +1,352 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>选择性格特质 - H5语音对话项目</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        /* 性格选择页面特有样式 */
+        .personality-container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 40px;
+            background-color: rgba(255, 255, 255, 0.85);
+            border-radius: 20px;
+            box-shadow: 0 8px 32px rgba(31, 38, 135, 0.15);
+            backdrop-filter: blur(4px);
+            -webkit-backdrop-filter: blur(4px);
+            border: 1px solid rgba(255, 255, 255, 0.18);
+            text-align: center;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+
+        .page-title {
+            font-size: 2.5rem;
+            color: #2c3e50;
+            margin-bottom: 30px;
+            font-weight: 600;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .page-description {
+            font-size: 1.1rem;
+            color: #7f8c8d;
+            margin-bottom: 40px;
+        }
+
+        /* 性格选择卡片容器 */
+        .personality-cards {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 25px;
+            margin-bottom: 40px;
+        }
+
+        /* 性格选择卡片样式 */
+        .personality-card {
+            background-color: rgba(255, 255, 255, 0.9);
+            border-radius: 20px;
+            padding: 25px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: 2px solid transparent;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .personality-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+            border-color: #8BC6EC;
+        }
+
+        .personality-card.selected {
+            border-color: #64DFDF;
+            background-color: rgba(100, 223, 223, 0.1);
+        }
+
+        /* 性格图标容器 */
+        .personality-icon {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 3rem;
+            color: white;
+            position: relative;
+        }
+
+        /* 不同性格的图标背景色 */
+        .extroverted .personality-icon {
+            background: linear-gradient(135deg, #FF9E9E 0%, #FF6B6B 100%);
+        }
+
+        .introverted .personality-icon {
+            background: linear-gradient(135deg, #9599E2 0%, #7474C1 100%);
+        }
+
+        .thinker .personality-icon {
+            background: linear-gradient(135deg, #8BC6EC 0%, #5E9DD4 100%);
+        }
+
+        .feeler .personality-icon {
+            background: linear-gradient(135deg, #64DFDF 0%, #3DB8B8 100%);
+        }
+
+        /* 性格名称 */
+        .personality-name {
+            font-size: 1.3rem;
+            font-weight: 600;
+            color: #2c3e50;
+            margin-bottom: 10px;
+        }
+
+        /* 性格描述 */
+        .personality-description {
+            font-size: 1rem;
+            color: #7f8c8d;
+            line-height: 1.5;
+        }
+
+        /* 确认按钮 */
+        .confirm-btn {
+            width: 100%;
+            max-width: 300px;
+            padding: 16px;
+            font-size: 18px;
+            font-weight: 500;
+            border: none;
+            border-radius: 24px;
+            background-color: #64DFDF;
+            color: #2c3e50;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            margin-top: 20px;
+        }
+
+        .confirm-btn:hover:not(:disabled) {
+            background-color: #53C8C8;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        }
+
+        .confirm-btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        /* 响应式调整 */
+        @media (max-width: 768px) {
+            .personality-container {
+                width: 95%;
+                padding: 30px 20px;
+                margin-top: 100px;
+                position: relative;
+                top: 0;
+                left: 0;
+                transform: none;
+            }
+            
+            .personality-cards {
+                grid-template-columns: 1fr;
+            }
+            
+            .page-title {
+                font-size: 2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="personality-container">
+            <h1 class="page-title">选择您的性格特质</h1>
+            <p class="page-description">请选择最符合您的性格特质，这将帮助助手更好地与您交流</p>
+            
+            <div class="personality-cards">
+                <!-- 外向性格 -->
+                <div class="personality-card extroverted" data-personality="extroverted">
+                    <div class="personality-icon">
+                        😃
+                    </div>
+                    <div class="personality-name">外向活泼</div>
+                    <div class="personality-description">喜欢社交，充满活力，善于表达自己的想法和感受</div>
+                </div>
+                
+                <!-- 内向性格 -->
+                <div class="personality-card introverted" data-personality="introverted">
+                    <div class="personality-icon">
+                        🤔
+                    </div>
+                    <div class="personality-name">内向沉思</div>
+                    <div class="personality-description">喜欢独处，善于思考，倾向于深入分析问题</div>
+                </div>
+                
+                <!-- 思考者性格 -->
+                <div class="personality-card thinker" data-personality="thinker">
+                    <div class="personality-icon">
+                        🧠
+                    </div>
+                    <div class="personality-name">理性思考</div>
+                    <div class="personality-description">注重逻辑和理性，善于分析问题，寻求客观解决方案</div>
+                </div>
+                
+                <!-- 情感者性格 -->
+                <div class="personality-card feeler" data-personality="feeler">
+                    <div class="personality-icon">
+                        ❤️
+                    </div>
+                    <div class="personality-name">感性体贴</div>
+                    <div class="personality-description">注重情感和价值观，善于理解他人感受，富有同理心</div>
+                </div>
+            </div>
+            
+            <div class="loading-indicator" id="loading-indicator" style="display: none;"></div>
+            <div class="error-message" id="error-message"></div>
+            <button id="confirm-btn" class="confirm-btn" disabled>确认选择</button>
+        </div>
+    </div>
+
+    <script>
+        // DOM元素初始化
+        const personalityCards = document.querySelectorAll('.personality-card');
+        const confirmBtn = document.getElementById('confirm-btn');
+        const loadingIndicator = document.getElementById('loading-indicator');
+        const errorMessage = document.getElementById('error-message');
+        
+        let selectedPersonality = null;
+        
+        // 性格卡片点击事件
+        personalityCards.forEach(card => {
+            card.addEventListener('click', function() {
+                // 移除所有卡片的选中状态
+                personalityCards.forEach(c => c.classList.remove('selected'));
+                
+                // 添加当前卡片的选中状态
+                this.classList.add('selected');
+                
+                // 保存选中的性格特质
+                selectedPersonality = this.getAttribute('data-personality');
+                
+                // 启用确认按钮
+                confirmBtn.disabled = false;
+                
+                // 清除错误消息
+                errorMessage.style.display = 'none';
+            });
+        });
+        
+        // 检测当前访问方式并选择合适的存储策略
+        function getStorageStrategy() {
+            const protocol = window.location.protocol;
+            // 如果是通过文件协议(file://)访问，使用localStorage
+            // 如果是通过HTTP/HTTPS协议访问，使用服务器存储
+            return protocol === 'file:' ? 'localStorage' : 'server';
+        }
+        
+        // 保存性格特质（智能选择存储方式）
+        async function savePersonality(personality) {
+            const strategy = getStorageStrategy();
+            
+            if (strategy === 'localStorage') {
+                // 使用localStorage存储
+                try {
+                    localStorage.setItem('userPersonality', personality);
+                    return true;
+                } catch (error) {
+                    console.error('保存性格特质到localStorage失败:', error);
+                    showError('保存性格特质失败，请检查浏览器设置');
+                    return false;
+                }
+            } else {
+                // 使用服务器存储
+                return await savePersonalityToServer(personality);
+            }
+        }
+        
+        // 获取完整的API基础URL
+        function getApiBaseUrl() {
+            const protocol = window.location.protocol;
+            const host = window.location.hostname;
+            const port = window.location.port || (protocol === 'https:' ? 443 : 8000);
+            return `${protocol}//${host}:${port}`;
+        }
+        
+        // 保存性格特质到服务器
+        async function savePersonalityToServer(personality) {
+            try {
+                const apiBaseUrl = getApiBaseUrl();
+                const response = await fetch(`${apiBaseUrl}/api/user/personality`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ personality: personality }),
+                    credentials: 'include' // 包含Cookie等凭证
+                });
+                
+                // 检查响应是否为空
+                const contentType = response.headers.get('content-type');
+                if (!contentType || !contentType.includes('application/json')) {
+                    throw new Error('服务器返回的不是有效的JSON数据');
+                }
+                
+                const data = await response.json();
+                if (response.ok && data.success) {
+                    return true;
+                } else {
+                    throw new Error(data.error || '保存性格特质失败');
+                }
+            } catch (error) {
+                console.error('保存性格特质到服务器出错:', error);
+                // 提供更具体的错误信息
+                let errorMsg = error.message;
+                if (errorMsg === 'Failed to fetch') {
+                    errorMsg = '无法连接到服务器，请确认服务器已启动并正在运行';
+                }
+                showError(errorMsg);
+                return false;
+            }
+        }
+        
+        // 显示错误消息
+        function showError(message) {
+            errorMessage.textContent = message;
+            errorMessage.style.display = 'block';
+        }
+        
+        // 确认按钮点击事件
+        confirmBtn.addEventListener('click', async function() {
+            if (selectedPersonality) {
+                // 显示加载状态
+                loadingIndicator.style.display = 'block';
+                confirmBtn.disabled = true;
+                
+                // 保存性格特质（智能选择存储方式）
+                const success = await savePersonality(selectedPersonality);
+                
+                // 隐藏加载状态
+                loadingIndicator.style.display = 'none';
+                
+                if (success) {
+                    // 页面跳转到主页面
+                    window.location.href = 'index.html';
+                } else {
+                    confirmBtn.disabled = false;
+                }
+            }
+        });
+    </script>
+</body>
+</html>
