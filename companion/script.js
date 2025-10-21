@@ -5,6 +5,9 @@ let stopBtn = null;
 let manualInputContainer = null;
 let manualInput = null;
 let sendBtn = null;
+let fileInput = null;
+let uploadBtn = null;
+let fileUploadContainer = null;
 
 // 语音识别初始化
 let recognition = null;
@@ -762,6 +765,9 @@ window.addEventListener('DOMContentLoaded', function() {
     manualInputContainer = document.getElementById('manual-input-container');
     manualInput = document.getElementById('manual-input');
     sendBtn = document.getElementById('send-btn');
+    fileUploadContainer = document.getElementById('file-upload-container');
+    fileInput = document.getElementById('file-input');
+    uploadBtn = document.getElementById('upload-btn');
     
     // 验证必要的DOM元素是否存在
     if (!chatMessages || !startBtn || !stopBtn) {
@@ -782,8 +788,171 @@ window.addEventListener('DOMContentLoaded', function() {
     addMessage('assistant', '欢迎使用语音对话助手！您可以点击"开始录音"按钮进行语音对话，或者在下方的输入框中输入文字进行交流。');
 });
 
+// 处理文件上传
+function handleFileUpload() {
+    const file = fileInput.files[0];
+    
+    if (!file) {
+        addMessage('assistant', '请先选择一个文件再上传');
+        return;
+    }
+    
+    // 显示文件上传中的状态
+    addMessage('assistant', `正在上传文件: ${file.name}`);
+    
+    // 为了处理不同类型的文件，我们需要根据文件类型进行相应的处理
+    const fileType = file.type;
+    const fileName = file.name;
+    const fileSize = (file.size / 1024).toFixed(2); // 转换为KB
+    
+    // 简单的文件信息，将传递给豆包模型
+    const fileInfo = {
+        name: fileName,
+        type: fileType,
+        size: `${fileSize}KB`
+    };
+    
+    // 限制文件大小（这里设置为10MB）
+    const maxSize = 10 * 1024 * 1024; // 10MB
+    if (file.size > maxSize) {
+        addMessage('assistant', `文件大小超过限制（最大10MB），请上传较小的文件`);
+        return;
+    }
+    
+    // 创建FormData对象并添加文件
+    const formData = new FormData();
+    formData.append('file', file);
+    
+    // 上传文件到服务器
+    fetch('/upload', {
+        method: 'POST',
+        body: formData
+    })
+    .then(response => {
+        if (!response.ok) {
+            throw new Error(`服务器响应错误: ${response.status}`);
+        }
+        return response.json();
+    })
+    .then(data => {
+        if (data.success) {
+            console.log('文件上传成功:', data);
+            
+            // 更新文件信息，添加服务器返回的文件路径
+            fileInfo.filePath = data.filePath;
+            
+            // 读取文本文件内容（如果是文本文件）
+            if (fileType.startsWith('text/') || fileName.endsWith('.txt') || fileName.endsWith('.md')) {
+                const reader = new FileReader();
+                
+                reader.onload = function(event) {
+                    // 读取文本内容
+                    const fileContent = event.target.result;
+                    // 为了避免内容过长，限制发送给模型的文本长度
+                    const contentPreview = fileContent.substring(0, 2000) + (fileContent.length > 2000 ? '...（内容过长，已截断）' : '');
+                    
+                    // 构建发送给豆包模型的消息，包含文件路径
+                    const messageForModel = `用户上传了文本文件 ${fileName}（${fileType}，${fileSize}KB），文件已保存到服务器路径：${data.filePath}，内容预览：\n${contentPreview}\n\n请帮我解析并存储这个文件的内容和信息。`;
+                    
+                    // 调用豆包API处理文件信息
+                    processFileWithDoubao(messageForModel, fileInfo);
+                };
+                
+                reader.onerror = function() {
+                    addMessage('assistant', `文件读取失败，但文件已成功上传到服务器`);
+                    console.error('文件读取失败');
+                    
+                    // 即使读取失败，仍然处理文件信息
+                    const messageForModel = `用户上传了文本文件 ${fileName}（${fileType}，${fileSize}KB），文件已保存到服务器路径：${data.filePath}，但读取内容时出错。\n\n请帮我存储这个文件的基本信息。`;
+                    processFileWithDoubao(messageForModel, fileInfo);
+                };
+                
+                // 读取文本文件
+                reader.readAsText(file);
+            } else {
+                // 对于非文本文件，我们发送文件信息和服务器路径
+                const messageForModel = `用户上传了文件 ${fileName}（${fileType}，${fileSize}KB），文件已保存到服务器路径：${data.filePath}\n\n请帮我存储这个文件的信息。`;
+                
+                // 调用豆包API处理文件信息
+                processFileWithDoubao(messageForModel, fileInfo);
+            }
+        } else {
+            throw new Error(data.message || '文件上传失败');
+        }
+    })
+    .catch(error => {
+        console.error('文件上传失败:', error);
+        addMessage('assistant', `文件上传失败: ${error.message || '未知错误'}`);
+    })
+    .finally(() => {
+        // 清空文件输入，以便用户可以再次选择同一个文件
+        fileInput.value = '';
+    });
+}
+
+// 使用豆包模型处理文件信息
+async function processFileWithDoubao(message, fileInfo) {
+    try {
+        // 移除之前的上传中消息
+        chatMessages.removeChild(chatMessages.lastChild);
+        
+        // 显示正在处理的状态
+        addMessage('assistant', `正在处理文件: ${fileInfo.name}，请稍候...`);
+        
+        const response = await fetch(DOBAO_API_URL, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${DOBAO_API_KEY}`
+            },
+            body: JSON.stringify({
+                model: ENDPOINT_ID,
+                messages: [
+                    { role: 'system', content: '你是一个有用的中文助手，擅长处理和存储文件信息。当用户上传文件时，你需要解析文件内容（如果是文本文件）并存储文件信息。' },
+                    { role: 'user', content: message }
+                ],
+                max_tokens: 300, // 增加token数以处理更多文件内容
+                temperature: 0.7
+            })
+        });
+        
+        const data = await response.json();
+        
+        // 移除正在处理的消息
+        chatMessages.removeChild(chatMessages.lastChild);
+        
+        if (data.choices && data.choices.length > 0) {
+            const assistantResponse = data.choices[0].message.content;
+            addMessage('assistant', assistantResponse);
+        } else {
+            addMessage('assistant', '抱歉，处理文件时遇到问题。请稍后再试。');
+        }
+    } catch (error) {
+        console.error('处理文件时API调用错误:', error);
+        // 移除正在处理的消息
+        chatMessages.removeChild(chatMessages.lastChild);
+        
+        addMessage('assistant', `文件处理失败: ${error.message || '未知错误'}`);
+    }
+}
+
 // 初始化事件监听器
 function initializeEventListeners() {
+    // 文件上传按钮事件监听
+    if (uploadBtn) {
+        uploadBtn.addEventListener('click', handleFileUpload);
+    }
+    
+    // 文件输入框变化事件监听（可选，用户选择文件后自动上传）
+    if (fileInput) {
+        fileInput.addEventListener('change', function() {
+            if (this.files && this.files.length > 0) {
+                // 用户选择文件后，可以提示用户点击上传按钮
+                console.log('用户选择了文件:', this.files[0].name);
+            }
+        });
+    }
+    
     // 开始录音按钮事件监听
     startBtn.addEventListener('click', function() {
         console.log('开始录音按钮被点击');

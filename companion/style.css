@@ -163,6 +163,43 @@ h1 {
     transform: none;
 }
 
+/* 文件上传区域样式 */
+.file-upload-container {
+    display: flex;
+    gap: 10px;
+    padding: 0 20px 10px;
+    background-color: transparent;
+}
+
+#file-input {
+    flex: 1;
+    padding: 10px 12px;
+    border: 2px solid rgba(255, 255, 255, 0.5);
+    border-radius: 24px;
+    font-size: 14px;
+    outline: none;
+    transition: all 0.3s ease;
+    background-color: rgba(255, 255, 255, 0.7);
+    cursor: pointer;
+}
+
+#file-input:focus {
+    border-color: #8BC6EC;
+    background-color: rgba(255, 255, 255, 0.9);
+    box-shadow: 0 2px 8px rgba(139, 198, 236, 0.2);
+}
+
+#upload-btn {
+    background-color: #9599E2;
+    color: white;
+}
+
+#upload-btn:hover:not(:disabled) {
+    background-color: #8488D0;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
 /* 手动输入区域样式 */
 .manual-input-container {
     display: flex;
