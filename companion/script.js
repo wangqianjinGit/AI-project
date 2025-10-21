@@ -153,6 +153,166 @@ function checkBrowserSupport() {
 function setupRecognition(isMobile) {
     console.log('开始设置语音识别参数...');
     console.log('移动设备模式:', isMobile);
+    
+    if (!recognition) return;
+    
+    // 设置语音识别参数
+    recognition.continuous = isMobile ? false : true; // 移动设备上使用非连续模式以节省资源
+    recognition.interimResults = true; // 启用中间结果
+    recognition.lang = 'zh-CN'; // 设置为中文识别
+    recognition.maxAlternatives = 1; // 最大备选结果数
+    
+    // 设置事件监听器
+    recognition.onstart = function() {
+        console.log('语音识别已启动');
+        isRecording = true;
+        startBtn.disabled = true;
+        stopBtn.disabled = false;
+        
+        // 创建录音指示器
+        let recordingIndicator = document.getElementById('recording-indicator');
+        if (!recordingIndicator) {
+            recordingIndicator = document.createElement('div');
+            recordingIndicator.id = 'recording-indicator';
+            recordingIndicator.style.cssText = 'position: fixed; top: 20px; right: 20px; background: rgba(255, 0, 0, 0.9); color: white; padding: 10px 15px; border-radius: 20px; z-index: 1000; display: flex; align-items: center;';
+            
+            const microphoneIcon = document.createElement('div');
+            microphoneIcon.style.cssText = 'width: 12px; height: 12px; background: white; border-radius: 50%; margin-right: 8px; animation: pulse 1.5s infinite;';
+            
+            const styleSheet = document.createElement('style');
+            styleSheet.textContent = '@keyframes pulse { 0% { opacity: 1; } 50% { opacity: 0.5; } 100% { opacity: 1; } }';
+            document.head.appendChild(styleSheet);
+            
+            const text = document.createElement('span');
+            text.textContent = '正在录音...';
+            
+            recordingIndicator.appendChild(microphoneIcon);
+            recordingIndicator.appendChild(text);
+            document.body.appendChild(recordingIndicator);
+        } else {
+            recordingIndicator.style.display = 'flex';
+        }
+        
+        // 设置超时计时器，防止录音时间过长
+        recognitionTimeout = setTimeout(() => {
+            console.log('录音超时，自动停止');
+            forceStopRecording();
+        }, 60000); // 60秒超时
+    };
+    
+    recognition.onresult = function(event) {
+        console.log('语音识别结果:', event.results);
+        
+        // 清除之前的超时计时器
+        if (recognitionTimeout) {
+            clearTimeout(recognitionTimeout);
+            recognitionTimeout = null;
+        }
+        
+        // 获取最后一个结果
+        const lastResult = event.results[event.results.length - 1];
+        
+        if (lastResult.isFinal) {
+            const userMessage = lastResult[0].transcript.trim();
+            console.log('最终识别结果:', userMessage);
+            
+            if (userMessage) {
+                addMessage('user', userMessage);
+                // 在移动设备上自动停止录音
+                if (isMobile) {
+                    forceStopRecording();
+                }
+                // 获取AI回复
+                getDoubaoResponse(userMessage);
+            }
+        }
+        
+        // 重置超时计时器
+        recognitionTimeout = setTimeout(() => {
+            console.log('录音超时，自动停止');
+            forceStopRecording();
+        }, 60000); // 60秒超时
+    };
+    
+    recognition.onerror = function(event) {
+        console.error('语音识别错误:', event.error);
+        
+        // 清除超时计时器
+        if (recognitionTimeout) {
+            clearTimeout(recognitionTimeout);
+            recognitionTimeout = null;
+        }
+        
+        let errorMessage = '语音识别出错';
+        switch (event.error) {
+            case 'no-speech':
+                errorMessage = '没有检测到语音，请尝试重新录音';
+                break;
+            case 'audio-capture':
+                errorMessage = '没有找到麦克风，请确保麦克风已连接并授权';
+                break;
+            case 'not-allowed':
+                errorMessage = '麦克风访问被拒绝，请在浏览器设置中授权';
+                break;
+            case 'aborted':
+                console.log('语音识别被中止（用户操作或系统干预）');
+                return; // 中止错误不需要显示消息
+            default:
+                errorMessage = '无法开启麦克风: ' + event.error;
+        }
+        
+        addMessage('assistant', errorMessage);
+        
+        // 重置状态
+        isRecording = false;
+        startBtn.disabled = false;
+        stopBtn.disabled = true;
+        
+        // 移除录音指示器
+        const recordingIndicator = document.getElementById('recording-indicator');
+        if (recordingIndicator) {
+            document.body.removeChild(recordingIndicator);
+        }
+    };
+    
+    recognition.onend = function() {
+        console.log('语音识别已结束');
+        
+        // 清除超时计时器
+        if (recognitionTimeout) {
+            clearTimeout(recognitionTimeout);
+            recognitionTimeout = null;
+        }
+        
+        // 在非连续模式下，自动重新启动（用于移动设备）
+        if (isMobile && isRecording && recognition.continuous === false) {
+            console.log('移动设备上自动重启语音识别');
+            setTimeout(() => {
+                try {
+                    if (isRecording) {
+                        recognition.start();
+                    }
+                } catch (e) {
+                    console.error('自动重启语音识别失败:', e);
+                    isRecording = false;
+                    startBtn.disabled = false;
+                    stopBtn.disabled = true;
+                }
+            }, 100);
+            return;
+        }
+        
+        // 重置状态
+        isRecording = false;
+        startBtn.disabled = false;
+        stopBtn.disabled = true;
+        
+        // 移除录音指示器
+        const recordingIndicator = document.getElementById('recording-indicator');
+        if (recordingIndicator) {
+            document.body.removeChild(recordingIndicator);
+        }
+    };
 }
 
 // 页面加载完成后初始化
@@ -185,6 +345,10 @@ window.addEventListener('DOMContentLoaded', async function() {
         return;
     }
     
+    // 初始化语音识别对象
+    const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+    setupRecognition(isMobile);
+    
     // 初始化事件监听和功能
     initializeEventListeners();
     checkBrowserSupport();
@@ -192,54 +356,6 @@ window.addEventListener('DOMContentLoaded', async function() {
     // 添加欢迎消息，包含用户昵称
     addMessage('assistant', `欢迎回来，${userNickname}！您可以点击"开始录音"按钮进行语音对话，或者在下方的输入框中输入文字进行交流。`);
 });
-
-// 初始化事件监听器
-function initializeEventListeners() {
-    console.log('===== 开始初始化事件监听器 =====');
-    console.log('DOM元素状态检查:');
-    console.log('- startBtn:', startBtn ? '存在' : '不存在');
-    console.log('- stopBtn:', stopBtn ? '存在' : '不存在');
-    console.log('- manualInputContainer:', manualInputContainer ? '存在' : '不存在');
-    console.log('- manualInput:', manualInput ? '存在' : '不存在');
-    console.log('- sendBtn:', sendBtn ? '存在' : '不存在');
-    
-    // 开始录音按钮事件监听
-    if (startBtn) {
-        startBtn.addEventListener('click', function() {
-            console.log('开始录音按钮被点击');
-        });
-        console.log('✅ 开始录音按钮事件监听已绑定');
-    }
-    
-    // 验证手动输入相关元素是否存在
-    if (manualInputContainer && manualInput && sendBtn) {
-        console.log('手动输入相关元素均存在，准备绑定事件监听');
-        
-        // 发送按钮点击事件 - 添加调试日志
-        sendBtn.addEventListener('click', function() {
-            console.log('发送按钮被点击！当前输入内容:', manualInput.value);
-            sendManualMessage();
-        });
-        console.log('✅ 发送按钮点击事件监听已绑定');
-        
-        // 回车键发送 - 添加调试日志
-        manualInput.addEventListener('keypress', function(event) {
-            if (event.key === 'Enter') {
-                console.log('回车键被按下！当前输入内容:', manualInput.value);
-                sendManualMessage();
-            }
-        });
-        console.log('✅ 回车键事件监听已绑定');
-    } else {
-        console.error('❌ 手动输入相关元素不存在，无法绑定事件监听:', {
-            manualInputContainer: !!manualInputContainer,
-            manualInput: !!manualInput,
-            sendBtn: !!sendBtn
-        });
-    }
-    
-    console.log('===== 事件监听器初始化完成 =====');
-}
 
 // 强制停止录音并更新状态 - 新增函数
 function forceStopRecording() {
@@ -697,43 +813,6 @@ function sendManualMessage() {
     }
 }
 
-// 页面加载完成后初始化
-window.addEventListener('DOMContentLoaded', async function() {
-    // 从服务器获取用户昵称
-    userNickname = await getUserNickname();
-    
-    // 如果没有昵称并且不是登录页面，则跳转到登录页面
-    if (!userNickname && !window.location.href.includes('login.html')) {
-        window.location.href = 'login.html';
-        return;
-    }
-    
-    // 初始化DOM元素
-    chatMessages = document.getElementById('chat-messages');
-    startBtn = document.getElementById('start-btn');
-    stopBtn = document.getElementById('stop-btn');
-    manualInputContainer = document.getElementById('manual-input-container');
-    manualInput = document.getElementById('manual-input');
-    sendBtn = document.getElementById('send-btn');
-    
-    // 验证必要的DOM元素是否存在
-    if (!chatMessages || !startBtn || !stopBtn) {
-        console.error('关键DOM元素未找到，应用程序可能无法正常工作');
-        // 尝试显示错误信息（如果可能）
-        const errorDiv = document.createElement('div');
-        errorDiv.style.cssText = 'position: fixed; top: 20px; left: 50%; transform: translateX(-50%); background: red; color: white; padding: 10px 20px; border-radius: 5px; z-index: 1000;';
-        errorDiv.textContent = '应用程序初始化失败：关键UI元素未找到';
-        document.body.appendChild(errorDiv);
-        return;
-    }
-    
-    // 初始化事件监听和功能
-    initializeEventListeners();
-    checkBrowserSupport();
-    
-    // 添加欢迎消息，包含用户昵称
-    addMessage('assistant', `欢迎回来，${userNickname}！您可以点击"开始录音"按钮进行语音对话，或者在下方的输入框中输入文字进行交流。`);
-});
 
 // 初始化事件监听器
 function initializeEventListeners() {
