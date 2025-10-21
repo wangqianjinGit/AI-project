@@ -129,8 +129,8 @@ const server = http.createServer((req, res) => {
         return;
     }
 
-    // 静态文件处理
-    const filePath = path.join(__dirname, req.url === '/' ? 'index.html' : req.url);
+    // 静态文件处理 - 默认指向login.html
+    const filePath = path.join(__dirname, req.url === '/' ? 'login.html' : req.url);
     
     // 获取文件扩展名
     const extname = path.extname(filePath);
