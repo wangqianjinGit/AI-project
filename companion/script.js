@@ -350,6 +350,91 @@ function forceStopRecording() {
     }
 }
 
+// 增强的滚动到底部函数
+function scrollToBottom() {
+    // 确保chatMessages元素存在
+    if (!chatMessages) {
+        console.error('chatMessages元素未找到');
+        return;
+    }
+    
+    // 保存当前尝试次数
+    let attemptCount = 0;
+    const maxAttempts = 3;
+    
+    // 核心滚动函数
+    const tryScroll = () => {
+        attemptCount++;
+        
+        try {
+            const currentScrollTop = chatMessages.scrollTop;
+            const targetScrollTop = chatMessages.scrollHeight - chatMessages.clientHeight;
+            
+            // 记录滚动前的状态
+            console.log(`滚动尝试 #${attemptCount}:`, {
+                currentScrollTop: currentScrollTop,
+                targetScrollTop: targetScrollTop,
+                scrollHeight: chatMessages.scrollHeight,
+                clientHeight: chatMessages.clientHeight
+            });
+            
+            // 尝试直接滚动
+            chatMessages.scrollTop = targetScrollTop;
+            
+            // 检查滚动是否成功（允许1px的误差）
+            if (Math.abs(chatMessages.scrollTop - targetScrollTop) <= 1) {
+                console.log(`滚动到底部成功 (尝试 #${attemptCount})`);
+                return true;
+            } else {
+                console.warn(`滚动不完全成功 (尝试 #${attemptCount}): 从 ${currentScrollTop} 到 ${chatMessages.scrollTop}, 目标 ${targetScrollTop}`);
+                
+                // 如果还未达到最大尝试次数，继续尝试
+                if (attemptCount < maxAttempts) {
+                    // 尝试使用scrollIntoView作为备选
+                    if (chatMessages.lastChild && chatMessages.lastChild.scrollIntoView) {
+                        console.log('尝试使用lastChild.scrollIntoView作为备选');
+                        chatMessages.lastChild.scrollIntoView({ behavior: 'smooth', block: 'end' });
+                    }
+                    return false;
+                } else {
+                    console.error('已达到最大滚动尝试次数，仍然无法完全滚动到底部');
+                    return false;
+                }
+            }
+        } catch (e) {
+            console.error(`滚动尝试 #${attemptCount} 失败:`, e);
+            return attemptCount >= maxAttempts;
+        }
+    };
+    
+    // 立即尝试第一次滚动
+    if (tryScroll()) {
+        return;
+    }
+    
+    // 第一次延时尝试（0ms后，确保DOM更新）
+    setTimeout(() => {
+        if (tryScroll()) {
+            return;
+        }
+        
+        // 第二次延时尝试（100ms后）
+        setTimeout(() => {
+            tryScroll();
+            
+            // 最终保障：无论之前是否成功，200ms后再尝试一次
+            setTimeout(() => {
+                try {
+                    console.log('最终滚动保障尝试');
+                    chatMessages.scrollTop = chatMessages.scrollHeight - chatMessages.clientHeight;
+                } catch (e) {
+                    console.error('最终滚动保障尝试失败:', e);
+                }
+            }, 200);
+        }, 100);
+    }, 0);
+}
+
 // 添加消息到聊天界面
 function addMessage(role, content) {
     const messageDiv = document.createElement('div');
@@ -359,10 +444,8 @@ function addMessage(role, content) {
     
     chatMessages.appendChild(messageDiv);
     
-    // 改进的滚动到底部逻辑 - 使用setTimeout确保DOM更新后再滚动
-    setTimeout(() => {
-        chatMessages.scrollTop = chatMessages.scrollHeight;
-    }, 0);
+    // 调用滚动到底部函数
+    scrollToBottom();
     
     // 如果是助手的回复，并且不是"正在思考..."，则进行语音合成
     if (role === 'assistant' && content !== '正在思考...') {
