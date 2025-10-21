@@ -319,50 +319,88 @@ function setupRecognition(isMobile) {
     console.log('开始设置语音识别参数...');
     console.log('移动设备模式:', isMobile);
     
-    if (!recognition) {
-        console.error('recognition对象不存在，无法设置参数');
-        return;
-    }
+    if (!recognition) return;
     
-    // 重置尝试次数
-    recognitionAttempts = 0;
+    // 设置语音识别参数
+    recognition.continuous = isMobile ? false : true; // 移动设备上使用非连续模式以节省资源
+    recognition.interimResults = true; // 启用中间结果
+    recognition.lang = 'zh-CN'; // 设置为中文识别
+    recognition.maxAlternatives = 1; // 最大备选结果数
     
-    // 配置基本参数
-    recognition.continuous = true; // 连续识别
-    recognition.interimResults = true; // 返回临时结果
-    recognition.lang = 'zh-CN'; // 设置中文识别
-    
-    // 移动设备特定优化
-    if (isMobile) {
-        recognition.maxAlternatives = 1; // 移动设备上只返回1个最佳结果
-    } else {
-        recognition.maxAlternatives = 3; // 桌面设备返回3个备选结果
-    }
-    
-    // 设置语音识别事件监听器
+    // 设置事件监听器
     recognition.onstart = function() {
-        console.log('语音识别已开始');
+        console.log('语音识别已启动');
         isRecording = true;
-        recognitionInitialized = true;
-        
-        // 更新UI状态
         startBtn.disabled = true;
         stopBtn.disabled = false;
         
-        // 添加录音指示器
-        addRecordingIndicator();
+        // 创建录音指示器
+        let recordingIndicator = document.getElementById('recording-indicator');
+        if (!recordingIndicator) {
+            recordingIndicator = document.createElement('div');
+            recordingIndicator.id = 'recording-indicator';
+            recordingIndicator.style.cssText = 'position: fixed; top: 20px; right: 20px; background: rgba(255, 0, 0, 0.9); color: white; padding: 10px 15px; border-radius: 20px; z-index: 1000; display: flex; align-items: center;';
+            
+            const microphoneIcon = document.createElement('div');
+            microphoneIcon.style.cssText = 'width: 12px; height: 12px; background: white; border-radius: 50%; margin-right: 8px; animation: pulse 1.5s infinite;';
+            
+            const styleSheet = document.createElement('style');
+            styleSheet.textContent = '@keyframes pulse { 0% { opacity: 1; } 50% { opacity: 0.5; } 100% { opacity: 1; } }';
+            document.head.appendChild(styleSheet);
+            
+            const text = document.createElement('span');
+            text.textContent = '正在录音...';
+            
+            recordingIndicator.appendChild(microphoneIcon);
+            recordingIndicator.appendChild(text);
+            document.body.appendChild(recordingIndicator);
+        } else {
+            recordingIndicator.style.display = 'flex';
+        }
+        
+        // 设置超时计时器，防止录音时间过长
+        recognitionTimeout = setTimeout(() => {
+            console.log('录音超时，自动停止');
+            forceStopRecording();
+        }, 60000); // 60秒超时
     };
     
-    recognition.onend = function() {
-        console.log('语音识别已结束');
-        isRecording = false;
+    recognition.onresult = function(event) {
+        console.log('语音识别结果:', event.results);
         
-        // 更新UI状态
-        startBtn.disabled = false;
-        stopBtn.disabled = true;
+        // 清除之前的超时计时器
+        if (recognitionTimeout) {
+            clearTimeout(recognitionTimeout);
+            recognitionTimeout = null;
+        }
         
-        // 移除录音指示器
-        removeRecordingIndicator();
+        // 获取最后一个结果
+        const lastResult = event.results[event.results.length - 1];
+        
+        if (lastResult.isFinal) {
+            const userMessage = lastResult[0].transcript.trim();
+            console.log('最终识别结果:', userMessage);
+            
+            if (userMessage) {
+                addMessage('user', userMessage);
+                // 在移动设备上自动停止录音
+                if (isMobile) {
+                    forceStopRecording();
+                }
+                // 获取AI回复
+                getDoubaoResponse(userMessage);
+            }
+        }
+        
+        // 重置超时计时器
+        recognitionTimeout = setTimeout(() => {
+            console.log('录音超时，自动停止');
+            forceStopRecording();
+        }, 60000); // 60秒超时
+    };
+    
+    recognition.onerror = function(event) {
+        console.error('语音识别错误:', event.error);
         
         // 清除超时计时器
         if (recognitionTimeout) {
@@ -370,45 +408,25 @@ function setupRecognition(isMobile) {
             recognitionTimeout = null;
         }
         
-        // 如果是正常结束，重置错误状态
-        lastRecognitionError = null;
-    };
-    
-    recognition.onresult = function(event) {
-        console.log('接收到语音识别结果:', event);
-        
-        // 尝试获取最新的识别结果
-        let transcript = '';
-        for (let i = event.resultIndex; i < event.results.length; i++) {
-            if (event.results[i].isFinal) {
-                transcript = event.results[i][0].transcript;
+        let errorMessage = '语音识别出错';
+        switch (event.error) {
+            case 'no-speech':
+                errorMessage = '没有检测到语音，请尝试重新录音';
                 break;
-            }
+            case 'audio-capture':
+                errorMessage = '没有找到麦克风，请确保麦克风已连接并授权';
+                break;
+            case 'not-allowed':
+                errorMessage = '麦克风访问被拒绝，请在浏览器设置中授权';
+                break;
+            case 'aborted':
+                console.log('语音识别被中止（用户操作或系统干预）');
+                return; // 中止错误不需要显示消息
+            default:
+                errorMessage = '无法开启麦克风: ' + event.error;
         }
         
-        if (transcript.trim()) {
-            console.log('最终识别文本:', transcript);
-            
-            // 停止录音
-            try {
-                recognition.stop();
-            } catch (error) {
-                console.error('停止录音时出错:', error);
-            }
-            
-            // 添加用户消息
-            addMessage('user', transcript);
-            
-            // 调用API获取回复
-            getDoubaoResponse(transcript);
-        }
-    };
-    
-    recognition.onerror = function(event) {
-        console.error('语音识别错误:', event.error);
-        
-        // 记录错误
-        lastRecognitionError = event.error;
+        addMessage('assistant', errorMessage);
         
         // 重置状态
         isRecording = false;
@@ -416,23 +434,14 @@ function setupRecognition(isMobile) {
         stopBtn.disabled = true;
         
         // 移除录音指示器
-        removeRecordingIndicator();
-        
-        // 根据不同的错误类型提供具体提示
-        let errorMessage = '语音识别出错: ' + event.error;
-        if (event.error === 'not-allowed' || event.error === 'service-not-allowed') {
-            errorMessage = '请先授权麦克风访问权限';
-        } else if (event.error === 'no-speech' || event.error === 'audio-capture') {
-            errorMessage = '未检测到可用的麦克风';
-        } else if (event.error === 'aborted') {
-            errorMessage = '语音识别被中断';
-        } else if (event.error === 'network') {
-            errorMessage = '网络连接异常，请检查网络后重试';
-        } else if (event.error === 'audio-capture') {
-            errorMessage = '无法访问麦克风，请确保麦克风已连接且未被其他程序占用';
+        const recordingIndicator = document.getElementById('recording-indicator');
+        if (recordingIndicator) {
+            document.body.removeChild(recordingIndicator);
         }
-        
-        addMessage('assistant', errorMessage);
+    };
+    
+    recognition.onend = function() {
+        console.log('语音识别已结束');
         
         // 清除超时计时器
         if (recognitionTimeout) {
@@ -440,74 +449,35 @@ function setupRecognition(isMobile) {
             recognitionTimeout = null;
         }
         
-        // 如果是"recognition has already started"错误，自动尝试重置
-        if (event.error && event.error.includes('already started')) {
-            console.log('自动重置recognition状态');
+        // 在非连续模式下，自动重新启动（用于移动设备）
+        if (isMobile && isRecording && recognition.continuous === false) {
+            console.log('移动设备上自动重启语音识别');
             setTimeout(() => {
-                forceStopRecording();
-            }, 1000);
+                try {
+                    if (isRecording) {
+                        recognition.start();
+                    }
+                } catch (e) {
+                    console.error('自动重启语音识别失败:', e);
+                    isRecording = false;
+                    startBtn.disabled = false;
+                    stopBtn.disabled = true;
+                }
+            }, 100);
+            return;
+        }
+        
+        // 重置状态
+        isRecording = false;
+        startBtn.disabled = false;
+        stopBtn.disabled = true;
+        
+        // 移除录音指示器
+        const recordingIndicator = document.getElementById('recording-indicator');
+        if (recordingIndicator) {
+            document.body.removeChild(recordingIndicator);
         }
     };
-    
-    recognition.onaudiostart = function() {
-        console.log('音频捕获已开始');
-    };
-    
-    recognition.onaudioend = function() {
-        console.log('音频捕获已结束');
-    };
-    
-    // 标记初始化完成
-    recognitionInitialized = true;
-};
-
-// 添加录音指示器
-function addRecordingIndicator() {
-    // 移除已有的指示器（如果有）
-    removeRecordingIndicator();
-    
-    const indicator = document.createElement('div');
-    indicator.id = 'recording-indicator';
-    indicator.style.cssText = 
-        'position: fixed; bottom: 20px; right: 20px; background: rgba(231, 76, 60, 0.9); color: white; padding: 10px 20px; border-radius: 25px; z-index: 1000; display: flex; align-items: center; box-shadow: 0 2px 10px rgba(0,0,0,0.2);';
-    
-    const dot = document.createElement('span');
-    dot.style.cssText = 
-        'display: inline-block; width: 10px; height: 10px; background: white; border-radius: 50%; margin-right: 10px; animation: pulse 1.5s infinite;';
-    
-    const text = document.createElement('span');
-    text.textContent = '正在录音...点击停止';
-    
-    indicator.appendChild(dot);
-    indicator.appendChild(text);
-    
-    // 点击指示器也可以停止录音
-    indicator.addEventListener('click', function() {
-        if (recognition && isRecording) {
-            try {
-                recognition.stop();
-            } catch (error) {
-                console.error('点击指示器停止录音时出错:', error);
-            }
-        }
-    });
-    
-    document.body.appendChild(indicator);
-    
-    // 添加动画样式
-    const style = document.createElement('style');
-    style.textContent = 
-        '@keyframes pulse { 0% { opacity: 0.6; transform: scale(0.8); } 50% { opacity: 1; transform: scale(1.2); } 100% { opacity: 0.6; transform: scale(0.8); } }';
-    
-    indicator.appendChild(style);
-}
-
-// 移除录音指示器
-function removeRecordingIndicator() {
-    const indicator = document.getElementById('recording-indicator');
-    if (indicator) {
-        document.body.removeChild(indicator);
-    }
 }
 
 // 页面加载完成后初始化
@@ -540,6 +510,10 @@ window.addEventListener('DOMContentLoaded', async function() {
         return;
     }
     
+    // 初始化语音识别对象
+    const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+    setupRecognition(isMobile);
+    
     // 初始化事件监听和功能
     initializeEventListeners();
     checkBrowserSupport();
@@ -548,55 +522,7 @@ window.addEventListener('DOMContentLoaded', async function() {
     addMessage('assistant', `欢迎回来，${userNickname}！您可以点击"开始录音"按钮进行语音对话，或者在下方的输入框中输入文字进行交流。`);
 });
 
-// 初始化事件监听器
-function initializeEventListeners() {
-    console.log('===== 开始初始化事件监听器 =====');
-    console.log('DOM元素状态检查:');
-    console.log('- startBtn:', startBtn ? '存在' : '不存在');
-    console.log('- stopBtn:', stopBtn ? '存在' : '不存在');
-    console.log('- manualInputContainer:', manualInputContainer ? '存在' : '不存在');
-    console.log('- manualInput:', manualInput ? '存在' : '不存在');
-    console.log('- sendBtn:', sendBtn ? '存在' : '不存在');
-    
-    // 开始录音按钮事件监听
-    if (startBtn) {
-        startBtn.addEventListener('click', function() {
-            console.log('开始录音按钮被点击');
-        });
-        console.log('✅ 开始录音按钮事件监听已绑定');
-    }
-    
-    // 验证手动输入相关元素是否存在
-    if (manualInputContainer && manualInput && sendBtn) {
-        console.log('手动输入相关元素均存在，准备绑定事件监听');
-        
-        // 发送按钮点击事件 - 添加调试日志
-        sendBtn.addEventListener('click', function() {
-            console.log('发送按钮被点击！当前输入内容:', manualInput.value);
-            sendManualMessage();
-        });
-        console.log('✅ 发送按钮点击事件监听已绑定');
-        
-        // 回车键发送 - 添加调试日志
-        manualInput.addEventListener('keypress', function(event) {
-            if (event.key === 'Enter') {
-                console.log('回车键被按下！当前输入内容:', manualInput.value);
-                sendManualMessage();
-            }
-        });
-        console.log('✅ 回车键事件监听已绑定');
-    } else {
-        console.error('❌ 手动输入相关元素不存在，无法绑定事件监听:', {
-            manualInputContainer: !!manualInputContainer,
-            manualInput: !!manualInput,
-            sendBtn: !!sendBtn
-        });
-    }
-    
-    console.log('===== 事件监听器初始化完成 =====');
-}
-
-// 强制停止录音并更新状态 - 增强版
+// 强制停止录音并更新状态 - 新增函数
 function forceStopRecording() {
     console.log('强制停止录音并更新状态');
     
@@ -1130,194 +1056,6 @@ function sendManualMessage() {
     }
 }
 
-// 页面加载完成后初始化
-window.addEventListener('DOMContentLoaded', async function() {
-    // 从服务器获取用户昵称
-    userNickname = await getUserNickname();
-    
-    // 如果没有昵称并且不是登录页面，则跳转到登录页面
-    if (!userNickname && !window.location.href.includes('login.html')) {
-        window.location.href = 'login.html';
-        return;
-    }
-    
-    // 初始化DOM元素
-    chatMessages = document.getElementById('chat-messages');
-    startBtn = document.getElementById('start-btn');
-    stopBtn = document.getElementById('stop-btn');
-    manualInputContainer = document.getElementById('manual-input-container');
-    manualInput = document.getElementById('manual-input');
-    sendBtn = document.getElementById('send-btn');
-    fileUploadContainer = document.getElementById('file-upload-container');
-    fileInput = document.getElementById('file-input');
-    uploadBtn = document.getElementById('upload-btn');
-    
-    // 验证必要的DOM元素是否存在
-    if (!chatMessages || !startBtn || !stopBtn) {
-        console.error('关键DOM元素未找到，应用程序可能无法正常工作');
-        // 尝试显示错误信息（如果可能）
-        const errorDiv = document.createElement('div');
-        errorDiv.style.cssText = 'position: fixed; top: 20px; left: 50%; transform: translateX(-50%); background: red; color: white; padding: 10px 20px; border-radius: 5px; z-index: 1000;';
-        errorDiv.textContent = '应用程序初始化失败：关键UI元素未找到';
-        document.body.appendChild(errorDiv);
-        return;
-    }
-    
-    // 初始化事件监听和功能
-    initializeEventListeners();
-    checkBrowserSupport();
-    
-    // 添加欢迎消息，包含用户昵称
-    addMessage('assistant', `欢迎回来，${userNickname}！您可以点击"开始录音"按钮进行语音对话，或者在下方的输入框中输入文字进行交流。`);
-});
-
-// 处理文件上传
-function handleFileUpload() {
-    const file = fileInput.files[0];
-    
-    if (!file) {
-        addMessage('assistant', '请先选择一个文件再上传');
-        return;
-    }
-    
-    // 显示文件上传中的状态
-    addMessage('assistant', `正在上传文件: ${file.name}`);
-    
-    // 为了处理不同类型的文件，我们需要根据文件类型进行相应的处理
-    const fileType = file.type;
-    const fileName = file.name;
-    const fileSize = (file.size / 1024).toFixed(2); // 转换为KB
-    
-    // 简单的文件信息，将传递给豆包模型
-    const fileInfo = {
-        name: fileName,
-        type: fileType,
-        size: `${fileSize}KB`
-    };
-    
-    // 限制文件大小（这里设置为10MB）
-    const maxSize = 10 * 1024 * 1024; // 10MB
-    if (file.size > maxSize) {
-        addMessage('assistant', `文件大小超过限制（最大10MB），请上传较小的文件`);
-        return;
-    }
-    
-    // 创建FormData对象并添加文件
-    const formData = new FormData();
-    formData.append('file', file);
-    
-    // 上传文件到服务器
-    fetch('/upload', {
-        method: 'POST',
-        body: formData
-    })
-    .then(response => {
-        if (!response.ok) {
-            throw new Error(`服务器响应错误: ${response.status}`);
-        }
-        return response.json();
-    })
-    .then(data => {
-        if (data.success) {
-            console.log('文件上传成功:', data);
-            
-            // 更新文件信息，添加服务器返回的文件路径
-            fileInfo.filePath = data.filePath;
-            
-            // 读取文本文件内容（如果是文本文件）
-            if (fileType.startsWith('text/') || fileName.endsWith('.txt') || fileName.endsWith('.md')) {
-                const reader = new FileReader();
-                
-                reader.onload = function(event) {
-                    // 读取文本内容
-                    const fileContent = event.target.result;
-                    // 为了避免内容过长，限制发送给模型的文本长度
-                    const contentPreview = fileContent.substring(0, 2000) + (fileContent.length > 2000 ? '...（内容过长，已截断）' : '');
-                    
-                    // 构建发送给豆包模型的消息，包含文件路径
-                    const messageForModel = `用户上传了文本文件 ${fileName}（${fileType}，${fileSize}KB），文件已保存到服务器路径：${data.filePath}，内容预览：\n${contentPreview}\n\n请帮我解析并存储这个文件的内容和信息。`;
-                    
-                    // 调用豆包API处理文件信息
-                    processFileWithDoubao(messageForModel, fileInfo);
-                };
-                
-                reader.onerror = function() {
-                    addMessage('assistant', `文件读取失败，但文件已成功上传到服务器`);
-                    console.error('文件读取失败');
-                    
-                    // 即使读取失败，仍然处理文件信息
-                    const messageForModel = `用户上传了文本文件 ${fileName}（${fileType}，${fileSize}KB），文件已保存到服务器路径：${data.filePath}，但读取内容时出错。\n\n请帮我存储这个文件的基本信息。`;
-                    processFileWithDoubao(messageForModel, fileInfo);
-                };
-                
-                // 读取文本文件
-                reader.readAsText(file);
-            } else {
-                // 对于非文本文件，我们发送文件信息和服务器路径
-                const messageForModel = `用户上传了文件 ${fileName}（${fileType}，${fileSize}KB），文件已保存到服务器路径：${data.filePath}\n\n请帮我存储这个文件的信息。`;
-                
-                // 调用豆包API处理文件信息
-                processFileWithDoubao(messageForModel, fileInfo);
-            }
-        } else {
-            throw new Error(data.message || '文件上传失败');
-        }
-    })
-    .catch(error => {
-        console.error('文件上传失败:', error);
-        addMessage('assistant', `文件上传失败: ${error.message || '未知错误'}`);
-    })
-    .finally(() => {
-        // 清空文件输入，以便用户可以再次选择同一个文件
-        fileInput.value = '';
-    });
-}
-
-// 使用豆包模型处理文件信息
-async function processFileWithDoubao(message, fileInfo) {
-    try {
-        // 移除之前的上传中消息
-        chatMessages.removeChild(chatMessages.lastChild);
-        
-        // 显示正在处理的状态
-        addMessage('assistant', `正在处理文件: ${fileInfo.name}，请稍候...`);
-        
-        const response = await fetch(DOBAO_API_URL, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${DOBAO_API_KEY}`
-            },
-            body: JSON.stringify({
-                model: ENDPOINT_ID,
-                messages: [
-                    { role: 'system', content: '你是一个有用的中文助手，擅长处理和存储文件信息。当用户上传文件时，你需要解析文件内容（如果是文本文件）并存储文件信息。' },
-                    { role: 'user', content: message }
-                ],
-                max_tokens: 300, // 增加token数以处理更多文件内容
-                temperature: 0.7
-            })
-        });
-        
-        const data = await response.json();
-        
-        // 移除正在处理的消息
-        chatMessages.removeChild(chatMessages.lastChild);
-        
-        if (data.choices && data.choices.length > 0) {
-            const assistantResponse = data.choices[0].message.content;
-            addMessage('assistant', assistantResponse);
-        } else {
-            addMessage('assistant', '抱歉，处理文件时遇到问题。请稍后再试。');
-        }
-    } catch (error) {
-        console.error('处理文件时API调用错误:', error);
-        // 移除正在处理的消息
-        chatMessages.removeChild(chatMessages.lastChild);
-        
-        addMessage('assistant', `文件处理失败: ${error.message || '未知错误'}`);
-    }
-}
 
 // 初始化事件监听器
 function initializeEventListeners() {
