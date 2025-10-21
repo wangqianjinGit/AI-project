@@ -1,4 +1,3 @@
-const http = require('http');
 const fs = require('fs');
 const path = require('path');
 const http = require('http');
@@ -80,6 +79,51 @@ const server = http.createServer((req, res) => {
                 console.error('保存用户数据失败:', error);
                 res.writeHead(500, { 'Content-Type': 'application/json' });
                 res.end(JSON.stringify({ error: '保存用户数据失败' }));
+            }
+        });
+        return;
+    }
+
+    // 获取用户性格特质的API端点
+    if (req.url === '/api/user/personality' && req.method === 'GET') {
+        ensureUserDataFile();
+        try {
+            const userData = JSON.parse(fs.readFileSync(USER_DATA_FILE, 'utf-8'));
+            res.writeHead(200, { 'Content-Type': 'application/json' });
+            res.end(JSON.stringify({ personality: userData.personality || '' }));
+        } catch (error) {
+            console.error('读取用户性格特质失败:', error);
+            res.writeHead(500, { 'Content-Type': 'application/json' });
+            res.end(JSON.stringify({ error: '读取用户性格特质失败' }));
+        }
+        return;
+    }
+
+    // 保存用户性格特质的API端点
+    if (req.url === '/api/user/personality' && req.method === 'POST') {
+        let body = '';
+        req.on('data', chunk => {
+            body += chunk.toString();
+        });
+        req.on('end', () => {
+            try {
+                const data = JSON.parse(body);
+                if (data.personality) {
+                    ensureUserDataFile();
+                    const userData = JSON.parse(fs.readFileSync(USER_DATA_FILE, 'utf-8'));
+                    userData.personality = data.personality;
+                    userData.timestamp = new Date().toISOString();
+                    fs.writeFileSync(USER_DATA_FILE, JSON.stringify(userData), 'utf-8');
+                    res.writeHead(200, { 'Content-Type': 'application/json' });
+                    res.end(JSON.stringify({ success: true }));
+                } else {
+                    res.writeHead(400, { 'Content-Type': 'application/json' });
+                    res.end(JSON.stringify({ error: '性格特质不能为空' }));
+                }
+            } catch (error) {
+                console.error('保存用户性格特质失败:', error);
+                res.writeHead(500, { 'Content-Type': 'application/json' });
+                res.end(JSON.stringify({ error: '保存用户性格特质失败' }));
             }
         });
         return;

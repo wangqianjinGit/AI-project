@@ -5,21 +5,11 @@ let stopBtn = null;
 let manualInputContainer = null;
 let manualInput = null;
 let sendBtn = null;
-let fileInput = null;
-let uploadBtn = null;
-let fileUploadContainer = null;
 
-// 用户信息
-let userNickname = '';
-
-// 语音识别初始化 - 增强版
+// 语音识别初始化
 let recognition = null;
 let isRecording = false;
-let recognitionTimeout = null;
-let recognitionInitialized = false; // 标记recognition是否完全初始化
-let lastRecognitionError = null; // 记录上次错误信息
-let recognitionAttempts = 0; // 记录识别尝试次数
-const MAX_RECOGNITION_ATTEMPTS = 3; // 最大尝试次数
+let recognitionTimeout = null; // 添加超时计时器
 
 // 语音合成初始化
 let speechSynthesisUtterance = null;
@@ -37,62 +27,7 @@ const ENDPOINT_ID = 'ep-20251015101857-wc8xz';
 const OPENAI_API_KEY = 'your-api-key-here'; // 请替换为您的OpenAI API密钥
 const OPENAI_API_URL = 'https://api.openai.com/v1/chat/completions';
 
-// 检测当前访问方式并选择合适的存储策略
-function getStorageStrategy() {
-    const protocol = window.location.protocol;
-    // 如果是通过文件协议(file://)访问，使用localStorage
-    // 如果是通过HTTP/HTTPS协议访问，使用服务器存储
-    return protocol === 'file:' ? 'localStorage' : 'server';
-}
-
-// 获取用户昵称（智能选择存储方式）
-async function getUserNickname() {
-    const strategy = getStorageStrategy();
-    
-    if (strategy === 'localStorage') {
-        // 从localStorage获取
-        try {
-            return localStorage.getItem('userNickname') || '';
-        } catch (error) {
-            console.error('从localStorage获取昵称失败:', error);
-            return '';
-        }
-    } else {
-        // 从服务器获取
-        return await getNicknameFromServer();
-    }
-}
-
-// 获取完整的API基础URL
-function getApiBaseUrl() {
-    const protocol = window.location.protocol;
-    const host = window.location.hostname;
-    const port = window.location.port || (protocol === 'https:' ? 443 : 8000);
-    return `${protocol}//${host}:${port}`;
-}
-
-// 从服务器获取昵称
-async function getNicknameFromServer() {
-    try {
-        const apiBaseUrl = getApiBaseUrl();
-        const response = await fetch(`${apiBaseUrl}/api/user/nickname`, {
-            credentials: 'include'
-        });
-        
-        const contentType = response.headers.get('content-type');
-        if (!contentType || !contentType.includes('application/json')) {
-            return '';
-        }
-        
-        const data = await response.json();
-        return data.nickname || '';
-    } catch (error) {
-        console.error('从服务器获取昵称出错:', error);
-        return '';
-    }
-}
-
-// 检查浏览器支持 - 增强版
+// 检查浏览器支持
 function checkBrowserSupport() {
     console.log('开始检查浏览器支持...');
     console.log('当前URL:', window.location.href);
@@ -124,71 +59,14 @@ function checkBrowserSupport() {
     console.log('webkitSpeechRecognition in window:', 'webkitSpeechRecognition' in window);
     console.log('SpeechRecognition in window:', 'SpeechRecognition' in window);
     
-    // 重置recognition状态
-    recognition = null;
-    recognitionInitialized = false;
-    
-    // 创建一个初始化recognition对象的函数，支持重试
-    const initRecognition = (retryCount = 0) => {
-        try {
-            if ('webkitSpeechRecognition' in window) {
-                console.log(`尝试初始化webkitSpeechRecognition (第${retryCount + 1}次尝试)`);
-                recognition = new webkitSpeechRecognition();
-            } else if ('SpeechRecognition' in window) {
-                console.log(`尝试初始化SpeechRecognition (第${retryCount + 1}次尝试)`);
-                recognition = new SpeechRecognition();
-            }
-            
-            if (recognition) {
-                // 添加初始化完成事件
-                recognition.onstart = function() {
-                    console.log('语音识别初始化完成事件触发');
-                    recognitionInitialized = true;
-                };
-                
-                setupRecognition(isMobile);
-                console.log('recognition对象已成功创建并配置');
-                
-                // 测试性地开始和停止识别，以确保初始化完全成功
-                if (retryCount === 0) {
-                    console.log('进行初始化测试...');
-                    try {
-                        // 短暂启动然后立即停止，确保recognition对象正常工作
-                        recognition.start();
-                        setTimeout(() => {
-                            try {
-                                recognition.stop();
-                                console.log('初始化测试完成');
-                            } catch (e) {
-                                console.log('测试停止时出错:', e);
-                            }
-                        }, 100);
-                    } catch (e) {
-                        console.log('测试启动时出错:', e);
-                    }
-                }
-            } else {
-                console.error('无法创建recognition对象');
-                handleRecognitionError('无法创建语音识别对象');
-            }
-        } catch (error) {
-            console.error('初始化recognition对象时出错:', error);
-            
-            // 如果是首次失败，尝试第二次初始化
-            if (retryCount < 2) {
-                console.log(`初始化失败，${1000 * (retryCount + 1)}ms后重试...`);
-                setTimeout(() => {
-                    initRecognition(retryCount + 1);
-                }, 1000 * (retryCount + 1));
-            } else {
-                handleRecognitionError('语音识别初始化失败：' + error.message);
-            }
-        }
-    };
-    
-    // 开始初始化
-    if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
-        initRecognition();
+    if ('webkitSpeechRecognition' in window) {
+        console.log('使用webkitSpeechRecognition');
+        recognition = new webkitSpeechRecognition();
+        setupRecognition(isMobile);
+    } else if ('SpeechRecognition' in window) {
+        console.log('使用SpeechRecognition');
+        recognition = new SpeechRecognition();
+        setupRecognition(isMobile);
     } else {
         console.error('浏览器不支持语音识别API');
         startBtn.disabled = true;
@@ -203,243 +81,84 @@ function checkBrowserSupport() {
     
     // 检查语音合成支持
     if ('speechSynthesis' in window) {
-        try {
-            speechSynthesisUtterance = new SpeechSynthesisUtterance();
-            speechSynthesisUtterance.lang = 'zh-CN'; // 设置中文语音
-            
-            // 初始化语音列表
-            setupVoiceList();
-        } catch (error) {
-            console.error('初始化语音合成时出错:', error);
-            addMessage('assistant', '注意：语音合成功能初始化失败');
-        }
+        speechSynthesisUtterance = new SpeechSynthesisUtterance();
+        speechSynthesisUtterance.lang = 'zh-CN'; // 设置中文语音
+        
+        // 初始化语音列表
+        setupVoiceList();
     } else {
         addMessage('assistant', '注意：您的浏览器不支持语音合成功能');
     }
-    
-    // 添加定期状态检查
-    setInterval(() => {
-        if (recognition && !isRecording && lastRecognitionError) {
-            console.log('检测到recognition处于错误状态，尝试自动恢复');
-            forceStopRecording();
-        }
-    }, 5000); // 每5秒检查一次
 }
 
-// 重置recognition对象的封装函数
-function resetRecognition() {
-    console.log('开始重置recognition对象...');
-    
-    // 保存当前的错误信息，用于判断是否需要重建
-    const currentError = lastRecognitionError;
-    
-    // 清除当前recognition对象的所有事件监听器和引用
-    try {
-        if (recognition) {
-            // 尝试停止可能正在进行的识别
-            try {
-                recognition.stop();
-            } catch (e) {
-                console.log('停止当前识别时出错:', e);
-            }
-            
-            // 清除所有事件监听器
-            const newRecognition = recognition.constructor ? 
-                new recognition.constructor() : null;
-            recognition = null;
-            
-            // 创建新的recognition对象
-            const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
-            
-            if ('webkitSpeechRecognition' in window) {
-                recognition = new webkitSpeechRecognition();
-            } else if ('SpeechRecognition' in window) {
-                recognition = new SpeechRecognition();
-            } else {
-                console.error('浏览器不支持语音识别API，无法重置recognition对象');
-                recognitionInitialized = false;
-                return;
-            }
-            
-            if (recognition) {
-                // 设置参数
-                setupRecognition(isMobile);
-                
-                // 双重保障：设置超时检查recognition状态
-                setTimeout(() => {
-                    checkRecognitionStatus();
-                }, 1000);
-                
-                console.log('recognition对象重置成功');
-            } else {
-                console.error('无法创建新的recognition对象');
-                recognitionInitialized = false;
-                handleRecognitionError('无法重新初始化语音识别系统，请刷新页面后再试');
-            }
-        } else {
-            // 如果recognition对象为空，直接重新初始化
-            initRecognition();
-        }
-    } catch (error) {
-        console.error('重置recognition对象时发生严重错误:', error);
-        recognition = null;
-        recognitionInitialized = false;
-        handleRecognitionError('语音识别系统重置失败: ' + error.message);
-    }
-}
-
-// 处理recognition初始化和运行时错误
-function handleRecognitionError(errorMessage) {
-    console.error('语音识别错误处理:', errorMessage);
-    
-    // 更新状态
-    isRecording = false;
-    recognitionInitialized = false;
-    
-    // 更新UI
-    if (startBtn) startBtn.disabled = false;
-    if (stopBtn) stopBtn.disabled = true;
-    
-    // 显示错误信息
-    addMessage('assistant', '语音识别系统遇到问题：' + errorMessage + '\n\n建议：\n1. 刷新页面后再试\n2. 使用下方的文本输入框进行交流\n3. 检查浏览器麦克风权限设置');
-    
-    // 显示手动输入框作为备选
-    if (manualInputContainer) {
-        manualInputContainer.style.display = 'block';
-    }
-    
-    // 尝试重置recognition对象
-    setTimeout(() => {
-        resetRecognition();
-    }, 2000);
-}
-
-// 设置语音识别参数 - 增强版
+// 设置语音识别参数
 function setupRecognition(isMobile) {
     console.log('开始设置语音识别参数...');
     console.log('移动设备模式:', isMobile);
     
-    if (!recognition) return;
+    // 移动设备优化配置
+    if (isMobile) {
+        // 在移动设备上，continuous设为true通常效果更好
+        recognition.continuous = true;
+        // 移动设备上启用interimResults可以提高响应速度
+        recognition.interimResults = true;
+        // 移动设备上设置更短的识别超时时间
+        recognition.maxAlternatives = 1;
+    } else {
+        recognition.continuous = false;
+        recognition.interimResults = false;
+    }
     
-    // 设置语音识别参数
-    recognition.continuous = isMobile ? false : true; // 移动设备上使用非连续模式以节省资源
-    recognition.interimResults = true; // 启用中间结果
-    recognition.lang = 'zh-CN'; // 设置为中文识别
-    recognition.maxAlternatives = 1; // 最大备选结果数
+    recognition.lang = 'zh-CN'; // 设置中文识别
     
-    // 设置事件监听器
+    console.log('语音识别参数设置完成:', {
+        continuous: recognition.continuous,
+        interimResults: recognition.interimResults,
+        lang: recognition.lang
+    });
+
+    // 识别开始事件
     recognition.onstart = function() {
-        console.log('语音识别已启动');
+        console.log('语音识别已开始');
         isRecording = true;
         startBtn.disabled = true;
         stopBtn.disabled = false;
         
-        // 创建录音指示器
-        let recordingIndicator = document.getElementById('recording-indicator');
-        if (!recordingIndicator) {
-            recordingIndicator = document.createElement('div');
-            recordingIndicator.id = 'recording-indicator';
-            recordingIndicator.style.cssText = 'position: fixed; top: 20px; right: 20px; background: rgba(255, 0, 0, 0.9); color: white; padding: 10px 15px; border-radius: 20px; z-index: 1000; display: flex; align-items: center;';
-            
-            const microphoneIcon = document.createElement('div');
-            microphoneIcon.style.cssText = 'width: 12px; height: 12px; background: white; border-radius: 50%; margin-right: 8px; animation: pulse 1.5s infinite;';
-            
-            const styleSheet = document.createElement('style');
-            styleSheet.textContent = '@keyframes pulse { 0% { opacity: 1; } 50% { opacity: 0.5; } 100% { opacity: 1; } }';
-            document.head.appendChild(styleSheet);
-            
-            const text = document.createElement('span');
-            text.textContent = '正在录音...';
-            
-            recordingIndicator.appendChild(microphoneIcon);
-            recordingIndicator.appendChild(text);
-            document.body.appendChild(recordingIndicator);
-        } else {
-            recordingIndicator.style.display = 'flex';
-        }
-        
-        // 设置超时计时器，防止录音时间过长
-        recognitionTimeout = setTimeout(() => {
-            console.log('录音超时，自动停止');
-            forceStopRecording();
-        }, 60000); // 60秒超时
-    };
-    
-    recognition.onresult = function(event) {
-        console.log('语音识别结果:', event.results);
-        
-        // 清除之前的超时计时器
+        // 清除之前的超时计时器（如果有）
         if (recognitionTimeout) {
             clearTimeout(recognitionTimeout);
-            recognitionTimeout = null;
         }
         
-        // 获取最后一个结果
-        const lastResult = event.results[event.results.length - 1];
-        
-        if (lastResult.isFinal) {
-            const userMessage = lastResult[0].transcript.trim();
-            console.log('最终识别结果:', userMessage);
-            
-            if (userMessage) {
-                addMessage('user', userMessage);
-                // 在移动设备上自动停止录音
-                if (isMobile) {
-                    forceStopRecording();
+        // 添加移动设备专用的超时机制（5秒无声音自动停止）
+        if (isMobile) {
+            recognitionTimeout = setTimeout(function() {
+                if (isRecording) {
+                    console.log('语音识别超时，自动停止');
+                    try {
+                        recognition.stop();
+                    } catch (e) {
+                        console.log('超时停止录音时出错:', e);
+                        // 强制更新状态
+                        forceStopRecording();
+                    }
                 }
-                // 获取AI回复
-                getDoubaoResponse(userMessage);
-            }
+            }, 5000); // 5秒无声音自动停止
         }
         
-        // 重置超时计时器
-        recognitionTimeout = setTimeout(() => {
-            console.log('录音超时，自动停止');
-            forceStopRecording();
-        }, 60000); // 60秒超时
+        // 停止正在播放的语音（如果有）
+        if (isSpeaking) {
+            window.speechSynthesis.cancel();
+        }
+        
+        // 添加视觉反馈
+        const recordingIndicator = document.createElement('div');
+        recordingIndicator.id = 'recording-indicator';
+        recordingIndicator.style.cssText = 'position: fixed; bottom: 20px; right: 20px; background: red; color: white; padding: 10px 15px; border-radius: 20px; font-size: 14px; font-weight: bold; z-index: 1000;';
+        recordingIndicator.textContent = '正在录音...';
+        document.body.appendChild(recordingIndicator);
     };
-    
-    recognition.onerror = function(event) {
-        console.error('语音识别错误:', event.error);
-        
-        // 清除超时计时器
-        if (recognitionTimeout) {
-            clearTimeout(recognitionTimeout);
-            recognitionTimeout = null;
-        }
-        
-        let errorMessage = '语音识别出错';
-        switch (event.error) {
-            case 'no-speech':
-                errorMessage = '没有检测到语音，请尝试重新录音';
-                break;
-            case 'audio-capture':
-                errorMessage = '没有找到麦克风，请确保麦克风已连接并授权';
-                break;
-            case 'not-allowed':
-                errorMessage = '麦克风访问被拒绝，请在浏览器设置中授权';
-                break;
-            case 'aborted':
-                console.log('语音识别被中止（用户操作或系统干预）');
-                return; // 中止错误不需要显示消息
-            default:
-                errorMessage = '无法开启麦克风: ' + event.error;
-        }
-        
-        addMessage('assistant', errorMessage);
-        
-        // 重置状态
-        isRecording = false;
-        startBtn.disabled = false;
-        stopBtn.disabled = true;
-        
-        // 移除录音指示器
-        const recordingIndicator = document.getElementById('recording-indicator');
-        if (recordingIndicator) {
-            document.body.removeChild(recordingIndicator);
-        }
-    };
-    
+
+    // 识别结束事件
     recognition.onend = function() {
         console.log('语音识别已结束');
         
@@ -449,25 +168,6 @@ function setupRecognition(isMobile) {
             recognitionTimeout = null;
         }
         
-        // 在非连续模式下，自动重新启动（用于移动设备）
-        if (isMobile && isRecording && recognition.continuous === false) {
-            console.log('移动设备上自动重启语音识别');
-            setTimeout(() => {
-                try {
-                    if (isRecording) {
-                        recognition.start();
-                    }
-                } catch (e) {
-                    console.error('自动重启语音识别失败:', e);
-                    isRecording = false;
-                    startBtn.disabled = false;
-                    stopBtn.disabled = true;
-                }
-            }, 100);
-            return;
-        }
-        
-        // 重置状态
         isRecording = false;
         startBtn.disabled = false;
         stopBtn.disabled = true;
@@ -477,62 +177,133 @@ function setupRecognition(isMobile) {
         if (recordingIndicator) {
             document.body.removeChild(recordingIndicator);
         }
+        
+        // 在移动设备上，当recognition自动结束后，重置状态以便下次使用
+        if (recognition.continuous) {
+            console.log('重置移动设备上的语音识别状态');
+        }
     };
-}
 
-// 页面加载完成后初始化
-window.addEventListener('DOMContentLoaded', async function() {
-    // 从服务器获取用户昵称
-    userNickname = await getUserNickname();
-    
-    // 如果没有昵称并且不是登录页面，则跳转到登录页面
-    if (!userNickname && !window.location.href.includes('login.html')) {
-        window.location.href = 'login.html';
-        return;
-    }
-    
-    // 初始化DOM元素
-    chatMessages = document.getElementById('chat-messages');
-    startBtn = document.getElementById('start-btn');
-    stopBtn = document.getElementById('stop-btn');
-    manualInputContainer = document.getElementById('manual-input-container');
-    manualInput = document.getElementById('manual-input');
-    sendBtn = document.getElementById('send-btn');
-    
-    // 验证必要的DOM元素是否存在
-    if (!chatMessages || !startBtn || !stopBtn) {
-        console.error('关键DOM元素未找到，应用程序可能无法正常工作');
-        // 尝试显示错误信息（如果可能）
-        const errorDiv = document.createElement('div');
-        errorDiv.style.cssText = 'position: fixed; top: 20px; left: 50%; transform: translateX(-50%); background: red; color: white; padding: 10px 20px; border-radius: 5px; z-index: 1000;';
-        errorDiv.textContent = '应用程序初始化失败：关键UI元素未找到';
-        document.body.appendChild(errorDiv);
-        return;
-    }
-    
-    // 初始化语音识别对象
-    const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
-    setupRecognition(isMobile);
-    
-    // 初始化事件监听和功能
-    initializeEventListeners();
-    checkBrowserSupport();
-    
-    // 添加欢迎消息，包含用户昵称
-    addMessage('assistant', `欢迎回来，${userNickname}！您可以点击"开始录音"按钮进行语音对话，或者在下方的输入框中输入文字进行交流。`);
-});
+    // 识别结果事件
+    recognition.onresult = function(event) {
+        console.log('语音识别结果事件触发:', event);
+        
+        // 清除之前的超时计时器（有声音输入，重新计时）
+        if (recognitionTimeout) {
+            clearTimeout(recognitionTimeout);
+        }
+        
+        // 添加新的超时计时器
+        if (isMobile) {
+            recognitionTimeout = setTimeout(function() {
+                if (isRecording) {
+                    console.log('语音识别超时，自动停止');
+                    try {
+                        recognition.stop();
+                    } catch (e) {
+                        console.log('超时停止录音时出错:', e);
+                        // 强制更新状态
+                        forceStopRecording();
+                    }
+                }
+            }, 5000); // 5秒无声音自动停止
+        }
+        
+        // 处理interimResults和finalResults
+        for (let i = event.resultIndex; i < event.results.length; i++) {
+            // 只有当结果是最终结果时才处理
+            if (event.results[i].isFinal) {
+                const speechResult = event.results[i][0].transcript;
+                console.log('识别到的文本:', speechResult);
+                addMessage('user', speechResult);
+                
+                // 在移动设备上，当识别到最终结果后自动停止录音
+                if (isMobile) {
+                    console.log('在移动设备上检测到最终结果，自动停止录音');
+                    try {
+                        recognition.stop();
+                    } catch (e) {
+                        console.log('识别结果后停止录音时出错:', e);
+                        // 强制更新状态
+                        forceStopRecording();
+                    }
+                }
+                
+                // 调用豆包API获取回复
+                getDoubaoResponse(speechResult);
+                
+                // 如果是连续模式，需要手动停止
+                if (recognition.continuous) {
+                    try {
+                        recognition.stop();
+                    } catch (e) {
+                        console.log('连续模式停止录音时出错:', e);
+                        // 强制更新状态
+                        forceStopRecording();
+                    }
+                }
+            }
+        }
+    };
+
+    // 识别错误事件 - 新增
+    recognition.onerror = function(event) {
+        console.error('语音识别发生错误:', event.error);
+        
+        // 清除超时计时器
+        if (recognitionTimeout) {
+            clearTimeout(recognitionTimeout);
+            recognitionTimeout = null;
+        }
+        
+        // 错误处理
+        let errorMessage = '语音识别出错';
+        switch (event.error) {
+            case 'no-speech':
+                errorMessage = '没有检测到语音输入';
+                break;
+            case 'audio-capture':
+                errorMessage = '无法访问麦克风，请确保已授予权限';
+                break;
+            case 'not-allowed':
+                errorMessage = '麦克风访问被拒绝';
+                break;
+            case 'aborted':
+                console.log('语音识别被中止');
+                break;
+            case 'network':
+                errorMessage = '网络错误，请稍后再试';
+                break;
+            case 'service-not-allowed':
+                errorMessage = '浏览器不允许语音识别服务';
+                break;
+            case 'bad-grammar':
+                errorMessage = '语音识别语法错误';
+                break;
+            case 'language-not-supported':
+                errorMessage = '不支持的语言';
+                break;
+            default:
+                errorMessage = `未知错误: ${event.error}`;
+        }
+        
+        // 在非中止错误的情况下显示错误消息
+        if (event.error !== 'aborted') {
+            addMessage('assistant', errorMessage);
+        }
+        
+        // 强制更新状态
+        forceStopRecording();
+    };
+};
 
 // 强制停止录音并更新状态 - 新增函数
 function forceStopRecording() {
     console.log('强制停止录音并更新状态');
     
-    // 立即更新状态标志
     isRecording = false;
-    recognitionInitialized = false;
-    
-    // 立即更新UI状态
-    if (startBtn) startBtn.disabled = false;
-    if (stopBtn) stopBtn.disabled = true;
+    startBtn.disabled = false;
+    stopBtn.disabled = true;
     
     // 移除录音指示器
     const recordingIndicator = document.getElementById('recording-indicator');
@@ -546,111 +317,37 @@ function forceStopRecording() {
         recognitionTimeout = null;
     }
     
-    // 检测是否是移动设备
-    const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
-    
-    // 确保recognition停止 - 增强版处理
+    // 确保recognition停止
     try {
         if (recognition) {
-            // 先尝试标准停止方法
-            try {
-                recognition.stop();
-                console.log('recognition.stop() 调用成功');
-            } catch (e) {
-                console.log('标准停止recognition时出错:', e);
-            }
-            
-            // 特殊设备处理：对于已知有兼容性问题的设备，直接重新创建recognition对象
-            const problematicDevices = ['vivo', 'honor', 'xiaomi', 'redmi', 'huawei', 'oppo'];
-            const userAgent = navigator.userAgent.toLowerCase();
-            const isProblematicDevice = problematicDevices.some(device => userAgent.includes(device));
-            
-            // 检查是否需要重置recognition对象
-            const shouldResetRecognition = isProblematicDevice || 
-                                         window.location.protocol !== 'https:' || 
-                                         lastRecognitionError === 'recognition has already started';
-            
-            // 对于问题设备、非HTTPS环境或识别错误，直接重新初始化recognition
-            if (shouldResetRecognition) {
-                console.log(`设备兼容性处理: ${isProblematicDevice ? '已知问题设备' : (window.location.protocol !== 'https:' ? '非HTTPS环境' : '识别错误')}`);
+            // 对于vivo手机的特殊处理：尝试重置recognition对象
+            if (/vivo/i.test(navigator.userAgent)) {
+                console.log('vivo手机特殊处理：重新初始化recognition对象');
+                const tempIsMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
                 
-                // 创建一个全新的recognition对象
-                const recreateRecognition = () => {
-                    console.log('重新初始化recognition对象');
-                    
-                    // 先完全清除当前recognition对象
-                    recognition = null;
-                    
-                    // 重新初始化recognition对象
-                    if ('webkitSpeechRecognition' in window) {
-                        recognition = new webkitSpeechRecognition();
-                    } else if ('SpeechRecognition' in window) {
-                        recognition = new SpeechRecognition();
-                    }
-                    
-                    // 重新设置参数
-                    if (recognition) {
-                        setupRecognition(isMobile);
-                        console.log('recognition对象重新初始化完成');
-                    }
-                };
+                // 先尝试停止，然后重新设置recognition
+                try {
+                    recognition.stop();
+                } catch (e) {
+                    console.log('重新停止recognition时出错:', e);
+                }
                 
-                // 延迟200ms后重新创建recognition对象，确保完全清理
-                setTimeout(() => {
-                    try {
-                        recreateRecognition();
-                    } catch (e) {
-                        console.error('重新创建recognition时出错:', e);
-                        // 再次尝试作为最后的兜底
-                        setTimeout(() => {
-                            try {
-                                recreateRecognition();
-                            } catch (e2) {
-                                console.error('最终尝试重新创建recognition失败:', e2);
-                            }
-                        }, 300);
-                    }
-                }, 200);
-            }
-        }
-    } catch (e) {
-        console.log('强制停止recognition时出错:', e);
-        
-        // 增强版兜底方案：重置recognition对象
-        const resetRecognition = () => {
-            console.log('错误后重置recognition对象');
-            recognition = null;
-            recognitionInitialized = false;
-            
-            // 检测设备类型
-            const tempIsMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
-            
-            try {
-                // 重新初始化
+                // 重新初始化recognition对象
                 if ('webkitSpeechRecognition' in window) {
                     recognition = new webkitSpeechRecognition();
                 } else if ('SpeechRecognition' in window) {
                     recognition = new SpeechRecognition();
                 }
                 
-                if (recognition) {
-                    setupRecognition(tempIsMobile);
-                    console.log('错误后recognition重置完成');
-                }
-            } catch (e2) {
-                console.error('重置recognition对象失败:', e2);
+                // 重新设置参数
+                setupRecognition(tempIsMobile);
+            } else {
+                recognition.stop();
             }
-        };
-        
-        // 延迟100ms后尝试重置
-        setTimeout(() => {
-            resetRecognition();
-        }, 100);
+        }
+    } catch (e) {
+        console.log('强制停止recognition时出错:', e);
     }
-    
-    // 重置错误状态
-    lastRecognitionError = null;
-    recognitionAttempts = 0;
 }
 
 // 增强的滚动到底部函数
@@ -983,7 +680,7 @@ async function getDoubaoResponse(userMessage) {
             body: JSON.stringify({
                 model: ENDPOINT_ID,
                 messages: [
-                    { role: 'system', content: `你是一个有用的中文助手，回答要简洁明了。用户的昵称是${userNickname}，请在回答中适当称呼用户。` },
+                    { role: 'system', content: '你是一个有用的中文助手，回答要简洁明了。' },
                     { role: 'user', content: userMessage }
                 ],
                 max_tokens: 150,
@@ -1056,30 +753,42 @@ function sendManualMessage() {
     }
 }
 
+// 页面加载完成后初始化
+window.addEventListener('DOMContentLoaded', function() {
+    // 初始化DOM元素
+    chatMessages = document.getElementById('chat-messages');
+    startBtn = document.getElementById('start-btn');
+    stopBtn = document.getElementById('stop-btn');
+    manualInputContainer = document.getElementById('manual-input-container');
+    manualInput = document.getElementById('manual-input');
+    sendBtn = document.getElementById('send-btn');
+    
+    // 验证必要的DOM元素是否存在
+    if (!chatMessages || !startBtn || !stopBtn) {
+        console.error('关键DOM元素未找到，应用程序可能无法正常工作');
+        // 尝试显示错误信息（如果可能）
+        const errorDiv = document.createElement('div');
+        errorDiv.style.cssText = 'position: fixed; top: 20px; left: 50%; transform: translateX(-50%); background: red; color: white; padding: 10px 20px; border-radius: 5px; z-index: 1000;';
+        errorDiv.textContent = '应用程序初始化失败：关键UI元素未找到';
+        document.body.appendChild(errorDiv);
+        return;
+    }
+    
+    // 初始化事件监听和功能
+    initializeEventListeners();
+    checkBrowserSupport();
+    
+    // 添加欢迎消息
+    addMessage('assistant', '欢迎使用语音对话助手！您可以点击"开始录音"按钮进行语音对话，或者在下方的输入框中输入文字进行交流。');
+});
 
 // 初始化事件监听器
 function initializeEventListeners() {
-    // 文件上传按钮事件监听
-    if (uploadBtn) {
-        uploadBtn.addEventListener('click', handleFileUpload);
-    }
-    
-    // 文件输入框变化事件监听（可选，用户选择文件后自动上传）
-    if (fileInput) {
-        fileInput.addEventListener('change', function() {
-            if (this.files && this.files.length > 0) {
-                // 用户选择文件后，可以提示用户点击上传按钮
-                console.log('用户选择了文件:', this.files[0].name);
-            }
-        });
-    }
-    
     // 开始录音按钮事件监听
     startBtn.addEventListener('click', function() {
         console.log('开始录音按钮被点击');
         console.log('recognition对象:', recognition);
         console.log('isRecording状态:', isRecording);
-        console.log('recognitionInitialized状态:', recognitionInitialized);
         console.log('当前URL协议:', window.location.protocol);
         
         // 检测是否是移动设备
@@ -1099,194 +808,70 @@ function initializeEventListeners() {
             }
         }
         
-        // 检查recognition对象是否存在
         if (!recognition) {
             console.error('recognition对象未初始化');
-            handleRecognitionError('语音识别功能未初始化');
+            addMessage('assistant', '抱歉，语音识别功能未初始化。请检查控制台了解详细信息。');
             return;
         }
         
-        // 检查是否正在录音
         if (isRecording) {
             console.warn('录音已经在进行中');
             return;
         }
         
-        // 如果recognition未完全初始化，尝试重新初始化
-        if (!recognitionInitialized) {
-            console.log('recognition对象未完全初始化，尝试重新初始化...');
-            addMessage('assistant', '正在准备语音识别功能，请稍候...');
+        // 在HTTP环境下给予用户提示，但仍允许尝试
+        if (window.location.protocol !== 'https:') {
+            // 创建一个临时的提示消息
+            const tempMessage = document.createElement('div');
+            tempMessage.classList.add('message');
+            tempMessage.classList.add('assistant-message');
+            tempMessage.textContent = '正在尝试启动语音识别...（在HTTP环境下可能需要特别授权）';
+            tempMessage.style.opacity = '0.7';
             
-            // 重置recognition对象
-            try {
-                // 先清除当前recognition对象
-                recognition = null;
-                
-                // 创建新的recognition对象
-                if ('webkitSpeechRecognition' in window) {
-                    recognition = new webkitSpeechRecognition();
-                } else if ('SpeechRecognition' in window) {
-                    recognition = new SpeechRecognition();
-                }
-                
-                if (recognition) {
-                    // 设置参数
-                    setupRecognition(isMobile);
-                    
-                    // 短暂延迟后再尝试启动
-                    setTimeout(() => {
-                        console.log('recognition对象重新初始化完成，尝试启动录音');
-                        // 移除之前的提示消息
-                        chatMessages.removeChild(chatMessages.lastChild);
-                        // 继续尝试启动录音
-                        attemptStartRecording();
-                    }, 500);
-                    
-                    return;
-                } else {
-                    handleRecognitionError('无法重新初始化语音识别功能');
-                }
-            } catch (error) {
-                console.error('重新初始化recognition对象失败:', error);
-                handleRecognitionError('重新初始化语音识别功能失败');
-            }
+            chatMessages.appendChild(tempMessage);
+            chatMessages.scrollTop = chatMessages.scrollHeight;
             
-            return;
+            // 2秒后自动移除这个临时提示
+            setTimeout(() => {
+                if (chatMessages.contains(tempMessage)) {
+                    chatMessages.removeChild(tempMessage);
+                }
+            }, 2000);
         }
         
-        // 尝试启动录音
-        attemptStartRecording();
-        
-        // 尝试启动录音的封装函数
-        function attemptStartRecording() {
-            // 在HTTP环境下给予用户提示，但仍允许尝试
-            if (window.location.protocol !== 'https:') {
-                // 创建一个临时的提示消息
-                const tempMessage = document.createElement('div');
-                tempMessage.classList.add('message');
-                tempMessage.classList.add('assistant-message');
-                tempMessage.textContent = '正在尝试启动语音识别...（在HTTP环境下可能需要特别授权）';
-                tempMessage.style.opacity = '0.7';
-                
-                chatMessages.appendChild(tempMessage);
-                chatMessages.scrollTop = chatMessages.scrollHeight;
-                
-                // 2秒后自动移除这个临时提示
-                setTimeout(() => {
-                    if (chatMessages.contains(tempMessage)) {
-                        chatMessages.removeChild(tempMessage);
-                    }
-                }, 2000);
-            }
+        try {
+            console.log('尝试开始语音识别...');
             
-            try {
-                console.log('尝试开始语音识别...');
-                
-                // 确保recognition处于非活动状态再调用start()
-                if (recognition && !isRecording) {
-                    // 移动设备上的特殊处理：尝试多次启动识别
-                    const startRecognitionWithRetry = (retryCount = 0) => {
-                        try {
-                            // 重置recognition的状态，确保它完全停止
-                            if (recognition && isRecording) {
-                                try {
-                                    recognition.stop();
-                                } catch (e) {
-                                    console.log('重置recognition状态时出错:', e);
-                                }
-                            }
-                            
-                            // 短暂延迟后再次尝试启动
-                            setTimeout(() => {
-                                try {
-                                    // 确保recognition对象存在且未在录制中
-                                    if (recognition && !isRecording) {
-                                        recognition.start();
-                                        console.log('语音识别开始命令已发送');
-                                        
-                                        // 设置超时，以防识别过程卡住
-                                        recognitionTimeout = setTimeout(() => {
-                                            console.log('语音识别超时，自动停止');
-                                            forceStopRecording();
-                                            addMessage('assistant', '语音识别超时，请重试');
-                                        }, 30000); // 30秒超时
-                                    }
-                                } catch (error) {
-                                    console.error('开始语音识别时发生异常:', error);
-                                    
-                                    // 特殊处理 "recognition has already started" 错误
-                                    if (error.message && error.message.includes('already started')) {
-                                        console.log('识别已经在运行，尝试强制重置状态');
-                                        
-                                        // 增加尝试次数
-                                        recognitionAttempts++;
-                                        
-                                        // 记录最后错误
-                                        lastRecognitionError = 'recognition has already started';
-                                        
-                                        // 如果尝试次数超过最大值，提示用户刷新页面
-                                        if (recognitionAttempts >= MAX_RECOGNITION_ATTEMPTS) {
-                                            console.log('达到最大识别尝试次数，建议用户刷新页面');
-                                            forceStopRecording();
-                                            addMessage('assistant', '语音识别系统持续遇到问题。\n\n建议：\n1. 尝试刷新页面后再试\n2. 使用下方的文本输入框进行交流\n3. 如果使用的是移动设备，请确保使用HTTPS连接');
-                                            return;
-                                        }
-                                        
-                                        // 首先强制停止并重置状态
-                                        forceStopRecording();
-                                        
-                                        // 显示友好的错误提示，并提供更具体的操作建议
-                                        addMessage('assistant', `语音识别系统可能处于不稳定状态，我们正在尝试修复（第${recognitionAttempts}次尝试）。\n\n请稍等2-3秒后再次点击"开始录音"按钮。`);
-                                        
-                                        // 添加一个短暂的延迟，确保状态完全重置
-                                        setTimeout(() => {
-                                            console.log('语音识别状态已重置，允许用户再次尝试');
-                                        }, 2000);
-                                    } else {
-                                        // 在移动设备上，如果是首次失败，尝试第二次
-                                        if (isMobile && retryCount < 1) {
-                                            console.log('移动设备上尝试第二次启动语音识别');
-                                            setTimeout(() => {
-                                                startRecognitionWithRetry(retryCount + 1);
-                                            }, 100);
-                                        } else {
-                                            // 使用新的错误处理函数
-                                            handleRecognitionError('无法开启麦克风: ' + error.message);
-                                        }
-                                    }
-                                }
-                            }, 100); // 短暂延迟确保状态更新
-                        } catch (error) {
-                            console.error('启动语音识别的重试逻辑出错:', error);
-                            // 使用新的错误处理函数
-                            handleRecognitionError('无法开启麦克风: ' + error.message);
-                        }
-                    };
+            // 移动设备上的特殊处理：尝试多次启动识别
+            const startRecognitionWithRetry = (retryCount = 0) => {
+                try {
+                    recognition.start();
+                    console.log('语音识别开始命令已发送');
+                } catch (error) {
+                    console.error('开始语音识别时发生异常:', error);
                     
-                    startRecognitionWithRetry();
+                    // 在移动设备上，如果是首次失败，尝试第二次
+                    if (isMobile && retryCount < 1) {
+                        console.log('移动设备上尝试第二次启动语音识别');
+                        setTimeout(() => {
+                            startRecognitionWithRetry(retryCount + 1);
+                        }, 100);
+                    } else {
+                        addMessage('assistant', '无法开启麦克风: ' + error.message);
+                    }
                 }
-            } catch (error) {
-                console.error('开始语音识别时发生异常:', error);
-                // 使用新的错误处理函数
-                handleRecognitionError('无法开启麦克风: ' + error.message);
-            }
+            };
+            
+            startRecognitionWithRetry();
+        } catch (error) {
+            console.error('开始语音识别时发生异常:', error);
+            addMessage('assistant', '无法开启麦克风: ' + error.message);
         }
     });
     
     // 停止录音按钮事件监听
     stopBtn.addEventListener('click', function() {
         console.log('停止录音按钮被点击');
-        console.log('当前recognition状态:', recognition);
-        console.log('isRecording:', isRecording);
-        console.log('recognitionInitialized:', recognitionInitialized);
-        
-        // 清除超时计时器
-        if (recognitionTimeout) {
-            clearTimeout(recognitionTimeout);
-            recognitionTimeout = null;
-            console.log('录音超时计时器已清除');
-        }
-        
         if (recognition && isRecording) {
             try {
                 // 在vivo手机上，可能需要强制停止
@@ -1310,7 +895,6 @@ function initializeEventListeners() {
                 }, 500); // 500毫秒后检查并强制更新状态
             } catch (error) {
                 console.error('停止录音时发生错误:', error);
-                
                 // 即使发生错误，也强制更新状态
                 isRecording = false;
                 startBtn.disabled = false;
@@ -1321,39 +905,7 @@ function initializeEventListeners() {
                 if (recordingIndicator) {
                     document.body.removeChild(recordingIndicator);
                 }
-                
-                // 判断错误类型，如果是严重错误，调用错误处理函数
-                if (error.message && error.message.includes('not available') || error.message.includes('not initialized')) {
-                    console.log('检测到严重错误，需要重新初始化recognition对象');
-                    recognitionInitialized = false;
-                    lastRecognitionError = error.message;
-                    
-                    // 延迟重置recognition对象，让用户有时间看到错误提示
-                    setTimeout(() => {
-                        resetRecognition();
-                    }, 1000);
-                }
             }
-        } else if (!recognition) {
-            console.warn('recognition对象不存在，无法停止录音');
-            // 如果recognition对象不存在，但isRecording为true，强制更新状态
-            if (isRecording) {
-                isRecording = false;
-                recognitionInitialized = false;
-                startBtn.disabled = false;
-                stopBtn.disabled = true;
-                
-                // 移除录音指示器
-                const recordingIndicator = document.getElementById('recording-indicator');
-                if (recordingIndicator) {
-                    document.body.removeChild(recordingIndicator);
-                }
-                
-                // 调用错误处理函数
-                handleRecognitionError('语音识别系统异常，请尝试刷新页面后再试');
-            }
-        } else {
-            console.warn('录音未在进行中');
         }
     });
     
