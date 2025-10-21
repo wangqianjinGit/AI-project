@@ -8,7 +8,13 @@
 </head>
 <body>
     <div class="container">
-        <h1>语音对话助手</h1>
+        <div class="user-info">
+            <h1>语音对话助手</h1>
+            <div id="personality-info" class="personality-info">
+                <span class="personality-label">性格特质: </span>
+                <span id="personality-display" class="personality-value">加载中...</span>
+            </div>
+        </div>
         
         <div class="chat-container">
             <div id="chat-messages"></div>
@@ -32,6 +38,100 @@
 
     </div>
 
+    <script>
+        // 获取并显示用户的性格特质
+        function displayUserPersonality() {
+            const personalityDisplay = document.getElementById('personality-display');
+            
+            // 检测当前访问方式并选择合适的存储策略
+            function getStorageStrategy() {
+                const protocol = window.location.protocol;
+                return protocol === 'file:' ? 'localStorage' : 'server';
+            }
+            
+            // 从localStorage获取性格特质
+            function getPersonalityFromLocalStorage() {
+                try {
+                    return localStorage.getItem('userPersonality') || null;
+                } catch (error) {
+                    console.error('从localStorage获取性格特质失败:', error);
+                    return null;
+                }
+            }
+            
+            // 获取完整的API基础URL
+            function getApiBaseUrl() {
+                const protocol = window.location.protocol;
+                const host = window.location.hostname;
+                const port = window.location.port || (protocol === 'https:' ? 443 : 8000);
+                return `${protocol}//${host}:${port}`;
+            }
+            
+            // 从服务器获取性格特质
+            async function getPersonalityFromServer() {
+                try {
+                    const apiBaseUrl = getApiBaseUrl();
+                    const response = await fetch(`${apiBaseUrl}/api/user/personality`, {
+                        method: 'GET',
+                        credentials: 'include'
+                    });
+                    
+                    const contentType = response.headers.get('content-type');
+                    if (!contentType || !contentType.includes('application/json')) {
+                        throw new Error('服务器返回的不是有效的JSON数据');
+                    }
+                    
+                    const data = await response.json();
+                    if (response.ok && data.success) {
+                        return data.personality || null;
+                    } else {
+                        throw new Error(data.error || '获取性格特质失败');
+                    }
+                } catch (error) {
+                    console.error('从服务器获取性格特质出错:', error);
+                    return null;
+                }
+            }
+            
+            // 获取性格特质的显示文本
+            function getPersonalityDisplayText(personality) {
+                const personalityMap = {
+                    'extroverted': '外向活泼',
+                    'introverted': '内向沉思',
+                    'thinker': '理性思考',
+                    'feeler': '感性体贴'
+                };
+                return personalityMap[personality] || '未知';
+            }
+            
+            // 主函数：获取并显示性格特质
+            async function main() {
+                const strategy = getStorageStrategy();
+                let personality;
+                
+                if (strategy === 'localStorage') {
+                    personality = getPersonalityFromLocalStorage();
+                } else {
+                    personality = await getPersonalityFromServer();
+                }
+                
+                if (personality) {
+                    personalityDisplay.textContent = getPersonalityDisplayText(personality);
+                } else {
+                    personalityDisplay.textContent = '未设置';
+                }
+            }
+            
+            // 执行主函数
+            main();
+        }
+        
+        // 页面加载完成后执行
+        document.addEventListener('DOMContentLoaded', function() {
+            displayUserPersonality();
+        });
+    </script>
+    
     <script src="script.js"></script>
 </body>
 </html>
