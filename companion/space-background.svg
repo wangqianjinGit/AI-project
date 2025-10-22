@@ -1,0 +1,147 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 1000" width="100%" height="100%">
+  <!-- 深蓝色渐变背景 -->
+  <defs>
+    <linearGradient id="skyGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#0d1117" />
+      <stop offset="50%" stop-color="#161b22" />
+      <stop offset="100%" stop-color="#1f2937" />
+    </linearGradient>
+    
+    <!-- 行星渐变 -->
+    <linearGradient id="planetGradient1" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#4ade80" />
+      <stop offset="100%" stop-color="#22c55e" />
+    </linearGradient>
+    
+    <radialGradient id="sunGradient" cx="50%" cy="50%" r="50%" fx="50%" fy="50%">
+      <stop offset="0%" stop-color="#fcd34d" />
+      <stop offset="100%" stop-color="#f59e0b" />
+    </radialGradient>
+    
+    <!-- 模糊滤镜 -->
+    <filter id="blur" x="-100%" y="-100%" width="300%" height="300%">
+      <feGaussianBlur in="SourceGraphic" stdDeviation="3" />
+    </filter>
+  </defs>
+  
+  <!-- 主背景 -->
+  <rect width="1000" height="1000" fill="url(#skyGradient)" />
+  
+  <!-- 星星 - 随机分布的小圆点 -->
+  <g id="stars">
+    <!-- 生成大量随机大小和位置的星星 -->
+    <circle cx="120" cy="80" r="1" fill="#ffffff" opacity="0.8" />
+    <circle cx="180" cy="120" r="1.2" fill="#ffffff" opacity="0.9" />
+    <circle cx="250" cy="200" r="0.8" fill="#ffffff" opacity="0.7" />
+    <circle cx="320" cy="150" r="1" fill="#ffffff" opacity="0.8" />
+    <circle cx="380" cy="220" r="1.1" fill="#ffffff" opacity="0.9" />
+    <circle cx="450" cy="90" r="0.9" fill="#ffffff" opacity="0.7" />
+    <circle cx="520" cy="180" r="1" fill="#ffffff" opacity="0.8" />
+    <circle cx="580" cy="250" r="1.2" fill="#ffffff" opacity="0.9" />
+    <circle cx="650" cy="120" r="0.8" fill="#ffffff" opacity="0.7" />
+    <circle cx="720" cy="200" r="1" fill="#ffffff" opacity="0.8" />
+    <circle cx="780" cy="80" r="1.1" fill="#ffffff" opacity="0.9" />
+    <circle cx="850" cy="150" r="0.9" fill="#ffffff" opacity="0.7" />
+    <circle cx="920" cy="220" r="1" fill="#ffffff" opacity="0.8" />
+    <circle cx="100" cy="320" r="1.2" fill="#ffffff" opacity="0.9" />
+    <circle cx="160" cy="400" r="0.8" fill="#ffffff" opacity="0.7" />
+    <circle cx="230" cy="350" r="1" fill="#ffffff" opacity="0.8" />
+    <circle cx="300" cy="420" r="1.1" fill="#ffffff" opacity="0.9" />
+    <circle cx="370" cy="380" r="0.9" fill="#ffffff" opacity="0.7" />
+    <circle cx="440" cy="450" r="1" fill="#ffffff" opacity="0.8" />
+    <circle cx="510" cy="330" r="1.2" fill="#ffffff" opacity="0.9" />
+    <circle cx="580" cy="400" r="0.8" fill="#ffffff" opacity="0.7" />
+    <circle cx="650" cy="350" r="1" fill="#ffffff" opacity="0.8" />
+    <circle cx="720" cy="420" r="1.1" fill="#ffffff" opacity="0.9" />
+    <circle cx="790" cy="380" r="0.9" fill="#ffffff" opacity="0.7" />
+    <circle cx="860" cy="450" r="1" fill="#ffffff" opacity="0.8" />
+    <circle cx="930" cy="330" r="1.2" fill="#ffffff" opacity="0.9" />
+    <circle cx="120" cy="520" r="0.8" fill="#ffffff" opacity="0.7" />
+    <circle cx="190" cy="600" r="1" fill="#ffffff" opacity="0.8" />
+    <circle cx="260" cy="550" r="1.1" fill="#ffffff" opacity="0.9" />
+    <circle cx="330" cy="620" r="0.9" fill="#ffffff" opacity="0.7" />
+    <circle cx="400" cy="580" r="1" fill="#ffffff" opacity="0.8" />
+    <circle cx="470" cy="650" r="1.2" fill="#ffffff" opacity="0.9" />
+    <circle cx="540" cy="530" r="0.8" fill="#ffffff" opacity="0.7" />
+    <circle cx="610" cy="600" r="1" fill="#ffffff" opacity="0.8" />
+    <circle cx="680" cy="550" r="1.1" fill="#ffffff" opacity="0.9" />
+    <circle cx="750" cy="620" r="0.9" fill="#ffffff" opacity="0.7" />
+    <circle cx="820" cy="580" r="1" fill="#ffffff" opacity="0.8" />
+    <circle cx="890" cy="650" r="1.2" fill="#ffffff" opacity="0.9" />
+    <circle cx="960" cy="530" r="0.8" fill="#ffffff" opacity="0.7" />
+    <circle cx="100" cy="720" r="1" fill="#ffffff" opacity="0.8" />
+    <circle cx="170" cy="800" r="1.1" fill="#ffffff" opacity="0.9" />
+    <circle cx="240" cy="750" r="0.9" fill="#ffffff" opacity="0.7" />
+    <circle cx="310" cy="820" r="1" fill="#ffffff" opacity="0.8" />
+    <circle cx="380" cy="780" r="1.2" fill="#ffffff" opacity="0.9" />
+    <circle cx="450" cy="850" r="0.8" fill="#ffffff" opacity="0.7" />
+    <circle cx="520" cy="730" r="1" fill="#ffffff" opacity="0.8" />
+    <circle cx="590" cy="800" r="1.1" fill="#ffffff" opacity="0.9" />
+    <circle cx="660" cy="750" r="0.9" fill="#ffffff" opacity="0.7" />
+    <circle cx="730" cy="820" r="1" fill="#ffffff" opacity="0.8" />
+    <circle cx="800" cy="780" r="1.2" fill="#ffffff" opacity="0.9" />
+    <circle cx="870" cy="850" r="0.8" fill="#ffffff" opacity="0.7" />
+    <circle cx="940" cy="730" r="1" fill="#ffffff" opacity="0.8" />
+    <circle cx="120" cy="920" r="1.1" fill="#ffffff" opacity="0.9" />
+    <circle cx="190" cy="980" r="0.9" fill="#ffffff" opacity="0.7" />
+    <circle cx="260" cy="880" r="1" fill="#ffffff" opacity="0.8" />
+    <circle cx="330" cy="950" r="1.2" fill="#ffffff" opacity="0.9" />
+    <circle cx="400" cy="900" r="0.8" fill="#ffffff" opacity="0.7" />
+    <circle cx="470" cy="970" r="1" fill="#ffffff" opacity="0.8" />
+    <circle cx="540" cy="880" r="1.1" fill="#ffffff" opacity="0.9" />
+    <circle cx="610" cy="950" r="0.9" fill="#ffffff" opacity="0.7" />
+    <circle cx="680" cy="900" r="1" fill="#ffffff" opacity="0.8" />
+    <circle cx="750" cy="970" r="1.2" fill="#ffffff" opacity="0.9" />
+    <circle cx="820" cy="880" r="0.8" fill="#ffffff" opacity="0.7" />
+    <circle cx="890" cy="950" r="1" fill="#ffffff" opacity="0.8" />
+    <circle cx="960" cy="900" r="1.1" fill="#ffffff" opacity="0.9" />
+    
+    <!-- 更亮的星星 -->
+    <circle cx="200" cy="150" r="1.5" fill="#ffffff" opacity="1" />
+    <circle cx="450" cy="250" r="1.5" fill="#ffffff" opacity="1" />
+    <circle cx="700" cy="100" r="1.5" fill="#ffffff" opacity="1" />
+    <circle cx="300" cy="400" r="1.5" fill="#ffffff" opacity="1" />
+    <circle cx="550" cy="350" r="1.5" fill="#ffffff" opacity="1" />
+    <circle cx="800" cy="250" r="1.5" fill="#ffffff" opacity="1" />
+    <circle cx="150" cy="500" r="1.5" fill="#ffffff" opacity="1" />
+    <circle cx="400" cy="550" r="1.5" fill="#ffffff" opacity="1" />
+    <circle cx="650" cy="450" r="1.5" fill="#ffffff" opacity="1" />
+    <circle cx="900" cy="500" r="1.5" fill="#ffffff" opacity="1" />
+    <circle cx="250" cy="700" r="1.5" fill="#ffffff" opacity="1" />
+    <circle cx="500" cy="650" r="1.5" fill="#ffffff" opacity="1" />
+    <circle cx="750" cy="600" r="1.5" fill="#ffffff" opacity="1" />
+    <circle cx="350" cy="850" r="1.5" fill="#ffffff" opacity="1" />
+    <circle cx="600" cy="800" r="1.5" fill="#ffffff" opacity="1" />
+    <circle cx="850" cy="750" r="1.5" fill="#ffffff" opacity="1" />
+    <circle cx="200" cy="900" r="1.5" fill="#ffffff" opacity="1" />
+    <circle cx="450" cy="850" r="1.5" fill="#ffffff" opacity="1" />
+    <circle cx="700" cy="900" r="1.5" fill="#ffffff" opacity="1" />
+    <circle cx="950" cy="850" r="1.5" fill="#ffffff" opacity="1" />
+  </g>
+  
+  <!-- 行星 -->
+  <!-- 左上角的黄色星球 -->
+  <circle cx="100" cy="100" r="80" fill="url(#sunGradient)" filter="url(#blur)" />
+  
+  <!-- 右侧的绿色大行星 -->
+  <circle cx="900" cy="300" r="150" fill="url(#planetGradient1)" />
+  <path d="M900 150 A150 150 0 0 1 900 450" stroke="#16a34a" stroke-width="8" fill="none" />
+  <path d="M900 170 A130 130 0 0 1 900 430" stroke="#166534" stroke-width="6" fill="none" />
+  
+  <!-- 右上角的浅蓝色小星球 -->
+  <circle cx="950" cy="50" r="30" fill="#93c5fd" />
+  
+  <!-- 红色小星球 -->
+  <circle cx="250" cy="300" r="20" fill="#ef4444" />
+  
+  <!-- 前景中的星球表面 -->
+  <ellipse cx="500" cy="900" rx="800" ry="200" fill="#1e3a8a" />
+  <ellipse cx="500" cy="900" rx="700" ry="170" fill="#1e40af" />
+  
+  <!-- 环形山 -->
+  <circle cx="300" cy="800" r="40" fill="#3b82f6" opacity="0.3" />
+  <circle cx="700" cy="780" r="60" fill="#3b82f6" opacity="0.3" />
+  <circle cx="100" cy="850" r="30" fill="#3b82f6" opacity="0.3" />
+  <circle cx="900" cy="830" r="45" fill="#3b82f6" opacity="0.3" />
+  <circle cx="500" cy="750" r="70" fill="#3b82f6" opacity="0.3" />
+</svg>

@@ -6,22 +6,25 @@
     <title>小伴 - 请选择性格特质</title>
     <link rel="stylesheet" href="style.css">
     <style>
+        /* 全局样式 */
+        body {
+            margin: 0;
+            padding: 0;
+            min-height: 100vh;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background-color: #f5f7fa;
+        }
+        
         /* 性格选择页面特有样式 */
         .personality-container {
             max-width: 800px;
-            margin: 0 auto;
+            margin: 100px auto;
             padding: 40px;
-            background-color: rgba(255, 255, 255, 0.85);
+            background-color: white;
             border-radius: 20px;
-            box-shadow: 0 8px 32px rgba(31, 38, 135, 0.15);
-            backdrop-filter: blur(4px);
-            -webkit-backdrop-filter: blur(4px);
-            border: 1px solid rgba(255, 255, 255, 0.18);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
             text-align: center;
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
+            
         }
 
         .page-title {
@@ -86,19 +89,22 @@
         }
 
         /* 不同性格的图标背景色 */
-        .extroverted .personality-icon {
-            background: linear-gradient(135deg, #FF9E9E 0%, #FF6B6B 100%);
+        .life .personality-icon {
+            background-image: url('life.png');
+            background-size: contain;
+            background-repeat: no-repeat;
+            background-position: center;
         }
 
-        .introverted .personality-icon {
+        .learn .personality-icon {
             background: linear-gradient(135deg, #9599E2 0%, #7474C1 100%);
         }
 
-        .thinker .personality-icon {
+        .growth .personality-icon {
             background: linear-gradient(135deg, #8BC6EC 0%, #5E9DD4 100%);
         }
 
-        .feeler .personality-icon {
+        .emotion .personality-icon {
             background: linear-gradient(135deg, #64DFDF 0%, #3DB8B8 100%);
         }
 
@@ -181,44 +187,48 @@
 <body>
     <div class="container">
         <div class="personality-container">
-            <h1 class="page-title">选择您的性格特质</h1>
-            <p class="page-description">请选择最符合您的性格特质，这将帮助助手更好地与您交流</p>
+            <h1 class="page-title">请选择你的小伙伴</h1>
+            <p class="page-description">请选择最适合您的小伙伴，这将帮助助手更好地与您交流</p>
             
             <div class="personality-cards">
                 <!-- 外向性格 -->
-                <div class="personality-card extroverted" data-personality="extroverted">
+                <div class="personality-card life" data-personality="life">
                     <div class="personality-icon">
-                        😃
+                        <!-- 外星人图像通过CSS背景显示 -->
                     </div>
-                    <div class="personality-name">外向活泼</div>
-                    <div class="personality-description">喜欢社交，充满活力，善于表达自己的想法和感受</div>
+                    <div class="personality-name">全能校园NPC</div>
+                    <div class="personality-description">你的贴心校园生活大管家日程提醒、收支管理、食堂外卖推荐样样行，帮你在校内平稳landing。
+开场白：嘿，同学！校园生活大管家时刻准备着~</div>
                 </div>
                 
                 <!-- 内向性格 -->
-                <div class="personality-card introverted" data-personality="introverted">
+                <div class="personality-card learn" data-personality="learn">
                     <div class="personality-icon">
                         🤔
                     </div>
-                    <div class="personality-name">内向沉思</div>
-                    <div class="personality-description">喜欢独处，善于思考，倾向于深入分析问题</div>
+                    <div class="personality-name">学搭子Pro</div>
+                    <div class="personality-description">你的专属虚拟同桌，用番茄钟和自习打卡陪你肝论文、刷题库，专治拖延症的学习搭子，让学习打怪不再孤单。
+开场白：你的同桌已上线，专注一下还是聊点学习那些事？</div>
                 </div>
                 
                 <!-- 思考者性格 -->
-                <div class="personality-card thinker" data-personality="thinker">
+                <div class="personality-card growth" data-personality="growth">
                     <div class="personality-icon">
                         🧠
                     </div>
-                    <div class="personality-name">理性思考</div>
-                    <div class="personality-description">注重逻辑和理性，善于分析问题，寻求客观解决方案</div>
+                    <div class="personality-name">成长合伙人</div>
+                    <div class="personality-description">陪你立flag探索人生新剧情，鼓励引导你进步，你的专属成长见证官。
+开场白：欢迎回到成长星球，今天打算解锁哪些新技能？</div>
                 </div>
                 
                 <!-- 情感者性格 -->
-                <div class="personality-card feeler" data-personality="feeler">
+                <div class="personality-card emotion" data-personality="emotion">
                     <div class="personality-icon">
                         ❤️
                     </div>
-                    <div class="personality-name">感性体贴</div>
-                    <div class="personality-description">注重情感和价值观，善于理解他人感受，富有同理心</div>
+                    <div class="personality-name">树洞小耳朵</div>
+                    <div class="personality-description">24小时在线的心情树洞，听你吐槽压力，帮你记录心情日记，做你emo时的暖心陪伴者，提供足够的情绪价值。
+开场白：嗨，我一直都在哦，想到什么就跟我说吧</div>
                 </div>
             </div>
             

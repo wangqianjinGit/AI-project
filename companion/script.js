@@ -22,6 +22,109 @@ let voicesTimeout = null;
 const DOBAO_API_KEY = 'bd747896-e89b-46f4-a5ab-0a232d086845'; // 豆包API密钥
 const DOBAO_API_URL = 'https://ark.cn-beijing.volces.com/api/v3/chat/completions'; // 豆包API URL
 const ENDPOINT_ID = 'ep-20251015101857-wc8xz';
+// 角色设定
+let characterContent = '';
+
+// 获取性格特质的显示文本
+function getPersonalityDisplayText(personality) {
+    const personalityMap = {
+        'life': '外向活泼',
+        'learn': '内向沉思',
+        'growth': '理性思考',
+        'emotion': '感性体贴'
+    };
+    return personalityMap[personality] || '未知';
+}
+
+// 检测当前访问方式并选择合适的存储策略
+function getStorageStrategy() {
+    const protocol = window.location.protocol;
+    // 如果是通过文件协议(file://)访问，使用localStorage
+    // 如果是通过HTTP/HTTPS协议访问，使用服务器存储
+    return protocol === 'file:' ? 'localStorage' : 'server';
+}
+
+// 获取API基础URL
+function getApiBaseUrl() {
+    // 获取当前协议和主机名
+    const protocol = window.location.protocol;
+    const host = window.location.host;
+    
+    // 构建并返回基础URL
+    return `${protocol}//${host}`;
+}
+// 从localStorage获取性格特质
+function getPersonalityFromLocalStorage() {
+    try {
+        return localStorage.getItem('userPersonality') || 'life'; // 默认返回'life'
+    } catch (error) {
+        console.error('从localStorage获取性格特质失败:', error);
+        return 'life'; // 出错时也返回默认值
+    }
+}            
+
+// 从服务器获取性格特质
+async function getPersonalityFromServer() {
+    try {
+        const apiBaseUrl = getApiBaseUrl();
+        const response = await fetch(`${apiBaseUrl}/api/user/personality`, {
+            method: 'GET',
+            credentials: 'include'
+        });
+        
+        const contentType = response.headers.get('content-type');
+        if (!contentType || !contentType.includes('application/json')) {
+            throw new Error('服务器返回的不是有效的JSON数据');
+        }
+        
+        const data = await response.json();
+        if (response.ok) {
+            // 服务器返回的格式是 { personality: '...' }
+            return data.personality || 'life'; // 默认返回'life'
+        } else {
+            throw new Error(data.error || '获取性格特质失败');
+        }
+    } catch (error) {
+        console.error('从服务器获取性格特质出错:', error);
+        return 'life'; // 出错时也返回默认值
+    }
+}
+
+// 从文件中读取角色设定
+async function loadCharacterSetting() {
+    try {
+        // getStorageStrategy不是异步函数，不需要await
+        const strategy = getStorageStrategy();
+        let personality = 'life'; // 默认值
+        
+        if (strategy === 'localStorage') {
+            // getPersonalityFromLocalStorage也不是异步函数
+            personality = getPersonalityFromLocalStorage();
+        } else {
+            // getPersonalityFromServer现在是异步函数，需要await
+            personality = await getPersonalityFromServer();
+        }
+        
+        console.log('当前性格特质:', personality);
+        
+        try {
+            const response = await fetch('/character/' + personality + '.txt');
+            if (!response.ok) {
+                throw new Error('Failed to load character setting file');
+            }
+            characterContent = await response.text();
+            console.log('角色设定已成功加载');
+        } catch (error) {
+            console.error('加载角色设定失败:', error);
+            // 使用默认的角色设定作为备用
+            characterContent = '#角色定位 你是专为大学生设计的「生活伴」智能体，定位为「全能生活助理+校园向导」。核心使命是通过智能化的生活管理工具和场景化服务，帮助学生高效处理日常琐事，构建健康有序的校园生活。你需要像贴心室友一样熟悉用户的生活习惯，提供及时实用的生活建议，成为用户校园生活的得力帮手。';
+        }
+    } catch (error) {
+        console.error('加载性格特质时发生错误:', error);
+        // 确保即使出错也有默认的角色设定
+        characterContent = '#角色定位 你是专为大学生设计的「生活伴」智能体，定位为「全能生活助理+校园向导」。核心使命是通过智能化的生活管理工具和场景化服务，帮助学生高效处理日常琐事，构建健康有序的校园生活。你需要像贴心室友一样熟悉用户的生活习惯，提供及时实用的生活建议，成为用户校园生活的得力帮手。';
+    }
+}
 
 // OpenAI API 配置（作为备选）
 const OPENAI_API_KEY = 'your-api-key-here'; // 请替换为您的OpenAI API密钥
@@ -680,7 +783,7 @@ async function getDoubaoResponse(userMessage) {
             body: JSON.stringify({
                 model: ENDPOINT_ID,
                 messages: [
-                    { role: 'system', content: '你是一个有用的中文助手，回答要简洁明了。' },
+                    { role: 'system', content: characterContent },
                     { role: 'user', content: userMessage }
                 ],
                 max_tokens: 150,
@@ -754,7 +857,7 @@ function sendManualMessage() {
 }
 
 // 页面加载完成后初始化
-window.addEventListener('DOMContentLoaded', function() {
+window.addEventListener('DOMContentLoaded', async function() {
     // 初始化DOM元素
     chatMessages = document.getElementById('chat-messages');
     startBtn = document.getElementById('start-btn');
@@ -773,6 +876,10 @@ window.addEventListener('DOMContentLoaded', function() {
         document.body.appendChild(errorDiv);
         return;
     }
+    
+    // 加载角色设定文件
+    await loadCharacterSetting();
+    
     
     // 初始化事件监听和功能
     initializeEventListeners();
