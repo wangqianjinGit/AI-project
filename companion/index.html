@@ -78,52 +78,12 @@
             const personalityDisplay = document.getElementById('personality-display');
             
             // 检测当前访问方式并选择合适的存储策略
-            function getStorageStrategy() {
-                const protocol = window.location.protocol;
-                return protocol === 'file:' ? 'localStorage' : 'server';
-            }
-            
             // 从localStorage获取性格特质
             function getPersonalityFromLocalStorage() {
                 try {
                     return localStorage.getItem('userPersonality') || null;
                 } catch (error) {
                     console.error('从localStorage获取性格特质失败:', error);
-                    return null;
-                }
-            }
-            
-            // 获取完整的API基础URL
-            function getApiBaseUrl() {
-                const protocol = window.location.protocol;
-                const host = window.location.hostname;
-                const port = window.location.port || (protocol === 'https:' ? 443 : 8000);
-                return `${protocol}//${host}:${port}`;
-            }
-            
-            // 从服务器获取性格特质
-            async function getPersonalityFromServer() {
-                try {
-                    const apiBaseUrl = getApiBaseUrl();
-                    const response = await fetch(`${apiBaseUrl}/api/user/personality`, {
-                        method: 'GET',
-                        credentials: 'include'
-                    });
-                    
-                    const contentType = response.headers.get('content-type');
-                    if (!contentType || !contentType.includes('application/json')) {
-                        throw new Error('服务器返回的不是有效的JSON数据');
-                    }
-                    
-                    const data = await response.json();
-                    if (response.ok) {
-                        // 服务器返回的格式是 { personality: '...' }
-                        return data.personality || null;
-                    } else {
-                        throw new Error(data.error || '获取性格特质失败');
-                    }
-                } catch (error) {
-                    console.error('从服务器获取性格特质出错:', error);
                     return null;
                 }
             }
@@ -140,15 +100,8 @@
             }
             
             // 主函数：获取并显示性格特质
-            async function main() {
-                const strategy = getStorageStrategy();
-                let personality;
-                
-                if (strategy === 'localStorage') {
-                    personality = getPersonalityFromLocalStorage();
-                } else {
-                    personality = await getPersonalityFromServer();
-                }
+            function main() {
+                let personality = getPersonalityFromLocalStorage();
                 
                 if (personality) {
                     personalityDisplay.textContent = getPersonalityDisplayText(personality);

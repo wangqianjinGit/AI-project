@@ -161,115 +161,24 @@
             errorMessage.style.display = 'none'; // 清除错误消息
         });
 
-        // 检测当前访问方式并选择合适的存储策略
-        function getStorageStrategy() {
-            const protocol = window.location.protocol;
-            // 如果是通过文件协议(file://)访问，使用localStorage
-            // 如果是通过HTTP/HTTPS协议访问，使用服务器存储
-            return protocol === 'file:' ? 'localStorage' : 'server';
-        }
-
-        // 保存昵称（智能选择存储方式）
+        // 保存昵称（使用localStorage存储）
         async function saveNickname(nickname) {
-            const strategy = getStorageStrategy();
-            
-            if (strategy === 'localStorage') {
-                // 使用localStorage存储
-                try {
-                    localStorage.setItem('userNickname', nickname);
-                    return true;
-                } catch (error) {
-                    console.error('保存昵称到localStorage失败:', error);
-                    showError('保存昵称失败，请检查浏览器设置');
-                    return false;
-                }
-            } else {
-                // 使用服务器存储
-                return await saveNicknameToServer(nickname);
-            }
-        }
-
-        // 获取昵称（智能选择存储方式）
-        async function getNickname() {
-            const strategy = getStorageStrategy();
-            
-            if (strategy === 'localStorage') {
-                // 从localStorage获取
-                try {
-                    return localStorage.getItem('userNickname') || '';
-                } catch (error) {
-                    console.error('从localStorage获取昵称失败:', error);
-                    return '';
-                }
-            } else {
-                // 从服务器获取
-                return await getNicknameFromServer();
-            }
-        }
-
-        // 获取完整的API基础URL
-        function getApiBaseUrl() {
-            const protocol = window.location.protocol;
-            const host = window.location.hostname;
-            const port = window.location.port || (protocol === 'https:' ? 443 : 8000);
-            return `${protocol}//${host}:${port}`;
-        }
-
-        // 保存昵称到服务器
-        async function saveNicknameToServer(nickname) {
             try {
-                const apiBaseUrl = getApiBaseUrl();
-                const response = await fetch(`${apiBaseUrl}/api/user/nickname`, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({ nickname: nickname }),
-                    credentials: 'include' // 包含Cookie等凭证
-                });
-                
-                // 检查响应是否为空
-                const contentType = response.headers.get('content-type');
-                if (!contentType || !contentType.includes('application/json')) {
-                    throw new Error('服务器返回的不是有效的JSON数据');
-                }
-                
-                const data = await response.json();
-                if (response.ok && data.success) {
-                    return true;
-                } else {
-                    throw new Error(data.error || '保存昵称失败');
-                }
+                localStorage.setItem('userNickname', nickname);
+                return true;
             } catch (error) {
-                console.error('保存昵称到服务器出错:', error);
-                // 提供更具体的错误信息
-                let errorMsg = error.message;
-                if (errorMsg === 'Failed to fetch') {
-                    errorMsg = '无法连接到服务器，请确认服务器已启动并正在运行';
-                }
-                showError(errorMsg);
+                console.error('保存昵称到localStorage失败:', error);
+                showError('保存昵称失败，请检查浏览器设置');
                 return false;
             }
         }
 
-        // 从服务器获取昵称
-        async function getNicknameFromServer() {
+        // 获取昵称（从localStorage获取）
+        async function getNickname() {
             try {
-                const apiBaseUrl = getApiBaseUrl();
-                const response = await fetch(`${apiBaseUrl}/api/user/nickname`, {
-                    credentials: 'include'
-                });
-                
-                const contentType = response.headers.get('content-type');
-                if (!contentType || !contentType.includes('application/json')) {
-                    return '';
-                }
-                
-                const data = await response.json();
-                return data.nickname || '';
+                return localStorage.getItem('userNickname') || '';
             } catch (error) {
-                console.error('从服务器获取昵称出错:', error);
-                // 静默失败，不显示错误消息
+                console.error('从localStorage获取昵称失败:', error);
                 return '';
             }
         }
