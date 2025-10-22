@@ -1,0 +1,122 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="450" height="850" viewBox="0 0 450 850">
+  <!-- 星空背景 -->
+  <rect width="100%" height="100%" fill="#0A1128"/>
+  
+  <!-- 随机星星 -->
+  <g id="stars">
+    <!-- 星星点 - 顶部区域 -->
+    <circle cx="50" cy="100" r="1.5" fill="white" opacity="0.8"/>
+    <circle cx="120" cy="70" r="1" fill="white" opacity="0.6"/>
+    <circle cx="200" cy="150" r="1.2" fill="white" opacity="0.7"/>
+    <circle cx="300" cy="80" r="1.8" fill="white" opacity="0.9"/>
+    <circle cx="380" cy="120" r="1" fill="white" opacity="0.5"/>
+    <circle cx="420" cy="180" r="1.5" fill="white" opacity="0.8"/>
+    <circle cx="80" cy="200" r="1" fill="white" opacity="0.6"/>
+    <circle cx="150" cy="250" r="1.3" fill="white" opacity="0.7"/>
+    <circle cx="250" cy="220" r="1.1" fill="white" opacity="0.6"/>
+    <circle cx="320" cy="280" r="1.6" fill="white" opacity="0.8"/>
+    <circle cx="390" cy="240" r="1" fill="white" opacity="0.5"/>
+    <circle cx="40" cy="300" r="1.4" fill="white" opacity="0.8"/>
+    
+    <!-- 星星点 - 中部区域 -->
+    <circle cx="100" cy="350" r="1.2" fill="white" opacity="0.7"/>
+    <circle cx="180" cy="330" r="1" fill="white" opacity="0.6"/>
+    <circle cx="240" cy="380" r="1.5" fill="white" opacity="0.8"/>
+    <circle cx="320" cy="360" r="1.1" fill="white" opacity="0.6"/>
+    <circle cx="380" cy="310" r="1.3" fill="white" opacity="0.7"/>
+    <circle cx="430" cy="370" r="1" fill="white" opacity="0.5"/>
+    <circle cx="70" cy="420" r="1.4" fill="white" opacity="0.8"/>
+    <circle cx="140" cy="450" r="1.2" fill="white" opacity="0.7"/>
+    <circle cx="200" cy="410" r="1.5" fill="white" opacity="0.8"/>
+    <circle cx="280" cy="440" r="1" fill="white" opacity="0.6"/>
+    <circle cx="350" cy="400" r="1.3" fill="white" opacity="0.7"/>
+    <circle cx="400" cy="460" r="1.1" fill="white" opacity="0.6"/>
+    
+    <!-- 星星点 - 底部区域 -->
+    <circle cx="30" cy="500" r="1" fill="white" opacity="0.5"/>
+    <circle cx="90" cy="530" r="1.4" fill="white" opacity="0.8"/>
+    <circle cx="160" cy="510" r="1.2" fill="white" opacity="0.7"/>
+    <circle cx="230" cy="550" r="1.5" fill="white" opacity="0.8"/>
+    <circle cx="300" cy="520" r="1" fill="white" opacity="0.6"/>
+    <circle cx="370" cy="560" r="1.3" fill="white" opacity="0.7"/>
+    <circle cx="420" cy="500" r="1.1" fill="white" opacity="0.6"/>
+    <circle cx="60" cy="600" r="1" fill="white" opacity="0.5"/>
+    <circle cx="120" cy="630" r="1.4" fill="white" opacity="0.8"/>
+    <circle cx="180" cy="610" r="1.2" fill="white" opacity="0.7"/>
+    <circle cx="250" cy="650" r="1.5" fill="white" opacity="0.8"/>
+    <circle cx="320" cy="620" r="1" fill="white" opacity="0.6"/>
+    <circle cx="380" cy="660" r="1.3" fill="white" opacity="0.7"/>
+    <circle cx="410" cy="610" r="1.1" fill="white" opacity="0.6"/>
+  </g>
+  
+  <!-- 装饰性星球 -->
+  <circle cx="35" cy="40" r="45" fill="#FFD700" opacity="0.3"/>
+  <ellipse cx="380" cy="120" rx="50" ry="40" fill="#64DFDF" opacity="0.3"/>
+  <circle cx="410" cy="60" r="15" fill="#FF6B6B" opacity="0.4"/>
+  <ellipse cx="100" cy="600" rx="120" ry="80" fill="#8BC6EC" opacity="0.2"/>
+  
+  <!-- 主要机器人角色 -->
+  <g id="robot">
+    <!-- 机器人身体 -->
+    <circle cx="225" cy="350" r="100" fill="#95E6F3"/>
+    <circle cx="225" cy="350" r="95" fill="#A6F0FA"/>
+    
+    <!-- 机器人脸部 -->
+    <circle cx="225" cy="320" r="60" fill="#FFFFFF"/>
+    
+    <!-- 机器人眼睛 -->
+    <circle cx="200" cy="310" r="18" fill="#0A1128"/>
+    <circle cx="250" cy="310" r="18" fill="#0A1128"/>
+    <circle cx="200" cy="310" r="8" fill="#FFFFFF"/>
+    <circle cx="250" cy="310" r="8" fill="#FFFFFF"/>
+    
+    <!-- 机器人天线 -->
+    <rect x="195" y="240" width="10" height="30" fill="#95E6F3"/>
+    <rect x="245" y="240" width="10" height="30" fill="#95E6F3"/>
+    <circle cx="200" cy="230" r="15" fill="#FFB6C1"/>
+    <circle cx="250" cy="230" r="15" fill="#FFB6C1"/>
+    
+    <!-- 机器人嘴巴 -->
+    <path d="M190,350 Q225,370 260,350" fill="none" stroke="#0A1128" stroke-width="4" stroke-linecap="round"/>
+  </g>
+  
+  <!-- 文字 -->
+  <text x="225" y="100" font-family="Arial, sans-serif" font-size="24" fill="white" text-anchor="middle" font-weight="bold">嘿，同学！</text>
+  <text x="225" y="140" font-family="Arial, sans-serif" font-size="22" fill="white" text-anchor="middle" font-weight="bold">校园生活大管家</text>
+  <text x="225" y="180" font-family="Arial, sans-serif" font-size="22" fill="white" text-anchor="middle" font-weight="bold">时刻准备着~</text>
+  
+  <!-- 底部功能图标背景 -->
+  <rect x="40" y="680" width="370" height="60" rx="30" ry="30" fill="rgba(255, 255, 255, 0.1)"/>
+  
+  <!-- 功能图标（简化版） -->
+  <!-- 宝箱图标 -->
+  <circle cx="100" cy="710" r="25" fill="rgba(255, 215, 0, 0.2)"/>
+  <rect x="85" y="695" width="30" height="25" fill="#FFD700"/>
+  <rect x="95" y="685" width="10" height="10" fill="#FFD700"/>
+  
+  <!-- 笔记本图标 -->
+  <circle cx="175" cy="710" r="25" fill="rgba(149, 153, 226, 0.2)"/>
+  <rect x="160" y="695" width="30" height="25" fill="#9599E2"/>
+  <path d="M165,700 L190,700" stroke="white" stroke-width="2"/>
+  <path d="M165,706 L190,706" stroke="white" stroke-width="2"/>
+  <path d="M165,712 L185,712" stroke="white" stroke-width="2"/>
+  
+  <!-- 薯条图标 -->
+  <circle cx="250" cy="710" r="25" fill="rgba(255, 158, 158, 0.2)"/>
+  <rect x="235" y="695" width="30" height="25" fill="#FF9E9E"/>
+  <rect x="240" y="685" width="6" height="10" fill="#FF9E9E"/>
+  <rect x="248" y="685" width="6" height="10" fill="#FF9E9E"/>
+  <rect x="256" y="685" width="6" height="10" fill="#FF9E9E"/>
+  
+  <!-- 花朵图标 -->
+  <circle cx="325" cy="710" r="25" fill="rgba(100, 223, 223, 0.2)"/>
+  <circle cx="325" cy="710" r="12" fill="#FF9E9E"/>
+  <circle cx="310" cy="710" r="8" fill="#64DFDF"/>
+  <circle cx="340" cy="710" r="8" fill="#64DFDF"/>
+  <circle cx="325" cy="695" r="8" fill="#64DFDF"/>
+  <circle cx="325" cy="725" r="8" fill="#64DFDF"/>
+  
+  <!-- 底部聊天按钮 -->
+  <rect x="70" y="770" width="310" height="60" rx="30" ry="30" fill="#64DFDF"/>
+  <text x="225" y="805" font-family="Arial, sans-serif" font-size="20" fill="white" text-anchor="middle" font-weight="bold">按住和我聊天</text>
+</svg>
