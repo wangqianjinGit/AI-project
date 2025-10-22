@@ -44,9 +44,33 @@
                 <input type="text" id="manual-input" placeholder="输入您的问题...">
                 <button id="send-btn" class="btn">发送</button>
             </div>
+
+            <!-- 快捷功能按钮区域 -->
+            <div id="quick-actions" class="quick-actions">
+                <button class="quick-btn btn" data-action="class">上课</button>
+                <button class="quick-btn btn" data-action="communication">沟通</button>
+                <button class="quick-btn btn" data-action="eating">吃饭</button>
+                <button class="quick-btn btn" data-action="social">社交</button>
+            </div>
         </div>
 
     </div>
+
+    <script>
+        // 快捷功能按钮选择功能
+        document.addEventListener('DOMContentLoaded', function() {
+            const quickBtns = document.querySelectorAll('.quick-btn');
+            
+            quickBtns.forEach(btn => {
+                btn.addEventListener('click', function() {
+                    // 移除所有按钮的选中状态
+                    quickBtns.forEach(b => b.classList.remove('selected'));
+                    // 添加当前按钮的选中状态
+                    this.classList.add('selected');
+                });
+            });
+        });
+    </script>
 
     <script>
         // 获取并显示用户的性格特质

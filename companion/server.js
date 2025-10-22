@@ -209,7 +209,7 @@ function handleFileUpload(req, res) {
 }
 
 // 启动服务器
-server.listen(8000, () => {
-    console.log('Server running at http://localhost:8000/');
-    console.log('File upload endpoint available at http://localhost:8000/upload');
+server.listen(8080, () => {
+    console.log('Server running at http://localhost:8080/');
+    console.log('File upload endpoint available at http://localhost:8080/upload');
 });

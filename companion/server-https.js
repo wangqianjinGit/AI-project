@@ -254,9 +254,9 @@ const httpServer = http.createServer((req, res) => {
 });
 
 // 启动HTTP服务器 - 监听所有接口
-httpServer.listen(8000, '0.0.0.0', () => {
-    console.log('HTTP Server running at http://localhost:8000/');
-    console.log('也可以通过局域网IP访问：http://<your-ip>:8000/');
+httpServer.listen(8080, '0.0.0.0', () => {
+    console.log('HTTP Server running at http://localhost:8080/');
+    console.log('也可以通过局域网IP访问：http://<your-ip>:8080/');
     console.log('提示：在HTTP环境下，某些浏览器可能限制语音识别功能');
     console.log('尝试方案：');
     console.log('1. 使用 localhost 而非IP地址访问（大多数浏览器允许localhost的HTTP使用麦克风）');
@@ -295,7 +295,7 @@ function startHttpsServer() {
             } catch (readError) {
                 console.error('Failed to read SSL certificate files:', readError.message);
                 console.log('HTTPS Server not started due to certificate read error.');
-                console.log('You can still access the application via HTTP at http://localhost:8000/');
+                console.log('You can still access the application via HTTP at http://localhost:8080/');
                 return;
             }
             

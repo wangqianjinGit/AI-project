@@ -269,6 +269,35 @@ h1 {
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
 }
 
+/* 快捷功能按钮区域样式 */
+.quick-actions {
+    display: flex;
+    gap: 10px;
+    padding: 0 20px 20px;
+    background-color: transparent;
+    flex-wrap: wrap;
+}
+
+.quick-btn {
+    flex: 1;
+    min-width: 80px;
+    background-color: #64DFDF;
+    color: #2c3e50;
+}
+
+.quick-btn:hover:not(:disabled) {
+    background-color: #53C8C8;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+/* 选中状态样式 */
+.quick-btn.selected {
+    background-color: #3DB8B8;
+    font-weight: 600;
+    box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.5) inset;
+}
+
 /* 响应式设计 */
 @media (max-width: 600px) {
     .container {
