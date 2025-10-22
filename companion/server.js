@@ -86,7 +86,7 @@ const server = http.createServer((req, res) => {
     }
 
     // 静态文件处理
-    const filePath = path.join(__dirname, req.url === '/' ? 'index.html' : req.url);
+    const filePath = path.join(__dirname, req.url === '/' ? 'login.html' : req.url);
     
     // 获取文件扩展名
     const extname = path.extname(filePath);

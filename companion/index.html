@@ -3,13 +3,23 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>H5语音对话项目</title>
+    <title>小伴</title>
     <link rel="stylesheet" href="style.css">
+    <script>
+        // 百度统计
+        var _hmt = _hmt || [];
+        (function() {
+        var hm = document.createElement("script");
+        hm.src = "https://hm.baidu.com/hm.js?3fe867119ef61c6aa6c8c4722d0555cb";
+        var s = document.getElementsByTagName("script")[0];
+        s.parentNode.insertBefore(hm, s);
+        })();
+    </script>
 </head>
 <body>
     <div class="container">
         <div class="user-info">
-            <h1>语音对话助手</h1>
+            <h1>小伴</h1>
             <div id="personality-info" class="personality-info">
                 <span class="personality-label">性格特质: </span>
                 <span id="personality-display" class="personality-value">加载中...</span>
@@ -23,11 +33,11 @@
                 <button id="stop-btn" class="btn" disabled>停止录音</button>
             </div>
             
-            <!-- 文件上传区域 -->
+            <!-- 文件上传区域 
             <div id="file-upload-container" class="file-upload-container">
                 <input type="file" id="file-input" accept=".txt,.doc,.docx,.pdf,.xls,.xlsx,.jpg,.jpeg,.png">
                 <button id="upload-btn" class="btn">上传文件</button>
-            </div>
+            </div>-->
             
             <!-- 文本输入区域 -->
             <div id="manual-input-container" class="manual-input-container">

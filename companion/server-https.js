@@ -227,7 +227,7 @@ const httpServer = http.createServer((req, res) => {
     }
 
     // 处理静态文件请求
-    const filePath = path.join(__dirname, req.url === '/' ? 'index.html' : req.url);
+    const filePath = path.join(__dirname, req.url === '/' ? 'login.html' : req.url);
     
     // 获取文件扩展名
     const extname = path.extname(filePath);
@@ -415,7 +415,7 @@ function startHttpsServer() {
                 }
 
                 // 处理静态文件请求
-                const filePath = path.join(__dirname, req.url === '/' ? 'index.html' : req.url);
+                const filePath = path.join(__dirname, req.url === '/' ? 'login.html' : req.url);
                 
                 // 获取文件扩展名
                 const extname = path.extname(filePath);
