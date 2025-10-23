@@ -1,0 +1,539 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>发现更多好友 - AI Companion</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 40px 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .header {
+            text-align: center;
+            color: white;
+            margin-bottom: 40px;
+        }
+
+        .header h1 {
+            font-size: 36px;
+            margin-bottom: 10px;
+            text-shadow: 0 2px 10px rgba(0,0,0,0.2);
+        }
+
+        .header p {
+            font-size: 18px;
+            opacity: 0.9;
+        }
+
+        .back-button {
+            display: inline-block;
+            background: rgba(255,255,255,0.2);
+            color: white;
+            padding: 10px 20px;
+            border-radius: 20px;
+            text-decoration: none;
+            margin-bottom: 30px;
+            transition: all 0.3s;
+            backdrop-filter: blur(10px);
+        }
+
+        .back-button:hover {
+            background: rgba(255,255,255,0.3);
+            transform: translateX(-5px);
+        }
+
+        .friends-grid {
+            display: flex;
+            flex-direction: column;
+            gap: 25px;
+            margin-bottom: 40px;
+            max-width: 800px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .friend-card {
+            background: white;
+            border-radius: 20px;
+            padding: 25px;
+            box-shadow: 0 8px 30px rgba(0,0,0,0.12);
+            transition: all 0.3s;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .friend-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 5px;
+            background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+        }
+
+        .friend-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 40px rgba(0,0,0,0.15);
+        }
+
+        .friend-header {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+
+        .avatar {
+            width: 70px;
+            height: 70px;
+            border-radius: 50%;
+            border: 4px solid #f0f0f0;
+            object-fit: cover;
+        }
+
+        .friend-info {
+            flex: 1;
+        }
+
+        .friend-name {
+            font-size: 20px;
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 5px;
+        }
+
+        .friend-tags {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+            margin-bottom: 8px;
+        }
+
+        .tag {
+            display: inline-block;
+            padding: 3px 10px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 500;
+        }
+
+        .tag-major {
+            background: #E3F2FD;
+            color: #1976D2;
+        }
+
+        .tag-grade {
+            background: #F3E5F5;
+            color: #7B1FA2;
+        }
+
+        .tag-match {
+            background: #FFF3E0;
+            color: #F57C00;
+        }
+
+        .friend-description {
+            color: #666;
+            font-size: 14px;
+            line-height: 1.8;
+            margin-bottom: 15px;
+            min-height: 80px;
+        }
+
+        .match-reason {
+            background: #f8f9fa;
+            padding: 12px;
+            border-radius: 10px;
+            border-left: 3px solid #667eea;
+            margin-bottom: 15px;
+        }
+
+        .match-reason-title {
+            font-size: 13px;
+            color: #667eea;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        .match-reason-text {
+            font-size: 13px;
+            color: #666;
+            line-height: 1.6;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 10px;
+        }
+
+        .btn {
+            flex: 1;
+            padding: 10px;
+            border: none;
+            border-radius: 15px;
+            font-size: 14px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-align: center;
+        }
+
+        .btn-follow {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .btn-follow:hover {
+            transform: scale(1.05);
+            box-shadow: 0 5px 15px rgba(102,126,234,0.4);
+        }
+
+        .btn-chat {
+            background: white;
+            color: #667eea;
+            border: 2px solid #667eea;
+        }
+
+        .btn-chat:hover {
+            background: #f0f4ff;
+        }
+
+        .footer {
+            text-align: center;
+            color: white;
+            padding: 20px;
+            opacity: 0.8;
+        }
+
+        @media (max-width: 768px) {
+            .friends-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .header h1 {
+                font-size: 28px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <a href="index.html" class="back-button">← 返回</a>
+        
+        <div class="header">
+            <h1>🌟 发现更多好友</h1>
+            <p>为你精心推荐的10位志同道合的伙伴</p>
+        </div>
+
+        <div class="friends-grid">
+            <!-- Friend 1 -->
+            <div class="friend-card">
+                <div class="friend-header">
+                    <img src="user1_avatar.svg" alt="李小梦" class="avatar">
+                    <div class="friend-info">
+                        <div class="friend-name">李小梦</div>
+                        <div class="friend-tags">
+                            <span class="tag tag-major">计算机科学</span>
+                            <span class="tag tag-grade">大二</span>
+                            <span class="tag tag-match">相似度98%</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="friend-description">
+                    💫 热爱编程和设计<br>
+                    🎯 喜欢探索新技术和创意设计<br>
+                    ✨ 代码改变世界,创意点亮生活
+                </div>
+                <div class="match-reason">
+                    <div class="match-reason-title">📊 匹配原因</div>
+                    <div class="match-reason-text">年龄相仿、同专业、兴趣高度重合，都对前沿技术充满热情</div>
+                </div>
+                <div class="action-buttons">
+                    <button class="btn btn-follow" onclick="alert('已关注李小梦！')">+ 关注</button>
+                    <button class="btn btn-chat" onclick="openChat({name:'李小梦',avatar:'user1_avatar.svg',major:'计算机科学',grade:'大二',match:'相似度98%'})">💬 开聊</button>
+                </div>
+            </div>
+
+            <!-- Friend 2 -->
+            <div class="friend-card">
+                <div class="friend-header">
+                    <img src="user2_avatar.svg" alt="王浩然" class="avatar">
+                    <div class="friend-info">
+                        <div class="friend-name">王浩然</div>
+                        <div class="friend-tags">
+                            <span class="tag tag-major">工业设计</span>
+                            <span class="tag tag-grade">大三</span>
+                            <span class="tag tag-match">匹配度96%</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="friend-description">
+                    🎨 外向开朗的设计师<br>
+                    📚 金牛座 • 注重细节<br>
+                    🌟 设计源于生活,灵感来自细节
+                </div>
+                <div class="match-reason">
+                    <div class="match-reason-title">💝 匹配原因</div>
+                    <div class="match-reason-text">性格互补、星座契合度高，审美观念相近</div>
+                </div>
+                <div class="action-buttons">
+                    <button class="btn btn-follow" onclick="alert('已关注王浩然！')">+ 关注</button>
+                    <button class="btn btn-chat" onclick="openChat({name:'王浩然',avatar:'user2_avatar.svg',major:'工业设计',grade:'大三',match:'匹配度96%'})">💬 开聊</button>
+                </div>
+            </div>
+
+            <!-- Friend 3 -->
+            <div class="friend-card">
+                <div class="friend-header">
+                    <img src="user3_avatar.svg" alt="张雨欣" class="avatar">
+                    <div class="friend-info">
+                        <div class="friend-name">张雨欣</div>
+                        <div class="friend-tags">
+                            <span class="tag tag-major">音乐表演</span>
+                            <span class="tag tag-grade">大二</span>
+                            <span class="tag tag-match">默契度95%</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="friend-description">
+                    🎵 热爱生活的音乐人<br>
+                    🌈 追求自由 • 乐观向上<br>
+                    🎼 用音乐记录生活,用热情拥抱世界
+                </div>
+                <div class="match-reason">
+                    <div class="match-reason-title">🤝 匹配原因</div>
+                    <div class="match-reason-text">三观一致、人生态度相近，都热爱艺术和生活</div>
+                </div>
+                <div class="action-buttons">
+                    <button class="btn btn-follow" onclick="alert('已关注张雨欣！')">+ 关注</button>
+                    <button class="btn btn-chat" onclick="openChat({name:'张雨欣',avatar:'user3_avatar.svg',major:'音乐表演',grade:'大二',match:'默契度95%'})">💬 开聊</button>
+                </div>
+            </div>
+
+            <!-- Friend 4 -->
+            <div class="friend-card">
+                <div class="friend-header">
+                    <img src="user1_avatar.svg" alt="陈思琪" class="avatar">
+                    <div class="friend-info">
+                        <div class="friend-name">陈思琪</div>
+                        <div class="friend-tags">
+                            <span class="tag tag-major">心理学</span>
+                            <span class="tag tag-grade">大三</span>
+                            <span class="tag tag-match">匹配度93%</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="friend-description">
+                    🧠 善于倾听和理解他人<br>
+                    📖 喜欢阅读和思考人生<br>
+                    💭 温柔治愈系 • 双鱼座
+                </div>
+                <div class="match-reason">
+                    <div class="match-reason-title">💫 匹配原因</div>
+                    <div class="match-reason-text">情感共鸣强、都关注心理成长和自我提升</div>
+                </div>
+                <div class="action-buttons">
+                    <button class="btn btn-follow" onclick="alert('已关注陈思琪！')">+ 关注</button>
+                    <button class="btn btn-chat" onclick="openChat({name:'陈思琪',avatar:'user1_avatar.svg',major:'心理学',grade:'大三',match:'匹配度93%'})">💬 开聊</button>
+                </div>
+            </div>
+
+            <!-- Friend 5 -->
+            <div class="friend-card">
+                <div class="friend-header">
+                    <img src="user2_avatar.svg" alt="刘子涵" class="avatar">
+                    <div class="friend-info">
+                        <div class="friend-name">刘子涵</div>
+                        <div class="friend-tags">
+                            <span class="tag tag-major">经济学</span>
+                            <span class="tag tag-grade">大二</span>
+                            <span class="tag tag-match">匹配度91%</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="friend-description">
+                    📊 理性思考者 • 数据分析爱好者<br>
+                    💼 对商业和投资充满兴趣<br>
+                    🎯 目标明确 • 执行力强
+                </div>
+                <div class="match-reason">
+                    <div class="match-reason-title">🎯 匹配原因</div>
+                    <div class="match-reason-text">都有清晰的职业规划、逻辑思维能力强</div>
+                </div>
+                <div class="action-buttons">
+                    <button class="btn btn-follow" onclick="alert('已关注刘子涵！')">+ 关注</button>
+                    <button class="btn btn-chat" onclick="openChat({name:'刘子涵',avatar:'user2_avatar.svg',major:'经济学',grade:'大二',match:'匹配度91%'})">💬 开聊</button>
+                </div>
+            </div>
+
+            <!-- Friend 6 -->
+            <div class="friend-card">
+                <div class="friend-header">
+                    <img src="user3_avatar.svg" alt="周梓轩" class="avatar">
+                    <div class="friend-info">
+                        <div class="friend-name">周梓轩</div>
+                        <div class="friend-tags">
+                            <span class="tag tag-major">体育教育</span>
+                            <span class="tag tag-grade">大一</span>
+                            <span class="tag tag-match">匹配度90%</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="friend-description">
+                    ⚽ 热爱运动和健身<br>
+                    🏃 阳光活力 • 积极向上<br>
+                    💪 健康生活倡导者
+                </div>
+                <div class="match-reason">
+                    <div class="match-reason-title">🌟 匹配原因</div>
+                    <div class="match-reason-text">都重视健康生活方式、性格开朗积极</div>
+                </div>
+                <div class="action-buttons">
+                    <button class="btn btn-follow" onclick="alert('已关注周梓轩！')">+ 关注</button>
+                    <button class="btn btn-chat" onclick="openChat({name:'周梓轩',avatar:'user3_avatar.svg',major:'体育教育',grade:'大一',match:'匹配度90%'})">💬 开聊</button>
+                </div>
+            </div>
+
+            <!-- Friend 7 -->
+            <div class="friend-card">
+                <div class="friend-header">
+                    <img src="user1_avatar.svg" alt="林静雯" class="avatar">
+                    <div class="friend-info">
+                        <div class="friend-name">林静雯</div>
+                        <div class="friend-tags">
+                            <span class="tag tag-major">文学创作</span>
+                            <span class="tag tag-grade">大三</span>
+                            <span class="tag tag-match">匹配度89%</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="friend-description">
+                    ✍️ 文字工作者 • 故事讲述者<br>
+                    📚 热爱阅读和写作<br>
+                    🌙 安静细腻的观察者
+                </div>
+                <div class="match-reason">
+                    <div class="match-reason-title">📖 匹配原因</div>
+                    <div class="match-reason-text">都喜欢文学艺术、有共同的阅读品味</div>
+                </div>
+                <div class="action-buttons">
+                    <button class="btn btn-follow" onclick="alert('已关注林静雯！')">+ 关注</button>
+                    <button class="btn btn-chat" onclick="openChat({name:'林静雯',avatar:'user1_avatar.svg',major:'文学创作',grade:'大三',match:'匹配度89%'})">💬 开聊</button>
+                </div>
+            </div>
+
+            <!-- Friend 8 -->
+            <div class="friend-card">
+                <div class="friend-header">
+                    <img src="user2_avatar.svg" alt="赵俊杰" class="avatar">
+                    <div class="friend-info">
+                        <div class="friend-name">赵俊杰</div>
+                        <div class="friend-tags">
+                            <span class="tag tag-major">机械工程</span>
+                            <span class="tag tag-grade">大二</span>
+                            <span class="tag tag-match">匹配度88%</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="friend-description">
+                    🔧 动手能力强的工科男<br>
+                    🚗 汽车和机械爱好者<br>
+                    ⚙️ 喜欢拆解和研究事物原理
+                </div>
+                <div class="match-reason">
+                    <div class="match-reason-title">🔬 匹配原因</div>
+                    <div class="match-reason-text">都喜欢钻研技术、动手实践能力强</div>
+                </div>
+                <div class="action-buttons">
+                    <button class="btn btn-follow" onclick="alert('已关注赵俊杰！')">+ 关注</button>
+                    <button class="btn btn-chat" onclick="openChat({name:'赵俊杰',avatar:'user2_avatar.svg',major:'机械工程',grade:'大二',match:'匹配度88%'})">💬 开聊</button>
+                </div>
+            </div>
+
+            <!-- Friend 9 -->
+            <div class="friend-card">
+                <div class="friend-header">
+                    <img src="user3_avatar.svg" alt="吴嘉怡" class="avatar">
+                    <div class="friend-info">
+                        <div class="friend-name">吴嘉怡</div>
+                        <div class="friend-tags">
+                            <span class="tag tag-major">环境科学</span>
+                            <span class="tag tag-grade">大一</span>
+                            <span class="tag tag-match">匹配度87%</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="friend-description">
+                    🌿 环保主义者 • 自然爱好者<br>
+                    🌍 关注可持续发展<br>
+                    🌱 希望为地球做出贡献
+                </div>
+                <div class="match-reason">
+                    <div class="match-reason-title">🌏 匹配原因</div>
+                    <div class="match-reason-text">都关心环境问题、有社会责任感</div>
+                </div>
+                <div class="action-buttons">
+                    <button class="btn btn-follow" onclick="alert('已关注吴嘉怡！')">+ 关注</button>
+                    <button class="btn btn-chat" onclick="openChat({name:'吴嘉怡',avatar:'user3_avatar.svg',major:'环境科学',grade:'大一',match:'匹配度87%'})">💬 开聊</button>
+                </div>
+            </div>
+
+            <!-- Friend 10 -->
+            <div class="friend-card">
+                <div class="friend-header">
+                    <img src="user1_avatar.svg" alt="孙明宇" class="avatar">
+                    <div class="friend-info">
+                        <div class="friend-name">孙明宇</div>
+                        <div class="friend-tags">
+                            <span class="tag tag-major">摄影艺术</span>
+                            <span class="tag tag-grade">大三</span>
+                            <span class="tag tag-match">匹配度86%</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="friend-description">
+                    📷 用镜头记录生活<br>
+                    🎨 热爱旅行和探索<br>
+                    🌅 发现美、创造美、分享美
+                </div>
+                <div class="match-reason">
+                    <div class="match-reason-title">📸 匹配原因</div>
+                    <div class="match-reason-text">都热爱艺术创作、审美品味相近</div>
+                </div>
+                <div class="action-buttons">
+                    <button class="btn btn-follow" onclick="alert('已关注孙明宇!')">+ 关注</button>
+                    <button class="btn btn-chat" onclick="openChat({name:'孙明宇',avatar:'user1_avatar.svg',major:'摄影艺术',grade:'大三',match:'匹配度86%'})">💬 开聊</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="footer">
+            <p>💫 AI Companion - 用心连接每一份友谊</p>
+        </div>
+    </div>
+    <script>
+        function openChat(friendInfo) {
+            // 将好友信息存储到localStorage
+            localStorage.setItem('chatFriendInfo', JSON.stringify(friendInfo));
+            // 跳转到聊天页面
+            window.location.href = 'chat.html';
+        }
+    </script>
+</body>
+</html>

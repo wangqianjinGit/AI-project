@@ -1,0 +1,20 @@
+<svg width="100" height="100" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+  <!-- 背景圆 -->
+  <circle cx="50" cy="50" r="50" fill="#FFB6C1"/>
+  
+  <!-- 头部 -->
+  <circle cx="50" cy="35" r="18" fill="#FFF5E1"/>
+  
+  <!-- 眼睛 -->
+  <circle cx="44" cy="32" r="2" fill="#333"/>
+  <circle cx="56" cy="32" r="2" fill="#333"/>
+  
+  <!-- 微笑 -->
+  <path d="M 42 40 Q 50 44 58 40" stroke="#FF69B4" stroke-width="2" fill="none" stroke-linecap="round"/>
+  
+  <!-- 身体 -->
+  <ellipse cx="50" cy="68" rx="22" ry="20" fill="#FFF5E1"/>
+  
+  <!-- 装饰小心心 -->
+  <path d="M 50 90 L 48 88 Q 45 85 45 82 Q 45 79 47 77 Q 49 75 50 76 Q 51 75 53 77 Q 55 79 55 82 Q 55 85 52 88 Z" fill="#FF1493"/>
+</svg>

@@ -1,0 +1,469 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>聊天 - AI学伴</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .header {
+            background: white;
+            padding: 15px 20px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .back-button {
+            background: #f0f0f0;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: all 0.3s;
+            text-decoration: none;
+            color: #333;
+        }
+
+        .back-button:hover {
+            background: #e0e0e0;
+            transform: translateX(-3px);
+        }
+
+        .friend-header-info {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            flex: 1;
+        }
+
+        .friend-avatar {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            border: 3px solid #667eea;
+        }
+
+        .friend-details h2 {
+            font-size: 18px;
+            color: #333;
+            margin-bottom: 3px;
+        }
+
+        .friend-details p {
+            font-size: 13px;
+            color: #666;
+        }
+
+        .follow-button {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 10px 25px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: bold;
+            transition: all 0.3s;
+        }
+
+        .follow-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .follow-button.following {
+            background: #e0e0e0;
+            color: #666;
+        }
+
+        .chat-container {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            max-width: 1000px;
+            width: 100%;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .messages-area {
+            flex: 1;
+            background: white;
+            border-radius: 20px 20px 0 0;
+            padding: 20px;
+            overflow-y: auto;
+            margin-bottom: 0;
+        }
+
+        .message {
+            display: flex;
+            margin-bottom: 20px;
+            gap: 10px;
+        }
+
+        .message.user {
+            flex-direction: row-reverse;
+        }
+
+        .message-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            flex-shrink: 0;
+        }
+
+        .message-content {
+            max-width: 60%;
+            padding: 12px 18px;
+            border-radius: 18px;
+            line-height: 1.5;
+        }
+
+        .message.friend .message-content {
+            background: #f0f0f0;
+            color: #333;
+        }
+
+        .message.user .message-content {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .input-area {
+            background: white;
+            padding: 15px 20px;
+            border-radius: 0 0 20px 20px;
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+
+        .voice-button {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            border: none;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            font-size: 24px;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .voice-button:hover {
+            transform: scale(1.1);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .voice-button.recording {
+            background: #ff4757;
+            animation: pulse 1.5s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+        }
+
+        .text-input {
+            flex: 1;
+            border: 2px solid #e0e0e0;
+            border-radius: 25px;
+            padding: 12px 20px;
+            font-size: 14px;
+            outline: none;
+            transition: all 0.3s;
+        }
+
+        .text-input:focus {
+            border-color: #667eea;
+        }
+
+        .send-button {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            border: none;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            font-size: 20px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .send-button:hover {
+            transform: scale(1.1);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .voice-status {
+            text-align: center;
+            padding: 10px;
+            color: #666;
+            font-size: 13px;
+        }
+
+        .voice-status.active {
+            color: #ff4757;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <a href="discover_more.html" class="back-button">← 返回</a>
+        <div class="friend-header-info">
+            <img id="headerAvatar" src="" alt="" class="friend-avatar">
+            <div class="friend-details">
+                <h2 id="friendName"></h2>
+                <p id="friendTags"></p>
+            </div>
+        </div>
+        <button id="followBtn" class="follow-button">+ 关注</button>
+    </div>
+
+    <div class="chat-container">
+        <div class="messages-area" id="messagesArea">
+            <div class="message friend">
+                <img id="friendAvatar" src="" alt="" class="message-avatar">
+                <div class="message-content">你好！很高兴认识你 😊</div>
+            </div>
+        </div>
+        
+        <div class="input-area">
+            <button id="voiceBtn" class="voice-button" title="按住说话">🎤</button>
+            <input type="text" id="textInput" class="text-input" placeholder="输入消息...">
+            <button id="sendBtn" class="send-button">📤</button>
+        </div>
+        <div id="voiceStatus" class="voice-status"></div>
+    </div>
+
+    <script>
+        // 豆包API配置
+        const DOBAO_API_KEY = 'bd747896-e89b-46f4-a5ab-0a232d086845';
+        const DOBAO_API_URL = 'https://ark.cn-beijing.volces.com/api/v3/chat/completions';
+        const ENDPOINT_ID = 'ep-20251015101857-wc8xz';
+        
+        // 从localStorage获取好友信息
+        const friendInfoStr = localStorage.getItem('chatFriendInfo');
+        let friendInfo = {};
+        if (friendInfoStr) {
+            friendInfo = JSON.parse(friendInfoStr);
+        }
+        const friendName = friendInfo.name || '好友';
+        const friendAvatar = friendInfo.avatar || 'default_avatar.svg';
+        const friendMajor = friendInfo.major || '';
+        const friendGrade = friendInfo.grade || '';
+        const friendMatch = friendInfo.match || '';
+
+        let characterContent = '';
+
+        // 设置页面标题和好友信息
+        document.title = `与${friendName}聊天 - AI学伴`;
+        document.getElementById('friendName').textContent = friendName;
+        document.getElementById('friendTags').textContent = `${friendMajor} • ${friendGrade} • ${friendMatch}`;
+        document.getElementById('headerAvatar').src = friendAvatar;
+        document.getElementById('friendAvatar').src = friendAvatar;
+
+        // 关注按钮
+        const followBtn = document.getElementById('followBtn');
+        let isFollowing = false;
+        followBtn.addEventListener('click', () => {
+            isFollowing = !isFollowing;
+            if (isFollowing) {
+                followBtn.textContent = '✓ 已关注';
+                followBtn.classList.add('following');
+            } else {
+                followBtn.textContent = '+ 关注';
+                followBtn.classList.remove('following');
+            }
+        });
+
+        // 消息区域
+        const messagesArea = document.getElementById('messagesArea');
+        const textInput = document.getElementById('textInput');
+        const sendBtn = document.getElementById('sendBtn');
+
+        function addMessage(content, isUser = false) {
+            const messageDiv = document.createElement('div');
+            messageDiv.className = `message ${isUser ? 'user' : 'friend'}`;
+            
+            const avatar = document.createElement('img');
+            avatar.className = 'message-avatar';
+            avatar.src = isUser ? 'user1_avatar.svg' : friendAvatar;
+            
+            const contentDiv = document.createElement('div');
+            contentDiv.className = 'message-content';
+            contentDiv.textContent = content;
+            
+            messageDiv.appendChild(avatar);
+            messageDiv.appendChild(contentDiv);
+            messagesArea.appendChild(messageDiv);
+            
+            // 滚动到底部
+            messagesArea.scrollTop = messagesArea.scrollHeight;
+        }
+
+        // 调用豆包API获取回复
+        async function getDoubaoResponse(userMessage) {
+        try {
+            const getCharacter= await fetch('/character/chat.txt');
+            if (!getCharacter.ok) {
+                throw new Error('Failed to load character setting file');
+            }
+            characterContent = await getCharacter.text();
+            console.log('角色设定已成功加载');
+        } catch (error) {
+            console.error('加载角色设定失败:', error);
+        }
+        
+
+            try {
+                const response = await fetch(DOBAO_API_URL, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${DOBAO_API_KEY}`
+                    },
+                    body: JSON.stringify({
+                        model: ENDPOINT_ID,
+                        messages: [
+                            { role: 'system', content: `你是${friendName},一位${friendMajor}专业的${friendGrade}学生。请以朋友的身份回复消息,语气要自然、友好、亲切。` + characterContent },
+                            { role: 'user', content: userMessage }
+                        ],
+                        max_tokens: 150,
+                        temperature: 0.8
+                    })
+                });
+                
+                const data = await response.json();
+                
+                if (data.choices && data.choices.length > 0) {
+                    return data.choices[0].message.content;
+                } else {
+                    return '抱歉,我现在有点忙,稍后再聊~';
+                }
+            } catch (error) {
+                console.error('豆包API调用错误:', error);
+                // 如果API调用失败,使用备选回复
+                const replies = [
+                    '哈哈,你说得对!',
+                    '我也这么觉得~',
+                    '真有意思!',
+                    '听起来不错呢',
+                    '嗯嗯,理解你的意思了'
+                ];
+                return replies[Math.floor(Math.random() * replies.length)];
+            }
+        }
+
+        // 发送文本消息
+        async function sendMessage() {
+            const message = textInput.value.trim();
+            if (message) {
+                addMessage(message, true);
+                textInput.value = '';
+                
+                // 显示正在输入状态
+                const typingDiv = document.createElement('div');
+                typingDiv.className = 'message friend typing-indicator';
+                typingDiv.innerHTML = '<div class="message-content">正在输入...</div>';
+                messagesArea.appendChild(typingDiv);
+                messagesArea.scrollTop = messagesArea.scrollHeight;
+                
+                // 调用豆包API获取回复
+                const reply = await getDoubaoResponse(message);
+                
+                // 移除正在输入提示
+                messagesArea.removeChild(typingDiv);
+                
+                // 添加好友回复
+                addMessage(reply, false);
+            }
+        }
+
+        sendBtn.addEventListener('click', sendMessage);
+        textInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                sendMessage();
+            }
+        });
+
+        // 语音功能
+        const voiceBtn = document.getElementById('voiceBtn');
+        const voiceStatus = document.getElementById('voiceStatus');
+        let recognition = null;
+        let isRecording = false;
+
+        // 检查浏览器是否支持语音识别
+        if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
+            const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+            recognition = new SpeechRecognition();
+            recognition.lang = 'zh-CN';
+            recognition.continuous = false;
+            recognition.interimResults = false;
+
+            recognition.onstart = () => {
+                isRecording = true;
+                voiceBtn.classList.add('recording');
+                voiceStatus.textContent = '🎤 正在录音中...';
+                voiceStatus.classList.add('active');
+            };
+
+            recognition.onresult = (event) => {
+                const transcript = event.results[0][0].transcript;
+                textInput.value = transcript;
+                sendMessage();
+            };
+
+            recognition.onerror = (event) => {
+                console.error('语音识别错误:', event.error);
+                voiceStatus.textContent = '❌ 语音识别失败,请重试';
+                setTimeout(() => {
+                    voiceStatus.textContent = '';
+                    voiceStatus.classList.remove('active');
+                }, 2000);
+            };
+
+            recognition.onend = () => {
+                isRecording = false;
+                voiceBtn.classList.remove('recording');
+                voiceStatus.textContent = '';
+                voiceStatus.classList.remove('active');
+            };
+
+            // 点击开始/停止录音
+            voiceBtn.addEventListener('click', () => {
+                if (isRecording) {
+                    recognition.stop();
+                } else {
+                    recognition.start();
+                }
+            });
+        } else {
+            voiceBtn.addEventListener('click', () => {
+                alert('您的浏览器不支持语音识别功能,请使用Chrome或Edge浏览器');
+            });
+        }
+    </script>
+</body>
+</html>
