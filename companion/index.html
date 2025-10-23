@@ -5,292 +5,124 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>小伴</title>
     <link rel="stylesheet" href="style.css">
-    <style>
-        /* 主页面特有样式 */
-        body {
-            overflow: hidden;
-            background-color: #f5f5f5;
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
-        }
-        
-        .container {
-            position: relative;
-        }
-        
-        /* 主应用容器 */
-        .app-main {
-            position: relative;
-            width: 100%;
-            max-width: 450px;
-            height: 100vh;
-            margin: 0 auto;
-            display: flex;
-            flex-direction: column;
-            overflow: hidden;
-            background-color: #fff;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-        }
-        
-        /* 背景图 - 确保顶部文字完全显示 */
-        .app-main::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-image: url('index.png');
-            background-repeat: no-repeat;
-            background-size: contain;
-            background-position: center center;
-            opacity: 1;
-            z-index: -1;
-        }
-        
-        /* 隐藏原有元素 */
-        .user-info {
-            display: none;
-        }
-        
-        /* 聊天消息区域 */
-        .chat-container {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            overflow: hidden;
-            padding: 10px;
-        }
-        
-        #chat-messages {
-            flex: 1;
-            overflow-y: auto;
-            padding: 10px;
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-        }
-        
-        .message {
-            max-width: 75%;
-            padding: 10px 15px;
-            border-radius: 18px;
-            word-wrap: break-word;
-            animation: fadeIn 0.3s ease;
-        }
-        
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-        
-        .user-message {
-            align-self: flex-end;
-            background-color: #1989fa;
-            color: white;
-            border-bottom-right-radius: 5px;
-        }
-        
-        .assistant-message {
-            align-self: flex-start;
-            background-color: #f0f0f0;
-            color: #333;
-            border-bottom-left-radius: 5px;
-        }
-        
-        /* 语音按钮区域 */
-        .voice-controls {
-            padding: 15px;
-            border-top: 1px solid #eee;
-            display: flex;
-            justify-content: center;
-            gap: 20px;
-        }
-        
-        #start-btn, #stop-btn {
-            width: 80px;
-            height: 80px;
-            border-radius: 50%;
-            border: none;
-            cursor: pointer;
-            font-size: 16px;
-            font-weight: bold;
-            transition: all 0.3s ease;
-        }
-        
-        #start-btn {
-            background-color: #1989fa;
-            color: white;
-        }
-        
-        #start-btn:hover:not(:disabled) {
-            background-color: #0e74da;
-            transform: scale(1.05);
-        }
-        
-        #start-btn:active:not(:disabled) {
-            transform: scale(0.95);
-        }
-        
-        #start-btn:disabled {
-            background-color: #ccc;
-            cursor: not-allowed;
-        }
-        
-        #stop-btn {
-            background-color: #ff4d4f;
-            color: white;
-        }
-        
-        #stop-btn:hover:not(:disabled) {
-            background-color: #ff7875;
-            transform: scale(1.05);
-        }
-        
-        #stop-btn:active:not(:disabled) {
-            transform: scale(0.95);
-        }
-        
-        #stop-btn:disabled {
-            background-color: #ccc;
-            cursor: not-allowed;
-        }
-        
-        /* 手动输入区域 */
-        #manual-input-container {
-            padding: 15px;
-            border-top: 1px solid #eee;
-            display: none;
-        }
-        
-        .input-wrapper {
-            display: flex;
-            gap: 10px;
-        }
-        
-        #manual-input {
-            flex: 1;
-            padding: 10px 15px;
-            border: 1px solid #d9d9d9;
-            border-radius: 20px;
-            outline: none;
-            font-size: 16px;
-        }
-        
-        #manual-input:focus {
-            border-color: #1989fa;
-        }
-        
-        #send-btn {
-            padding: 10px 20px;
-            background-color: #1989fa;
-            color: white;
-            border: none;
-            border-radius: 20px;
-            cursor: pointer;
-            font-size: 16px;
-            font-weight: bold;
-            transition: background-color 0.3s ease;
-        }
-        
-        #send-btn:hover {
-            background-color: #0e74da;
-        }
-        
-        /* 按住和我聊天按钮 */
-        .hold-chat-btn {
-            width: 100px;
-            height: 100px;
-            border-radius: 50%;
-            border: none;
-            background: linear-gradient(135deg, #1989fa, #0e74da);
-            color: white;
-            font-size: 16px;
-            font-weight: bold;
-            cursor: pointer;
-            box-shadow: 0 4px 15px rgba(25, 137, 250, 0.3);
-            transition: all 0.3s ease;
-            position: absolute;
-            bottom: 30px;
-            left: 50%;
-            transform: translateX(-50%);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            text-align: center;
-            z-index: 100;
-        }
-        
-        .hold-chat-btn:hover {
-            transform: translateX(-50%) scale(1.05);
-            box-shadow: 0 6px 20px rgba(25, 137, 250, 0.4);
-        }
-        
-        .hold-chat-btn:active {
-            transform: translateX(-50%) scale(0.95);
-        }
-    </style>
     <script>
-        // 百度统计
         var _hmt = _hmt || [];
         (function() {
         var hm = document.createElement("script");
-        hm.src = "https://hm.baidu.com/hm.js?3fe867119ef61c6aa6c8c4722d0555cb";
-        var s = document.getElementsByTagName("script")[0];
+        hm.src = "https://hm.baidu.com/hm.js?ca9a14ff3761dffcce773abaf201998e";
+        var s = document.getElementsByTagName("script")[0]; 
         s.parentNode.insertBefore(hm, s);
         })();
     </script>
 </head>
 <body>
     <div class="container">
-        <div class="app-main">
-            <!-- 原有内容（已隐藏） -->
-            <div class="user-info">
-                <h1>小伴</h1>
-                <div id="personality-info" class="personality-info">
-                    <span class="personality-label">性格特质: </span>
-                    <span id="personality-display" class="personality-value">加载中...</span>
-                </div>
+        <div class="user-info">
+            <h1>小伴</h1>
+            <div id="personality-info" class="personality-info">
+                <span class="personality-label">性格特质: </span>
+                <span id="personality-display" class="personality-value">加载中...</span>
             </div>
-            
-            <!-- 语言对话功能区域 -->
-            <div class="chat-container">
-                <!-- 聊天消息显示区域 -->
-                <div id="chat-messages"></div>
-            </div>
-            
-            <!-- 语音控制按钮 -->
-            <div class="voice-controls">
-                <button id="start-btn">开始录音</button>
-                <button id="stop-btn" disabled>停止录音</button>
-            </div>
-            
-            <!-- 手动输入区域 -->
-            <div id="manual-input-container">
-                <div class="input-wrapper">
-                    <input type="text" id="manual-input" placeholder="请输入文字...">
-                    <button id="send-btn">发送</button>
-                </div>
-            </div>
-            
-            <!-- 按住和我聊天按钮 -->
-            <button class="hold-chat-btn">按住和我聊天</button>
         </div>
+        
+        <div class="chat-container">
+            <div id="chat-messages"></div>
+            <div class="input-area">
+                <button id="start-btn" class="btn">开始录音</button>
+                <button id="stop-btn" class="btn" disabled>停止录音</button>
+            </div>
+            
+            <!-- 文件上传区域 
+            <div id="file-upload-container" class="file-upload-container">
+                <input type="file" id="file-input" accept=".txt,.doc,.docx,.pdf,.xls,.xlsx,.jpg,.jpeg,.png">
+                <button id="upload-btn" class="btn">上传文件</button>
+            </div>-->
+            
+            <!-- 文本输入区域 -->
+            <div id="manual-input-container" class="manual-input-container">
+                <input type="text" id="manual-input" placeholder="输入您的问题...">
+                <button id="send-btn" class="btn">发送</button>
+            </div>
+
+            <!-- 快捷功能按钮区域 -->
+            <div id="quick-actions" class="quick-actions">
+                <button class="quick-btn btn" data-action="class">上课</button>
+                <button class="quick-btn btn" data-action="communication">沟通</button>
+                <button class="quick-btn btn" data-action="eating">吃饭</button>
+                <button class="quick-btn btn" data-action="social">社交</button>
+            </div>
+        </div>
+
     </div>
 
-    <script src="script.js"></script>
-    
+    <script>
+        // 快捷功能按钮选择功能
+        document.addEventListener('DOMContentLoaded', function() {
+            const quickBtns = document.querySelectorAll('.quick-btn');
+            
+            quickBtns.forEach(btn => {
+                btn.addEventListener('click', function() {
+                    // 移除所有按钮的选中状态
+                    quickBtns.forEach(b => b.classList.remove('selected'));
+                    // 添加当前按钮的选中状态
+                    this.classList.add('selected');
+                });
+            });
+        });
+    </script>
+
     <script>
         // 获取并显示用户的性格特质
         function displayUserPersonality() {
             const personalityDisplay = document.getElementById('personality-display');
             
             // 检测当前访问方式并选择合适的存储策略
+            function getStorageStrategy() {
+                // 始终使用localStorage存储，不再使用服务器存储
+                return 'localStorage';
+            }
+            
             // 从localStorage获取性格特质
             function getPersonalityFromLocalStorage() {
                 try {
                     return localStorage.getItem('userPersonality') || null;
                 } catch (error) {
                     console.error('从localStorage获取性格特质失败:', error);
+                    return null;
+                }
+            }
+            
+            // 获取完整的API基础URL
+            function getApiBaseUrl() {
+                const protocol = window.location.protocol;
+                const host = window.location.hostname;
+                const port = window.location.port || (protocol === 'https:' ? 443 : 8000);
+                return `${protocol}//${host}:${port}`;
+            }
+            
+            // 从服务器获取性格特质
+            async function getPersonalityFromServer() {
+                try {
+                    const apiBaseUrl = getApiBaseUrl();
+                    const response = await fetch(`${apiBaseUrl}/api/user/personality`, {
+                        method: 'GET',
+                        credentials: 'include'
+                    });
+                    
+                    const contentType = response.headers.get('content-type');
+                    if (!contentType || !contentType.includes('application/json')) {
+                        throw new Error('服务器返回的不是有效的JSON数据');
+                    }
+                    
+                    const data = await response.json();
+                    if (response.ok) {
+                        // 服务器返回的格式是 { personality: '...' }
+                        return data.personality || null;
+                    } else {
+                        throw new Error(data.error || '获取性格特质失败');
+                    }
+                } catch (error) {
+                    console.error('从服务器获取性格特质出错:', error);
                     return null;
                 }
             }
@@ -307,8 +139,15 @@
             }
             
             // 主函数：获取并显示性格特质
-            function main() {
-                let personality = getPersonalityFromLocalStorage();
+            async function main() {
+                const strategy = getStorageStrategy();
+                let personality;
+                
+                if (strategy === 'localStorage') {
+                    personality = getPersonalityFromLocalStorage();
+                } else {
+                    personality = await getPersonalityFromServer();
+                }
                 
                 if (personality) {
                     personalityDisplay.textContent = getPersonalityDisplayText(personality);
@@ -326,6 +165,7 @@
             displayUserPersonality();
         });
     </script>
-
+    
+    <script src="script.js"></script>
 </body>
 </html>

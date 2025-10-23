@@ -6,71 +6,81 @@
     <title>小伴 - 首页</title>
     <link rel="stylesheet" href="style.css">
     <style>
-        /* 登录页面特有样式 - 适配电脑端和app端 */
+        /* 登录页面特有样式 */
         .login-container {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
+            max-width: 500px;
+            margin: 0 auto;
+            padding: 40px;
+            background-color: rgba(255, 255, 255, 0.85);
+            border-radius: 20px;
+            box-shadow: 0 8px 32px rgba(31, 38, 135, 0.15);
+            backdrop-filter: blur(4px);
+            -webkit-backdrop-filter: blur(4px);
+            border: 1px solid rgba(255, 255, 255, 0.18);
             text-align: center;
-            z-index: 10;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
         }
 
         .login-title {
-            font-size: 3.5rem;
-            color: white;
-            margin-bottom: 40px;
+            font-size: 2.5rem;
+            color: #2c3e50;
+            margin-bottom: 30px;
             font-weight: 600;
-            text-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
-            letter-spacing: 2px;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
         }
 
         .nickname-input {
-            width: 280px;
-            padding: 12px 16px;
-            font-size: 16px;
-            border: 2px solid #8BC6EC;
-            border-radius: 12px;
+            width: 100%;
+            padding: 16px;
+            font-size: 18px;
+            border: 2px solid rgba(139, 198, 236, 0.5);
+            border-radius: 24px;
             margin-bottom: 20px;
             outline: none;
             transition: all 0.3s ease;
-            background-color: rgba(255, 255, 255, 0.1);
+            background-color: rgba(255, 255, 255, 0.7);
             box-sizing: border-box;
-            color: white;
-            text-align: center;
         }
 
         .nickname-input:focus {
-            border-color: #64DFDF;
-            background-color: rgba(255, 255, 255, 0.2);
-            box-shadow: 0 2px 12px rgba(139, 198, 236, 0.4);
+            border-color: #8BC6EC;
+            background-color: rgba(255, 255, 255, 0.9);
+            box-shadow: 0 2px 8px rgba(139, 198, 236, 0.3);
         }
 
         .login-btn {
-            width: 180px;
-            padding: 12px 16px;
-            font-size: 16px;
+            width: 100%;
+            padding: 16px;
+            font-size: 18px;
             font-weight: 500;
             border: none;
-            border-radius: 12px;
-            background-color: #8BC6EC;
-            color: white;
+            border-radius: 24px;
+            background-color: #64DFDF;
+            color: #2c3e50;
             cursor: pointer;
             transition: all 0.3s ease;
-            box-shadow: 0 4px 16px rgba(139, 198, 236, 0.4);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
         }
 
         .login-btn:hover {
-            background-color: #64DFDF;
+            background-color: #53C8C8;
             transform: translateY(-1px);
-            box-shadow: 0 6px 20px rgba(100, 223, 223, 0.5);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
         }
 
         .login-btn:disabled {
             opacity: 0.6;
             cursor: not-allowed;
             transform: none;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .login-footer {
+            margin-top: 20px;
+            color: #7f8c8d;
+            font-size: 14px;
         }
 
         /* 错误消息样式 */
@@ -99,35 +109,40 @@
         }
 
         /* 响应式调整 */
-        @media (max-width: 768px) {
+        @media (max-width: 600px) {
+            .login-container {
+                width: 90%;
+                padding: 30px 20px;
+            }
+            
             .login-title {
-                font-size: 3rem;
+                font-size: 2rem;
             }
         }
     </style>
     <script>
-        // 百度统计
         var _hmt = _hmt || [];
         (function() {
         var hm = document.createElement("script");
-        hm.src = "https://hm.baidu.com/hm.js?3fe867119ef61c6aa6c8c4722d0555cb";
-        var s = document.getElementsByTagName("script")[0];
+        hm.src = "https://hm.baidu.com/hm.js?ca9a14ff3761dffcce773abaf201998e";
+        var s = document.getElementsByTagName("script")[0]; 
         s.parentNode.insertBefore(hm, s);
         })();
     </script>
 </head>
 <body>
     <div class="container">
-        <div class="app-frame">
-            <div class="login-container">
-                <!-- 标题已在背景图中包含，这里隐藏 -->
-                <h1 class="login-title" style="display: none;">小伴</h1>
-                <p style="color: white; margin-bottom: 30px; font-size: 16px; text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);">请输入你的昵称</p>
-                
-                <input type="text" id="nickname-input" class="nickname-input" placeholder="" autocomplete="off">
-                <div class="loading-indicator" id="loading-indicator"></div>
-                <div class="error-message" id="error-message"></div>
-                <button id="login-btn" class="login-btn" disabled>确定</button>
+        <div class="login-container">
+            <h1 class="login-title">欢迎使用</h1>
+            <p>请输入您的昵称开始使用语音对话助手</p>
+            
+            <input type="text" id="nickname-input" class="nickname-input" placeholder="请输入昵称" autocomplete="off">
+            <div class="loading-indicator" id="loading-indicator"></div>
+            <div class="error-message" id="error-message"></div>
+            <button id="login-btn" class="login-btn" disabled>进入对话</button>
+            
+            <div class="login-footer">
+                <p>您的昵称将被保存在服务器本地，方便下次使用</p>
             </div>
         </div>
     </div>
@@ -145,24 +160,113 @@
             errorMessage.style.display = 'none'; // 清除错误消息
         });
 
-        // 保存昵称（使用localStorage存储）
+        // 检测当前访问方式并选择合适的存储策略
+        function getStorageStrategy() {
+            // 始终使用localStorage存储，不再使用服务器存储
+            return 'localStorage';
+        }
+
+        // 保存昵称（智能选择存储方式）
         async function saveNickname(nickname) {
+            const strategy = getStorageStrategy();
+            
+            if (strategy === 'localStorage') {
+                // 使用localStorage存储
+                try {
+                    localStorage.setItem('userNickname', nickname);
+                    return true;
+                } catch (error) {
+                    console.error('保存昵称到localStorage失败:', error);
+                    showError('保存昵称失败，请检查浏览器设置');
+                    return false;
+                }
+            } else {
+                // 使用服务器存储
+                return await saveNicknameToServer(nickname);
+            }
+        }
+
+        // 获取昵称（智能选择存储方式）
+        async function getNickname() {
+            const strategy = getStorageStrategy();
+            
+            if (strategy === 'localStorage') {
+                // 从localStorage获取
+                try {
+                    return localStorage.getItem('userNickname') || '';
+                } catch (error) {
+                    console.error('从localStorage获取昵称失败:', error);
+                    return '';
+                }
+            } else {
+                // 从服务器获取
+                return await getNicknameFromServer();
+            }
+        }
+
+        // 获取完整的API基础URL
+        function getApiBaseUrl() {
+            const protocol = window.location.protocol;
+            const host = window.location.hostname;
+            const port = window.location.port || (protocol === 'https:' ? 443 : 8000);
+            return `${protocol}//${host}:${port}`;
+        }
+
+        // 保存昵称到服务器
+        async function saveNicknameToServer(nickname) {
             try {
-                localStorage.setItem('userNickname', nickname);
-                return true;
+                const apiBaseUrl = getApiBaseUrl();
+                const response = await fetch(`${apiBaseUrl}/api/user/nickname`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ nickname: nickname }),
+                    credentials: 'include' // 包含Cookie等凭证
+                });
+                
+                // 检查响应是否为空
+                const contentType = response.headers.get('content-type');
+                if (!contentType || !contentType.includes('application/json')) {
+                    throw new Error('服务器返回的不是有效的JSON数据');
+                }
+                
+                const data = await response.json();
+                if (response.ok && data.success) {
+                    return true;
+                } else {
+                    throw new Error(data.error || '保存昵称失败');
+                }
             } catch (error) {
-                console.error('保存昵称到localStorage失败:', error);
-                showError('保存昵称失败，请检查浏览器设置');
+                console.error('保存昵称到服务器出错:', error);
+                // 提供更具体的错误信息
+                let errorMsg = error.message;
+                if (errorMsg === 'Failed to fetch') {
+                    errorMsg = '无法连接到服务器，请确认服务器已启动并正在运行';
+                }
+                showError(errorMsg);
                 return false;
             }
         }
 
-        // 获取昵称（从localStorage获取）
-        async function getNickname() {
+        // 从服务器获取昵称
+        async function getNicknameFromServer() {
             try {
-                return localStorage.getItem('userNickname') || '';
+                const apiBaseUrl = getApiBaseUrl();
+                const response = await fetch(`${apiBaseUrl}/api/user/nickname`, {
+                    credentials: 'include'
+                });
+                
+                const contentType = response.headers.get('content-type');
+                if (!contentType || !contentType.includes('application/json')) {
+                    return '';
+                }
+                
+                const data = await response.json();
+                return data.nickname || '';
             } catch (error) {
-                console.error('从localStorage获取昵称失败:', error);
+                console.error('从服务器获取昵称出错:', error);
+                // 静默失败，不显示错误消息
                 return '';
             }
         }

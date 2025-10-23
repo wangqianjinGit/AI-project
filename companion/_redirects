@@ -1,12 +1,1 @@
-# 主要重定向规则 - 使用302临时重定向
 /    /login.html    302
-
-# API路由不进行重定向
-/api/*    /api/*    200
-
-# 静态资源不进行重定向
-/*.html    /:splat    200
-/*.css    /:splat    200
-/*.js    /:splat    200
-/*.svg    /:splat    200
-/upload/*    /:splat    200

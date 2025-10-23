@@ -173,13 +173,13 @@
             }
         }
     </style>
+
     <script>
-        // 百度统计
         var _hmt = _hmt || [];
         (function() {
         var hm = document.createElement("script");
-        hm.src = "https://hm.baidu.com/hm.js?3fe867119ef61c6aa6c8c4722d0555cb";
-        var s = document.getElementsByTagName("script")[0];
+        hm.src = "https://hm.baidu.com/hm.js?ca9a14ff3761dffcce773abaf201998e";
+        var s = document.getElementsByTagName("script")[0]; 
         s.parentNode.insertBefore(hm, s);
         })();
     </script>
@@ -267,14 +267,73 @@
             });
         });
         
-        // 保存性格特质（仅使用localStorage存储）
+        // 检测当前访问方式并选择合适的存储策略
+        function getStorageStrategy() {
+            // 始终使用localStorage存储，不再使用服务器存储
+            return 'localStorage';
+        }
+        
+        // 保存性格特质（智能选择存储方式）
         async function savePersonality(personality) {
+            const strategy = getStorageStrategy();
+            
+            if (strategy === 'localStorage') {
+                // 使用localStorage存储
+                try {
+                    localStorage.setItem('userPersonality', personality);
+                    return true;
+                } catch (error) {
+                    console.error('保存性格特质到localStorage失败:', error);
+                    showError('保存性格特质失败，请检查浏览器设置');
+                    return false;
+                }
+            } else {
+                // 使用服务器存储
+                return await savePersonalityToServer(personality);
+            }
+        }
+        
+        // 获取完整的API基础URL
+        function getApiBaseUrl() {
+            const protocol = window.location.protocol;
+            const host = window.location.hostname;
+            const port = window.location.port || (protocol === 'https:' ? 443 : 8000);
+            return `${protocol}//${host}:${port}`;
+        }
+        
+        // 保存性格特质到服务器
+        async function savePersonalityToServer(personality) {
             try {
-                localStorage.setItem('userPersonality', personality);
-                return true;
+                const apiBaseUrl = getApiBaseUrl();
+                const response = await fetch(`${apiBaseUrl}/api/user/personality`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ personality: personality }),
+                    credentials: 'include' // 包含Cookie等凭证
+                });
+                
+                // 检查响应是否为空
+                const contentType = response.headers.get('content-type');
+                if (!contentType || !contentType.includes('application/json')) {
+                    throw new Error('服务器返回的不是有效的JSON数据');
+                }
+                
+                const data = await response.json();
+                if (response.ok && data.success) {
+                    return true;
+                } else {
+                    throw new Error(data.error || '保存性格特质失败');
+                }
             } catch (error) {
-                console.error('保存性格特质到localStorage失败:', error);
-                showError('保存性格特质失败，请检查浏览器设置');
+                console.error('保存性格特质到服务器出错:', error);
+                // 提供更具体的错误信息
+                let errorMsg = error.message;
+                if (errorMsg === 'Failed to fetch') {
+                    errorMsg = '无法连接到服务器，请确认服务器已启动并正在运行';
+                }
+                showError(errorMsg);
                 return false;
             }
         }

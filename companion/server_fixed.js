@@ -20,20 +20,15 @@ if (!fs.existsSync(uploadDir)) {
 }
 
 const server = http.createServer((req, res) => {
-    // 设置基本响应头（确保CORS支持）
-    const setResponseHeaders = () => {
-        res.setHeader('Access-Control-Allow-Origin', '*');
-        res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
-        res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
-    };
-    
-    // 确保所有响应都设置CORS头
-    setResponseHeaders();
+    // 添加CORS支持
+    res.setHeader('Access-Control-Allow-Origin', '*');
+    res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
+    res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
     
     // 处理OPTIONS预检请求
     if (req.method === 'OPTIONS') {
-        res.writeHead(200, { 'Content-Type': 'application/json' });
-        res.end(JSON.stringify({ success: true }));
+        res.writeHead(200);
+        res.end();
         return;
     }
     
@@ -46,15 +41,15 @@ const server = http.createServer((req, res) => {
     // 处理静态文件请求
     if (req.url === '/api/user/nickname' && req.method === 'GET') {
         // 获取用户昵称的API端点
+        ensureUserDataFile();
         try {
-            ensureUserDataFile();
             const userData = JSON.parse(fs.readFileSync(USER_DATA_FILE, 'utf-8'));
             res.writeHead(200, { 'Content-Type': 'application/json' });
-            res.end(JSON.stringify({ success: true, nickname: userData.nickname || '' }));
+            res.end(JSON.stringify({ nickname: userData.nickname || '' }));
         } catch (error) {
             console.error('读取用户数据失败:', error);
             res.writeHead(500, { 'Content-Type': 'application/json' });
-            res.end(JSON.stringify({ success: false, error: '读取用户数据失败' }));
+            res.end(JSON.stringify({ error: '读取用户数据失败' }));
         }
         return;
     }
@@ -67,24 +62,7 @@ const server = http.createServer((req, res) => {
         });
         req.on('end', () => {
             try {
-                // 检查是否为空请求体
-                if (!body.trim()) {
-                    res.writeHead(400, { 'Content-Type': 'application/json' });
-                    res.end(JSON.stringify({ success: false, error: '请求体不能为空' }));
-                    return;
-                }
-                
-                console.log('接收到的请求体:', body);
-                let data;
-                try {
-                    data = JSON.parse(body);
-                } catch (jsonError) {
-                    console.error('JSON解析错误:', jsonError);
-                    res.writeHead(400, { 'Content-Type': 'application/json' });
-                    res.end(JSON.stringify({ success: false, error: '无效的JSON数据格式', details: jsonError.message }));
-                    return;
-                }
-                
+                const data = JSON.parse(body);
                 if (data.nickname) {
                     ensureUserDataFile();
                     const userData = JSON.parse(fs.readFileSync(USER_DATA_FILE, 'utf-8'));
@@ -95,12 +73,12 @@ const server = http.createServer((req, res) => {
                     res.end(JSON.stringify({ success: true }));
                 } else {
                     res.writeHead(400, { 'Content-Type': 'application/json' });
-                    res.end(JSON.stringify({ success: false, error: '昵称不能为空' }));
+                    res.end(JSON.stringify({ error: '昵称不能为空' }));
                 }
             } catch (error) {
-                console.error('保存用户昵称失败:', error);
+                console.error('保存用户数据失败:', error);
                 res.writeHead(500, { 'Content-Type': 'application/json' });
-                res.end(JSON.stringify({ success: false, error: '服务器内部错误', details: error.message }));
+                res.end(JSON.stringify({ error: '保存用户数据失败' }));
             }
         });
         return;
@@ -129,13 +107,6 @@ const server = http.createServer((req, res) => {
         });
         req.on('end', () => {
             try {
-                // 检查是否为空请求体
-                if (!body.trim()) {
-                    res.writeHead(400, { 'Content-Type': 'application/json' });
-                    res.end(JSON.stringify({ success: false, error: '请求体不能为空' }));
-                    return;
-                }
-                
                 const data = JSON.parse(body);
                 if (data.personality) {
                     ensureUserDataFile();
@@ -147,17 +118,12 @@ const server = http.createServer((req, res) => {
                     res.end(JSON.stringify({ success: true }));
                 } else {
                     res.writeHead(400, { 'Content-Type': 'application/json' });
-                    res.end(JSON.stringify({ success: false, error: '性格特质不能为空' }));
+                    res.end(JSON.stringify({ error: '性格特质不能为空' }));
                 }
             } catch (error) {
                 console.error('保存用户性格特质失败:', error);
-                // 更具体的错误信息
-                let errorMsg = '保存用户性格特质失败';
-                if (error instanceof SyntaxError) {
-                    errorMsg = '无效的JSON数据格式';
-                }
                 res.writeHead(500, { 'Content-Type': 'application/json' });
-                res.end(JSON.stringify({ success: false, error: errorMsg }));
+                res.end(JSON.stringify({ error: '保存用户性格特质失败' }));
             }
         });
         return;
@@ -286,9 +252,8 @@ function handleFileUpload(req, res) {
     });
 }
 
-// 启动服务器 - 支持环境变量指定端口，默认为8080
-const port = process.env.PORT || 8080;
-server.listen(port, () => {
-    console.log(`Server running at http://localhost:${port}/`);
-    console.log(`File upload endpoint available at http://localhost:${port}/upload`);
+// 启动服务器
+server.listen(8080, () => {
+    console.log('Server running at http://localhost:8080/');
+    console.log('File upload endpoint available at http://localhost:8080/upload');
 });

@@ -104,19 +104,13 @@
             
             if (currentUrl.includes('http://')) {
                 // 从HTTP切换到HTTPS
-                // 获取当前URL对象
-                const url = new URL(currentUrl);
-                // 切换协议
-                url.protocol = 'https:';
-                // 在部署环境中通常使用443作为HTTPS默认端口，而不是硬编码的8443
-                url.port = ''; // 清空端口，使用默认端口
-                httpsUrl = url.toString();
+                httpsUrl = currentUrl.replace('http://', 'https://').replace(':8000', ':8443');
             } else if (currentUrl.includes('https://')) {
                 // 已经是HTTPS，直接跳转到主页面
                 httpsUrl = currentUrl.replace('reset-voice.html', 'index.html');
             } else {
-                // 其他情况，使用相对路径跳转到主页面
-                httpsUrl = 'index.html';
+                // 其他情况，使用默认HTTPS地址
+                httpsUrl = 'https://localhost:8443/index.html';
             }
             
             window.location.href = httpsUrl;

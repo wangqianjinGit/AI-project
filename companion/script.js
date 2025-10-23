@@ -38,10 +38,8 @@ function getPersonalityDisplayText(personality) {
 
 // 检测当前访问方式并选择合适的存储策略
 function getStorageStrategy() {
-    const protocol = window.location.protocol;
-    // 如果是通过文件协议(file://)访问，使用localStorage
-    // 如果是通过HTTP/HTTPS协议访问，使用服务器存储
-    return protocol === 'file:' ? 'localStorage' : 'server';
+    // 始终使用localStorage存储，不再使用服务器存储
+    return 'localStorage';
 }
 
 // 获取API基础URL
