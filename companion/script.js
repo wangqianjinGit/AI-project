@@ -1,7 +1,6 @@
 // DOM 元素 - 将在DOM加载完成后初始化
 let chatMessages = null;
 let startBtn = null;
-let stopBtn = null;
 let manualInputContainer = null;
 let manualInput = null;
 let sendBtn = null;
@@ -144,8 +143,6 @@ function checkBrowserSupport() {
     
     // 检查HTTPS连接状态
     if (window.location.protocol !== 'https:') {
-        // HTTP环境提示
-        addMessage('assistant', '注意：您正在使用HTTP连接。虽然我们会尝试启用语音识别功能，但根据浏览器安全策略，在HTTP环境下语音识别可能无法正常工作。\n\n建议：\n1. 如果是在本地测试，可以尝试使用localhost访问\n2. 长期使用请生成SSL证书并通过HTTPS访问\n3. 如果语音识别失败，请使用下方的文本输入框');
         
         // 在HTTP环境下显示手动输入框作为备选
         if (manualInputContainer) {
@@ -222,8 +219,8 @@ function setupRecognition(isMobile) {
     recognition.onstart = function() {
         console.log('语音识别已开始');
         isRecording = true;
-        startBtn.disabled = true;
-        stopBtn.disabled = false;
+        startBtn.innerHTML = '⏹️ 停止录音';
+        startBtn.disabled = false;
         
         // 清除之前的超时计时器（如果有）
         if (recognitionTimeout) {
@@ -270,8 +267,8 @@ function setupRecognition(isMobile) {
         }
         
         isRecording = false;
+        startBtn.innerHTML = '<svg width="24" height="24" viewBox="0 0 24 24" style="vertical-align: middle; margin-right: 8px;"><defs><linearGradient id="micGradient" x1="0%" y1="0%" x2="0%" y2="100%"><stop offset="0%" style="stop-color:#667eea;stop-opacity:1" /><stop offset="100%" style="stop-color:#764ba2;stop-opacity:1" /></linearGradient><filter id="shadow"><feGaussianBlur in="SourceAlpha" stdDeviation="1"/><feOffset dx="0" dy="1" result="offsetblur"/><feComponentTransfer><feFuncA type="linear" slope="0.3"/></feComponentTransfer><feMerge><feMergeNode/><feMergeNode in="SourceGraphic"/></feMerge></filter></defs><ellipse cx="12" cy="8" rx="4" ry="6" fill="url(#micGradient)" filter="url(#shadow)"/><path d="M 12 14 Q 12 16, 12 16" stroke="url(#micGradient)" stroke-width="2" fill="none" filter="url(#shadow)"/><path d="M 8 12 Q 8 16, 12 16 Q 16 16, 16 12" stroke="url(#micGradient)" stroke-width="1.5" fill="none" filter="url(#shadow)"/><line x1="9" y1="16" x2="15" y2="16" stroke="url(#micGradient)" stroke-width="2" stroke-linecap="round" filter="url(#shadow)"/><rect x="11" y="16" width="2" height="3" fill="url(#micGradient)" filter="url(#shadow)"/><rect x="10" y="19" width="4" height="1.5" rx="0.5" fill="url(#micGradient)" filter="url(#shadow)"/><ellipse cx="10.5" cy="6" rx="1.5" ry="2" fill="rgba(255,255,255,0.4)"/></svg>';
         startBtn.disabled = false;
-        stopBtn.disabled = true;
         
         // 移除录音指示器
         const recordingIndicator = document.getElementById('recording-indicator');
@@ -403,8 +400,8 @@ function forceStopRecording() {
     console.log('强制停止录音并更新状态');
     
     isRecording = false;
+    startBtn.innerHTML = '<svg width="24" height="24" viewBox="0 0 24 24" style="vertical-align: middle; margin-right: 8px;"><defs><linearGradient id="micGradient" x1="0%" y1="0%" x2="0%" y2="100%"><stop offset="0%" style="stop-color:#667eea;stop-opacity:1" /><stop offset="100%" style="stop-color:#764ba2;stop-opacity:1" /></linearGradient><filter id="shadow"><feGaussianBlur in="SourceAlpha" stdDeviation="1"/><feOffset dx="0" dy="1" result="offsetblur"/><feComponentTransfer><feFuncA type="linear" slope="0.3"/></feComponentTransfer><feMerge><feMergeNode/><feMergeNode in="SourceGraphic"/></feMerge></filter></defs><ellipse cx="12" cy="8" rx="4" ry="6" fill="url(#micGradient)" filter="url(#shadow)"/><path d="M 12 14 Q 12 16, 12 16" stroke="url(#micGradient)" stroke-width="2" fill="none" filter="url(#shadow)"/><path d="M 8 12 Q 8 16, 12 16 Q 16 16, 16 12" stroke="url(#micGradient)" stroke-width="1.5" fill="none" filter="url(#shadow)"/><line x1="9" y1="16" x2="15" y2="16" stroke="url(#micGradient)" stroke-width="2" stroke-linecap="round" filter="url(#shadow)"/><rect x="11" y="16" width="2" height="3" fill="url(#micGradient)" filter="url(#shadow)"/><rect x="10" y="19" width="4" height="1.5" rx="0.5" fill="url(#micGradient)" filter="url(#shadow)"/><ellipse cx="10.5" cy="6" rx="1.5" ry="2" fill="rgba(255,255,255,0.4)"/></svg>';
     startBtn.disabled = false;
-    stopBtn.disabled = true;
     
     // 移除录音指示器
     const recordingIndicator = document.getElementById('recording-indicator');
@@ -859,13 +856,12 @@ window.addEventListener('DOMContentLoaded', async function() {
     // 初始化DOM元素
     chatMessages = document.getElementById('chat-messages');
     startBtn = document.getElementById('start-btn');
-    stopBtn = document.getElementById('stop-btn');
     manualInputContainer = document.getElementById('manual-input-container');
     manualInput = document.getElementById('manual-input');
     sendBtn = document.getElementById('send-btn');
     
     // 验证必要的DOM元素是否存在
-    if (!chatMessages || !startBtn || !stopBtn) {
+    if (!chatMessages || !startBtn) {
         console.error('关键DOM元素未找到，应用程序可能无法正常工作');
         // 尝试显示错误信息（如果可能）
         const errorDiv = document.createElement('div');
@@ -883,28 +879,64 @@ window.addEventListener('DOMContentLoaded', async function() {
     initializeEventListeners();
     checkBrowserSupport();
     
-    // 添加欢迎消息
-    addMessage('assistant', '欢迎使用语音对话助手！您可以点击"开始录音"按钮进行语音对话，或者在下方的输入框中输入文字进行交流。');
+    
 });
 
 // 初始化事件监听器
 function initializeEventListeners() {
-    // 开始录音按钮事件监听
+    // 录音按钮事件监听（单按钮切换录音状态）
     startBtn.addEventListener('click', function() {
-        console.log('开始录音按钮被点击');
+        console.log('录音按钮被点击，当前录音状态:', isRecording);
         console.log('recognition对象:', recognition);
-        console.log('isRecording状态:', isRecording);
         console.log('当前URL协议:', window.location.protocol);
+        
+        // 如果正在录音，则停止录音
+        if (isRecording) {
+            console.log('停止录音');
+            if (recognition) {
+                try {
+                    recognition.stop();
+                    // 立即更新UI状态
+                    setTimeout(() => {
+                        if (isRecording) {
+                            console.log('强制更新录音状态');
+                            isRecording = false;
+                            startBtn.textContent = '🎤 ';
+                            startBtn.disabled = false;
+                            
+                            // 移除录音指示器
+                            const recordingIndicator = document.getElementById('recording-indicator');
+                            if (recordingIndicator) {
+                                document.body.removeChild(recordingIndicator);
+                            }
+                        }
+                    }, 500);
+                } catch (error) {
+                    console.error('停止录音时发生错误:', error);
+                    isRecording = false;
+                    startBtn.innerHTML = '<svg width="24" height="24" viewBox="0 0 24 24" style="vertical-align: middle; margin-right: 8px;"><defs><linearGradient id="micGradient" x1="0%" y1="0%" x2="0%" y2="100%"><stop offset="0%" style="stop-color:#667eea;stop-opacity:1" /><stop offset="100%" style="stop-color:#764ba2;stop-opacity:1" /></linearGradient><filter id="shadow"><feGaussianBlur in="SourceAlpha" stdDeviation="1"/><feOffset dx="0" dy="1" result="offsetblur"/><feComponentTransfer><feFuncA type="linear" slope="0.3"/></feComponentTransfer><feMerge><feMergeNode/><feMergeNode in="SourceGraphic"/></feMerge></filter></defs><ellipse cx="12" cy="8" rx="4" ry="6" fill="url(#micGradient)" filter="url(#shadow)"/><path d="M 12 14 Q 12 16, 12 16" stroke="url(#micGradient)" stroke-width="2" fill="none" filter="url(#shadow)"/><path d="M 8 12 Q 8 16, 12 16 Q 16 16, 16 12" stroke="url(#micGradient)" stroke-width="1.5" fill="none" filter="url(#shadow)"/><line x1="9" y1="16" x2="15" y2="16" stroke="url(#micGradient)" stroke-width="2" stroke-linecap="round" filter="url(#shadow)"/><rect x="11" y="16" width="2" height="3" fill="url(#micGradient)" filter="url(#shadow)"/><rect x="10" y="19" width="4" height="1.5" rx="0.5" fill="url(#micGradient)" filter="url(#shadow)"/><ellipse cx="10.5" cy="6" rx="1.5" ry="2" fill="rgba(255,255,255,0.4)"/></svg>';
+                    startBtn.disabled = false;
+                    
+                    // 移除录音指示器
+                    const recordingIndicator = document.getElementById('recording-indicator');
+                    if (recordingIndicator) {
+                        document.body.removeChild(recordingIndicator);
+                    }
+                }
+            }
+            return;
+        }
+        
+        // 开始录音
+        console.log('');
         
         // 检测是否是移动设备
         const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
         
         // 在移动设备上，首次点击按钮时触发一个空的语音合成请求
-        // 这可以帮助在后续语音合成时绕过一些浏览器限制
         if ('speechSynthesis' in window) {
-            // 创建一个无声的语音请求
             const dummyUtterance = new SpeechSynthesisUtterance('');
-            dummyUtterance.volume = 0; // 音量设置为0
+            dummyUtterance.volume = 0;
             try {
                 window.speechSynthesis.speak(dummyUtterance);
                 console.log('移动设备语音合成初始化请求已发送');
@@ -916,11 +948,6 @@ function initializeEventListeners() {
         if (!recognition) {
             console.error('recognition对象未初始化');
             addMessage('assistant', '抱歉，语音识别功能未初始化。请检查控制台了解详细信息。');
-            return;
-        }
-        
-        if (isRecording) {
-            console.warn('录音已经在进行中');
             return;
         }
         
@@ -971,46 +998,6 @@ function initializeEventListeners() {
         } catch (error) {
             console.error('开始语音识别时发生异常:', error);
             addMessage('assistant', '无法开启麦克风: ' + error.message);
-        }
-    });
-    
-    // 停止录音按钮事件监听
-    stopBtn.addEventListener('click', function() {
-        console.log('停止录音按钮被点击');
-        if (recognition && isRecording) {
-            try {
-                // 在vivo手机上，可能需要强制停止
-                console.log('尝试停止语音识别...');
-                recognition.stop();
-                
-                // 立即更新UI状态，防止UI卡顿
-                setTimeout(() => {
-                    if (isRecording) {
-                        console.log('强制更新录音状态');
-                        isRecording = false;
-                        startBtn.disabled = false;
-                        stopBtn.disabled = true;
-                        
-                        // 移除录音指示器
-                        const recordingIndicator = document.getElementById('recording-indicator');
-                        if (recordingIndicator) {
-                            document.body.removeChild(recordingIndicator);
-                        }
-                    }
-                }, 500); // 500毫秒后检查并强制更新状态
-            } catch (error) {
-                console.error('停止录音时发生错误:', error);
-                // 即使发生错误，也强制更新状态
-                isRecording = false;
-                startBtn.disabled = false;
-                stopBtn.disabled = true;
-                
-                // 移除录音指示器
-                const recordingIndicator = document.getElementById('recording-indicator');
-                if (recordingIndicator) {
-                    document.body.removeChild(recordingIndicator);
-                }
-            }
         }
     });
     

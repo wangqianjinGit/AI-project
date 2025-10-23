@@ -1,0 +1,64 @@
+<svg width="48" height="48" viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <!-- 渐变定义 -->
+    <linearGradient id="bookGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#667eea;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#764ba2;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="pageGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#f5f7fa;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#c3cfe2;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="shadowGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#000000;stop-opacity:0.3" />
+      <stop offset="100%" style="stop-color:#000000;stop-opacity:0" />
+    </linearGradient>
+    <!-- 3D效果阴影 -->
+    <filter id="shadow" x="-50%" y="-50%" width="200%" height="200%">
+      <feGaussianBlur in="SourceAlpha" stdDeviation="2"/>
+      <feOffset dx="2" dy="3" result="offsetblur"/>
+      <feComponentTransfer>
+        <feFuncA type="linear" slope="0.3"/>
+      </feComponentTransfer>
+      <feMerge>
+        <feMergeNode/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+  </defs>
+  
+  <!-- 书本底座(3D底部) -->
+  <path d="M 10 32 L 38 32 L 40 36 L 8 36 Z" fill="#4a5568" opacity="0.6"/>
+  
+  <!-- 主书本 -->
+  <g filter="url(#shadow)">
+    <!-- 书脊 -->
+    <path d="M 12 14 L 12 32 L 16 34 L 16 16 Z" fill="#5a4d8f"/>
+    
+    <!-- 书本主体 -->
+    <rect x="16" y="14" width="22" height="18" rx="1" fill="url(#bookGradient)"/>
+    
+    <!-- 书页效果 -->
+    <rect x="18" y="16" width="18" height="14" rx="0.5" fill="url(#pageGradient)"/>
+    
+    <!-- 书页细节线条 -->
+    <line x1="20" y1="19" x2="34" y2="19" stroke="#a0aec0" stroke-width="0.5" opacity="0.6"/>
+    <line x1="20" y1="22" x2="34" y2="22" stroke="#a0aec0" stroke-width="0.5" opacity="0.6"/>
+    <line x1="20" y1="25" x2="34" y2="25" stroke="#a0aec0" stroke-width="0.5" opacity="0.6"/>
+    <line x1="20" y1="28" x2="30" y2="28" stroke="#a0aec0" stroke-width="0.5" opacity="0.6"/>
+    
+    <!-- 书本高光 -->
+    <path d="M 17 15 L 37 15 L 37 17 L 17 17 Z" fill="#ffffff" opacity="0.3"/>
+    <path d="M 36 16 L 37 16 L 37 30 L 36 30 Z" fill="#ffffff" opacity="0.2"/>
+  </g>
+  
+  <!-- 装饰性铅笔 -->
+  <g filter="url(#shadow)" transform="translate(28, 8) rotate(25)">
+    <rect x="0" y="0" width="3" height="12" rx="0.5" fill="#f59e0b"/>
+    <polygon points="0,12 3,12 1.5,15" fill="#92400e"/>
+    <rect x="0.5" y="1" width="2" height="1.5" fill="#fbbf24"/>
+  </g>
+  
+  <!-- 底部阴影 -->
+  <ellipse cx="24" cy="36" rx="16" ry="2" fill="url(#shadowGradient)"/>
+</svg>
