@@ -1,0 +1,44 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" width="48" height="48">
+  <defs>
+    <linearGradient id="noteGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#FFB74D;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#FF9800;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="paperGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#FFF9C4;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#FFF59D;stop-opacity:1" />
+    </linearGradient>
+    <filter id="noteShadow" x="-50%" y="-50%" width="200%" height="200%">
+      <feGaussianBlur in="SourceAlpha" stdDeviation="1.5"/>
+      <feOffset dx="1" dy="2" result="offsetblur"/>
+      <feComponentTransfer>
+        <feFuncA type="linear" slope="0.3"/>
+      </feComponentTransfer>
+      <feMerge>
+        <feMergeNode/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+  </defs>
+  
+  <!-- 笔记本主体 -->
+  <rect x="10" y="8" width="28" height="34" rx="2" fill="url(#noteGradient)" filter="url(#noteShadow)"/>
+  
+  <!-- 笔记本装订线 -->
+  <rect x="10" y="8" width="3" height="34" fill="#E65100" opacity="0.5"/>
+  
+  <!-- 纸张 -->
+  <rect x="14" y="12" width="20" height="26" rx="1" fill="url(#paperGradient)"/>
+  
+  <!-- 文字线条 -->
+  <line x1="17" y1="16" x2="31" y2="16" stroke="#FF9800" stroke-width="1" opacity="0.6"/>
+  <line x1="17" y1="20" x2="31" y2="20" stroke="#FF9800" stroke-width="1" opacity="0.6"/>
+  <line x1="17" y1="24" x2="28" y2="24" stroke="#FF9800" stroke-width="1" opacity="0.6"/>
+  <line x1="17" y1="28" x2="31" y2="28" stroke="#FF9800" stroke-width="1" opacity="0.6"/>
+  <line x1="17" y1="32" x2="26" y2="32" stroke="#FF9800" stroke-width="1" opacity="0.6"/>
+  
+  <!-- 铅笔 -->
+  <rect x="32" y="28" width="2.5" height="16" rx="0.5" fill="#FFB74D" transform="rotate(45 33.25 36)"/>
+  <polygon points="38,30 40,32 38.5,33.5 36.5,31.5" fill="#424242"/>
+  <rect x="36" y="29" width="1" height="3" fill="#FFE082" transform="rotate(45 36.5 30.5)"/>
+</svg>

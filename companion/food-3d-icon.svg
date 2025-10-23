@@ -1,0 +1,51 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" width="48" height="48">
+  <defs>
+    <linearGradient id="bowlGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#EF5350;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#E53935;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="riceGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#FFFFFF;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#F5F5F5;stop-opacity:1" />
+    </linearGradient>
+    <filter id="foodShadow" x="-50%" y="-50%" width="200%" height="200%">
+      <feGaussianBlur in="SourceAlpha" stdDeviation="1.5"/>
+      <feOffset dx="1" dy="2" result="offsetblur"/>
+      <feComponentTransfer>
+        <feFuncA type="linear" slope="0.3"/>
+      </feComponentTransfer>
+      <feMerge>
+        <feMergeNode/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+  </defs>
+  
+  <!-- 碗底 -->
+  <ellipse cx="24" cy="38" rx="14" ry="3" fill="#C62828" opacity="0.3"/>
+  
+  <!-- 碗身 -->
+  <path d="M 10,26 Q 10,35 24,38 Q 38,35 38,26 L 38,22 L 10,22 Z" fill="url(#bowlGradient)" filter="url(#foodShadow)"/>
+  
+  <!-- 碗口高光 -->
+  <ellipse cx="24" cy="22" rx="14" ry="3" fill="#EF5350"/>
+  <ellipse cx="24" cy="22" rx="12" ry="2.5" fill="#FFCDD2" opacity="0.4"/>
+  
+  <!-- 米饭 -->
+  <ellipse cx="24" cy="20" rx="11" ry="5" fill="url(#riceGradient)"/>
+  
+  <!-- 米粒细节 -->
+  <ellipse cx="20" cy="18" rx="1.5" ry="1" fill="#EEEEEE"/>
+  <ellipse cx="26" cy="19" rx="1.5" ry="1" fill="#EEEEEE"/>
+  <ellipse cx="24" cy="17" rx="1.5" ry="1" fill="#EEEEEE"/>
+  <ellipse cx="22" cy="21" rx="1.5" ry="1" fill="#EEEEEE"/>
+  <ellipse cx="28" cy="20" rx="1.5" ry="1" fill="#EEEEEE"/>
+  
+  <!-- 筷子 -->
+  <rect x="30" y="8" width="1.5" height="22" rx="0.75" fill="#8D6E63" transform="rotate(20 30.75 19)"/>
+  <rect x="34" y="10" width="1.5" height="22" rx="0.75" fill="#8D6E63" transform="rotate(15 34.75 21)"/>
+  
+  <!-- 筷子高光 -->
+  <rect x="30.3" y="10" width="0.5" height="18" rx="0.25" fill="#A1887F" opacity="0.5" transform="rotate(20 30.55 19)"/>
+  <rect x="34.3" y="12" width="0.5" height="18" rx="0.25" fill="#A1887F" opacity="0.5" transform="rotate(15 34.55 21)"/>
+</svg>

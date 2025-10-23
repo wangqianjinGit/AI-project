@@ -1,0 +1,61 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" width="48" height="48">
+  <defs>
+    <linearGradient id="plantGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#66BB6A;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#43A047;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="potGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#8D6E63;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#6D4C41;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="leafGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#81C784;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#66BB6A;stop-opacity:1" />
+    </linearGradient>
+    <filter id="growthShadow" x="-50%" y="-50%" width="200%" height="200%">
+      <feGaussianBlur in="SourceAlpha" stdDeviation="1.5"/>
+      <feOffset dx="1" dy="2" result="offsetblur"/>
+      <feComponentTransfer>
+        <feFuncA type="linear" slope="0.3"/>
+      </feComponentTransfer>
+      <feMerge>
+        <feMergeNode/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+  </defs>
+  
+  <!-- 花盆底座 -->
+  <ellipse cx="24" cy="40" rx="10" ry="2" fill="#5D4037" opacity="0.3"/>
+  
+  <!-- 花盆 -->
+  <path d="M 14,32 L 16,40 L 32,40 L 34,32 Z" fill="url(#potGradient)" filter="url(#growthShadow)"/>
+  <ellipse cx="24" cy="32" rx="10" ry="2.5" fill="#8D6E63"/>
+  <ellipse cx="24" cy="32" rx="8" ry="2" fill="#A1887F" opacity="0.4"/>
+  
+  <!-- 土壤 -->
+  <ellipse cx="24" cy="31.5" rx="8" ry="2" fill="#4E342E"/>
+  
+  <!-- 茎 -->
+  <rect x="22.5" y="14" width="3" height="18" rx="1.5" fill="url(#plantGradient)"/>
+  
+  <!-- 左叶子 -->
+  <ellipse cx="16" cy="22" rx="6" ry="4" fill="url(#leafGradient)" transform="rotate(-30 16 22)" filter="url(#growthShadow)"/>
+  <path d="M 16,22 Q 20,20 22,22" stroke="#43A047" stroke-width="0.5" fill="none"/>
+  
+  <!-- 右叶子 -->
+  <ellipse cx="32" cy="20" rx="6" ry="4" fill="url(#leafGradient)" transform="rotate(30 32 20)" filter="url(#growthShadow)"/>
+  <path d="M 32,20 Q 28,18 26,20" stroke="#43A047" stroke-width="0.5" fill="none"/>
+  
+  <!-- 顶部叶子 -->
+  <ellipse cx="20" cy="12" rx="5" ry="3.5" fill="url(#leafGradient)" transform="rotate(-20 20 12)" filter="url(#growthShadow)"/>
+  <ellipse cx="28" cy="10" rx="5" ry="3.5" fill="url(#leafGradient)" transform="rotate(20 28 10)" filter="url(#growthShadow)"/>
+  
+  <!-- 中心嫩芽 -->
+  <ellipse cx="24" cy="8" rx="3" ry="4" fill="#AED581"/>
+  <ellipse cx="24" cy="7" rx="2" ry="2.5" fill="#C5E1A5" opacity="0.6"/>
+  
+  <!-- 向上箭头（成长符号）-->
+  <path d="M 38,16 L 38,26 L 36,26 L 40,30 L 44,26 L 42,26 L 42,16 Z" fill="#FFB74D" opacity="0.8"/>
+  <path d="M 38,16 L 38,26 L 36,26 L 40,30 L 44,26 L 42,26 L 42,16 Z" fill="none" stroke="#FF9800" stroke-width="1"/>
+</svg>

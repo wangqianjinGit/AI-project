@@ -196,6 +196,24 @@ h1 {
     padding: 20px;
     background-color: rgba(255, 255, 255, 0.7);
     border-top: 1px solid rgba(255, 255, 255, 0.3);
+    align-items: center;
+}
+
+.input-area #manual-input {
+    flex: 1;
+    padding: 12px 16px;
+    border: 2px solid rgba(255, 255, 255, 0.5);
+    border-radius: 24px;
+    font-size: 16px;
+    outline: none;
+    transition: all 0.3s ease;
+    background-color: rgba(255, 255, 255, 0.7);
+}
+
+.input-area #manual-input:focus {
+    border-color: #8BC6EC;
+    background-color: rgba(255, 255, 255, 0.9);
+    box-shadow: 0 2px 8px rgba(139, 198, 236, 0.2);
 }
 
 /* 按钮样式 */
@@ -207,8 +225,12 @@ h1 {
     font-weight: 500;
     cursor: pointer;
     transition: all 0.3s ease;
-    flex: 1;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    white-space: nowrap;
+}
+
+.input-area .btn {
+    flex-shrink: 0;
 }
 
 #start-btn {
