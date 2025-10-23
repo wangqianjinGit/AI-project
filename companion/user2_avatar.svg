@@ -1,0 +1,25 @@
+<svg width="100" height="100" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+  <!-- 背景圆 -->
+  <circle cx="50" cy="50" r="50" fill="#87CEEB"/>
+  
+  <!-- 头部 -->
+  <circle cx="50" cy="35" r="18" fill="#FFDAB9"/>
+  
+  <!-- 眼镜 -->
+  <circle cx="44" cy="33" r="6" fill="none" stroke="#333" stroke-width="2"/>
+  <circle cx="56" cy="33" r="6" fill="none" stroke="#333" stroke-width="2"/>
+  <line x1="50" y1="33" x2="50" y2="33" stroke="#333" stroke-width="2"/>
+  
+  <!-- 眼睛 -->
+  <circle cx="44" cy="33" r="2" fill="#333"/>
+  <circle cx="56" cy="33" r="2" fill="#333"/>
+  
+  <!-- 微笑 -->
+  <path d="M 43 41 Q 50 45 57 41" stroke="#4169E1" stroke-width="2" fill="none" stroke-linecap="round"/>
+  
+  <!-- 身体 -->
+  <ellipse cx="50" cy="68" rx="22" ry="20" fill="#FFDAB9"/>
+  
+  <!-- 装饰星星 -->
+  <path d="M 50 88 L 52 93 L 57 94 L 53 97 L 54 102 L 50 99 L 46 102 L 47 97 L 43 94 L 48 93 Z" fill="#FFD700"/>
+</svg>
