@@ -1,0 +1,49 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="800" height="600" viewBox="0 0 800 600">
+  <!-- 背景 -->
+  <rect width="800" height="600" fill="#fff9e6" rx="10" ry="10"/>
+  
+  <!-- 标题 -->
+  <text x="400" y="60" font-family="Arial, sans-serif" font-size="28" font-weight="bold" text-anchor="middle" fill="#ff6b6b">🍽️ 今日美食推荐</text>
+  
+  <!-- 装饰元素 -->
+  <circle cx="100" cy="80" r="40" fill="#ffe0b2" stroke="#ffcc80" stroke-width="2"/>
+  <text x="100" y="90" font-family="Arial, sans-serif" font-size="30" text-anchor="middle" fill="#f57c00">🍗</text>
+  
+  <circle cx="700" cy="80" r="40" fill="#c8e6c9" stroke="#a5d6a7" stroke-width="2"/>
+  <text x="700" y="90" font-family="Arial, sans-serif" font-size="30" text-anchor="middle" fill="#43a047">🥗</text>
+  
+  <!-- 食堂主打菜卡片 -->
+  <rect x="50" y="120" width="350" height="200" fill="#ffffff" rx="10" ry="10" stroke="#ffd54f" stroke-width="3"/>
+  <text x="225" y="160" font-family="Arial, sans-serif" font-size="22" font-weight="bold" text-anchor="middle" fill="#ff6f00">🌟 食堂今日主打</text>
+  <rect x="100" y="180" width="250" height="100" rx="5" ry="5" fill="#fff3e0"/>
+  <text x="225" y="240" font-family="Arial, sans-serif" font-size="24" font-weight="bold" text-anchor="middle" fill="#e65100">香辣小龙虾盖饭</text>
+  <text x="225" y="270" font-family="Arial, sans-serif" font-size="14" text-anchor="middle" fill="#666">💰 18元 | 🍽️ 一食堂二楼</text>
+  
+  <!-- 附近上新美食卡片 -->
+  <rect x="400" y="120" width="350" height="200" fill="#ffffff" rx="10" ry="10" stroke="#81d4fa" stroke-width="3"/>
+  <text x="575" y="160" font-family="Arial, sans-serif" font-size="22" font-weight="bold" text-anchor="middle" fill="#0277bd">✨ 附近上新推荐</text>
+  <rect x="450" y="180" width="250" height="100" rx="5" ry="5" fill="#e1f5fe"/>
+  <text x="575" y="240" font-family="Arial, sans-serif" font-size="24" font-weight="bold" text-anchor="middle" fill="#01579b">韩式烤肉拌饭</text>
+  <text x="575" y="270" font-family="Arial, sans-serif" font-size="14" text-anchor="middle" fill="#666">💰 22元 | 🚶‍♂️ 南门小吃街</text>
+  
+  <!-- 美食详情 -->
+  <rect x="50" y="350" width="700" height="200" fill="#ffffff" rx="10" ry="10" stroke="#ce93d8" stroke-width="2"/>
+  
+  <!-- 小龙虾盖饭详情 -->
+  <rect x="80" y="380" width="300" height="150" rx="5" ry="5" fill="#fce4ec"/>
+  <text x="230" y="410" font-family="Arial, sans-serif" font-size="18" font-weight="bold" text-anchor="middle" fill="#c2185b">香辣小龙虾盖饭</text>
+  <text x="230" y="440" font-family="Arial, sans-serif" font-size="14" text-anchor="middle" fill="#666">新鲜小龙虾搭配秘制香辣酱</text>
+  <text x="230" y="465" font-family="Arial, sans-serif" font-size="14" text-anchor="middle" fill="#666">米饭粒粒分明，吸饱汤汁超满足</text>
+  <text x="230" y="490" font-family="Arial, sans-serif" font-size="14" text-anchor="middle" fill="#ff4081">💯 今日销量top1！</text>
+  
+  <!-- 韩式烤肉拌饭详情 -->
+  <rect x="420" y="380" width="300" height="150" rx="5" ry="5" fill="#e8f5e9"/>
+  <text x="570" y="410" font-family="Arial, sans-serif" font-size="18" font-weight="bold" text-anchor="middle" fill="#2e7d32">韩式烤肉拌饭</text>
+  <text x="570" y="440" font-family="Arial, sans-serif" font-size="14" text-anchor="middle" fill="#666">进口五花肉，秘制韩式酱料</text>
+  <text x="570" y="465" font-family="Arial, sans-serif" font-size="14" text-anchor="middle" fill="#666">搭配爽口小菜和流心煎蛋</text>
+  <text x="570" y="490" font-family="Arial, sans-serif" font-size="14" text-anchor="middle" fill="#4caf50">✨ 新店开业8折优惠！</text>
+  
+  <!-- 小红书风格标签 -->
+  <rect x="320" y="560" width="160" height="30" fill="#f48fb1" rx="15" ry="15"/>
+  <text x="400" y="580" font-family="Arial, sans-serif" font-size="14" font-weight="bold" text-anchor="middle" fill="white">#校园美食探店</text>
+</svg>

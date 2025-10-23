@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>语音采集重置工具</title>
+    <style>
+        body {
+            font-family: 'Microsoft YaHei', Arial, sans-serif;
+            background-color: #f5f5f5;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+        .container {
+            background-color: white;
+            padding: 40px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            max-width: 400px;
+            width: 100%;
+        }
+        h1 {
+            color: #333;
+            margin-bottom: 20px;
+        }
+        p {
+            color: #666;
+            margin-bottom: 30px;
+        }
+        button {
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            text-align: center;
+            text-decoration: none;
+            display: inline-block;
+            font-size: 16px;
+            margin: 10px;
+            cursor: pointer;
+            border-radius: 5px;
+            transition: background-color 0.3s;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+        .secondary {
+            background-color: #2196F3;
+        }
+        .secondary:hover {
+            background-color: #0b7dda;
+        }
+        .warning {
+            background-color: #ff9800;
+        }
+        .warning:hover {
+            background-color: #e68900;
+        }
+        .tips {
+            margin-top: 20px;
+            padding: 15px;
+            background-color: #f1f8e9;
+            border-left: 4px solid #4CAF50;
+            text-align: left;
+            color: #333;
+        }
+        .tips h3 {
+            margin-top: 0;
+            color: #4CAF50;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>语音采集重置工具</h1>
+        <p>当语音识别功能出现问题时，您可以使用以下选项来重置语音采集功能：</p>
+        
+        <button onclick="window.location.href='index.html'">刷新页面</button>
+        <button class="secondary" onclick="openInHttps()">使用HTTPS访问</button>
+        <button class="warning" onclick="clearCacheAndReload()">清除缓存并刷新</button>
+        
+        <div class="tips">
+            <h3>语音采集问题解决方案</h3>
+            <ul>
+                <li>确保您的浏览器已授予麦克风权限</li>
+                <li>使用HTTPS协议访问以获得最佳体验</li>
+                <li>如果使用HTTP，请尝试使用localhost而非IP地址</li>
+                <li>某些浏览器（如Safari）可能需要特殊配置</li>
+                <li>移动设备上可能需要特殊授权</li>
+            </ul>
+        </div>
+    </div>
+
+    <script>
+        // 打开HTTPS版本
+        function openInHttps() {
+            const currentUrl = window.location.href;
+            let httpsUrl;
+            
+            if (currentUrl.includes('http://')) {
+                // 从HTTP切换到HTTPS
+                httpsUrl = currentUrl.replace('http://', 'https://').replace(':8000', ':8443');
+            } else if (currentUrl.includes('https://')) {
+                // 已经是HTTPS，直接跳转到主页面
+                httpsUrl = currentUrl.replace('reset-voice.html', 'index.html');
+            } else {
+                // 其他情况，使用默认HTTPS地址
+                httpsUrl = 'https://localhost:8443/index.html';
+            }
+            
+            window.location.href = httpsUrl;
+        }
+        
+        // 清除缓存并刷新
+        function clearCacheAndReload() {
+            if (confirm('确定要清除浏览器缓存并刷新页面吗？这将重置所有语音识别设置。')) {
+                // 尝试清除Service Worker缓存
+                if ('caches' in window) {
+                    caches.keys().then(function(names) {
+                        for (let name of names) {
+                            caches.delete(name);
+                        }
+                    });
+                }
+                
+                // 强制刷新页面
+                window.location.reload(true);
+            }
+        }
+        
+        // 检测当前环境
+        function checkEnvironment() {
+            const isHttps = window.location.protocol === 'https:';
+            const isLocalhost = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
+            
+            console.log('当前环境:');
+            console.log('- 协议:', isHttps ? 'HTTPS (推荐)' : 'HTTP (可能有限制)');
+            console.log('- 主机:', isLocalhost ? 'localhost (推荐)' : 'IP地址 (可能有限制)');
+            
+            // 如果不是HTTPS且不是localhost，提示用户
+            if (!isHttps && !isLocalhost) {
+                console.warn('警告: 您当前使用的是HTTP协议和非localhost地址，这可能导致语音识别功能受限。');
+            }
+        }
+        
+        // 页面加载时检查环境
+        window.onload = checkEnvironment;
+    </script>
+</body>
+</html>

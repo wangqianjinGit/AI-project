@@ -36,95 +36,70 @@
             50% { opacity: 0.5; transform: translate(20px, -20px); }
         }
 
-        /* 登录页面特有样式 - 垂直居中布局 */
+        /* 登录页面特有样式 */
         .login-container {
-            max-width: 400px;
+            max-width: 500px;
             margin: 0 auto;
-            padding: 0;
-            background: none;
-            border: none;
-            box-shadow: none;
+            padding: 40px;
+            background-color: rgba(255, 255, 255, 0.9);
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
             text-align: center;
             position: absolute;
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%);
             z-index: 10;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 30px;
         }
 
-        /* 应用名称样式 */
         .login-title {
-            font-size: 3rem;
-            color: #ffffff;
-            margin: 0;
-            margin-top: -80px;
-            font-weight: 300;
-            font-family: 'FZFW_QINGQIAO', '方正FW轻俏颂体', 'Microsoft YaHei UI Light', 'PingFang SC', 'Helvetica Neue', Arial, sans-serif;
-            letter-spacing: 8px;
+            font-size: 2.5rem;
+            color: #2c3e50;
+            margin-bottom: 30px;
+            font-weight: 600;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
         }
 
-        /* 提示文案样式 */
-        .login-subtitle {
-            font-size: 1rem;
-            color: #b0b0b0;
-            margin: 0;
-            font-weight: 300;
-            font-family: 'Microsoft YaHei UI Light', 'PingFang SC', 'Helvetica Neue', Arial, sans-serif;
-        }
-
-        /* 输入框样式 */
         .nickname-input {
             width: 100%;
-            max-width: 350px;
-            padding: 16px 20px;
-            font-size: 16px;
-            background: rgba(255, 255, 255, 0.1);
-            border: 1px solid rgba(0, 255, 255, 0.3);
-            border-radius: 12px;
+            padding: 16px;
+            font-size: 18px;
+            border: 2px solid rgba(139, 198, 236, 0.5);
+            border-radius: 24px;
+            margin-bottom: 20px;
             outline: none;
             transition: all 0.3s ease;
+            background-color: rgba(255, 255, 255, 0.7);
             box-sizing: border-box;
-            color: #ffffff;
-            font-weight: 300;
-            box-shadow: 0 0 15px rgba(0, 255, 255, 0.2);
-        }
-
-        .nickname-input::placeholder {
-            color: #888888;
         }
 
         .nickname-input:focus {
-            border-color: rgba(0, 255, 255, 0.6);
-            background: rgba(255, 255, 255, 0.15);
-            box-shadow: 0 0 20px rgba(0, 255, 255, 0.4);
+            border-color: #8BC6EC;
+            background-color: rgba(255, 255, 255, 0.9);
+            box-shadow: 0 2px 8px rgba(139, 198, 236, 0.3);
         }
 
-        /* 确定按钮样式 */
         .login-btn {
             width: 100%;
-            max-width: 350px;
-            padding: 14px;
-            font-size: 16px;
+            padding: 16px;
+            font-size: 18px;
             font-weight: 500;
-            letter-spacing: 2px;
             border: none;
-            border-radius: 12px;
-            background: linear-gradient(135deg, #5ec8e5 0%, #4a9fd8 100%);
-            color: #ffffff;
+            border-radius: 24px;
+            background-color: #64DFDF;
+            color: #2c3e50;
             cursor: pointer;
             transition: all 0.3s ease;
-            box-shadow: 0 4px 15px rgba(94, 200, 229, 0.3);
-            font-family: 'Microsoft YaHei UI', 'PingFang SC', 'Helvetica Neue', Arial, sans-serif;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
         }
 
         .login-btn:hover {
-            background: linear-gradient(135deg, #6dd4f0 0%, #5baae3 100%);
-            transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(94, 200, 229, 0.4);
+            background-color: #53C8C8;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
         }
 
         .login-btn:disabled {
@@ -134,16 +109,17 @@
         }
 
         .login-footer {
-            display: none;
+            margin-top: 20px;
+            color: #7f8c8d;
+            font-size: 14px;
         }
 
         /* 错误消息样式 */
         .error-message {
-            color: rgba(255, 107, 107, 0.9);
+            color: #e74c3c;
             font-size: 14px;
             margin-top: 10px;
             display: none;
-            text-shadow: 0 0 8px rgba(255, 107, 107, 0.5);
         }
 
         /* 加载指示器 */
@@ -188,13 +164,13 @@
 <body>
     <div class="container">
         <div class="login-container">
-            <h1 class="login-title">小伴</h1>
-            <p class="login-subtitle">请输入你的昵称</p>
+            <h1 class="login-title">欢迎使用</h1>
+            <p>请输入您的昵称开始使用语音对话助手</p>
             
-            <input type="text" id="nickname-input" class="nickname-input" placeholder="昵称" autocomplete="off">
+            <input type="text" id="nickname-input" class="nickname-input" placeholder="请输入昵称" autocomplete="off">
             <div class="loading-indicator" id="loading-indicator"></div>
             <div class="error-message" id="error-message"></div>
-            <button id="login-btn" class="login-btn" disabled>确定</button>
+            <button id="login-btn" class="login-btn" disabled>进入对话</button>
             
             <div class="login-footer">
                 <p>您的昵称将被保存在服务器本地，方便下次使用</p>

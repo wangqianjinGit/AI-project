@@ -1,0 +1,127 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1920 1080" preserveAspectRatio="xMidYMid slice">
+  <defs>
+    <linearGradient id="skyGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#1a1a2e;stop-opacity:1" />
+      <stop offset="50%" style="stop-color:#16213e;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#0f3460;stop-opacity:1" />
+    </linearGradient>
+    <radialGradient id="glowCenter" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" style="stop-color:#667eea;stop-opacity:0.4" />
+      <stop offset="100%" style="stop-color:#667eea;stop-opacity:0" />
+    </radialGradient>
+    <filter id="glow">
+      <feGaussianBlur stdDeviation="3" result="coloredBlur"/>
+      <feMerge>
+        <feMergeNode in="coloredBlur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+  </defs>
+  
+  <!-- 深空背景 -->
+  <rect width="1920" height="1080" fill="url(#skyGradient)"/>
+  
+  <!-- 中心光晕 -->
+  <ellipse cx="960" cy="540" rx="800" ry="600" fill="url(#glowCenter)"/>
+  
+  <!-- 星星层1 - 小星星 -->
+  <g opacity="0.8">
+    <circle cx="180" cy="100" r="1.5" fill="#ffffff"/>
+    <circle cx="350" cy="150" r="1" fill="#ffffff"/>
+    <circle cx="620" cy="90" r="1.2" fill="#ffffff"/>
+    <circle cx="880" cy="140" r="1" fill="#ffffff"/>
+    <circle cx="1150" cy="110" r="1.5" fill="#ffffff"/>
+    <circle cx="1400" cy="170" r="1" fill="#ffffff"/>
+    <circle cx="1650" cy="120" r="1.2" fill="#ffffff"/>
+    <circle cx="1820" cy="160" r="1" fill="#ffffff"/>
+    <circle cx="250" cy="350" r="1" fill="#ffffff"/>
+    <circle cx="500" cy="300" r="1.2" fill="#ffffff"/>
+    <circle cx="750" cy="380" r="1" fill="#ffffff"/>
+    <circle cx="1000" cy="320" r="1.5" fill="#ffffff"/>
+    <circle cx="1250" cy="390" r="1" fill="#ffffff"/>
+    <circle cx="1550" cy="340" r="1.2" fill="#ffffff"/>
+    <circle cx="1780" cy="370" r="1" fill="#ffffff"/>
+  </g>
+  
+  <!-- 星星层2 - 闪烁星星 -->
+  <g opacity="0.9" filter="url(#glow)">
+    <circle cx="450" cy="180" r="2" fill="#667eea"/>
+    <circle cx="850" cy="500" r="2.5" fill="#764ba2"/>
+    <circle cx="1250" cy="220" r="2" fill="#667eea"/>
+    <circle cx="1550" cy="480" r="2.5" fill="#764ba2"/>
+    <circle cx="650" cy="680" r="2" fill="#667eea"/>
+  </g>
+  
+  <!-- 粒子流1 -->
+  <g opacity="0.3">
+    <path d="M 50,500 Q 350,450 650,500 T 1250,500" stroke="#667eea" stroke-width="1" fill="none"/>
+    <circle cx="150" cy="480" r="3" fill="#667eea" opacity="0.6"/>
+    <circle cx="450" cy="465" r="2" fill="#667eea" opacity="0.4"/>
+    <circle cx="850" cy="490" r="2.5" fill="#667eea" opacity="0.5"/>
+  </g>
+  
+  <!-- 粒子流2 -->
+  <g opacity="0.25">
+    <path d="M 1920,300 Q 1620,350 1320,300 T 720,300" stroke="#764ba2" stroke-width="1" fill="none"/>
+    <circle cx="1720" cy="320" r="2.5" fill="#764ba2" opacity="0.5"/>
+    <circle cx="1420" cy="335" r="2" fill="#764ba2" opacity="0.4"/>
+    <circle cx="1020" cy="310" r="3" fill="#764ba2" opacity="0.6"/>
+  </g>
+  
+  <!-- 科技网格线 -->
+  <g opacity="0.15" stroke="#667eea" stroke-width="0.5" fill="none">
+    <line x1="0" y1="540" x2="1920" y2="540"/>
+    <line x1="960" y1="0" x2="960" y2="1080"/>
+    <circle cx="960" cy="540" r="200"/>
+    <circle cx="960" cy="540" r="400"/>
+  </g>
+  
+  <!-- 大型光点装饰 -->
+  <g opacity="0.6">
+    <circle cx="250" cy="650" r="45" fill="#667eea" opacity="0.2"/>
+    <circle cx="250" cy="650" r="22" fill="#667eea" opacity="0.4"/>
+    <circle cx="1650" cy="750" r="55" fill="#764ba2" opacity="0.2"/>
+    <circle cx="1650" cy="750" r="27" fill="#764ba2" opacity="0.4"/>
+  </g>
+  
+  <!-- 学习页特有元素 - 书本和知识符号 -->
+  <g transform="translate(960, 600)" opacity="0.8">
+    <!-- 打开的书 -->
+    <path d="M -60,-30 L -60,30 L 0,40 L 0,-20 Z" fill="#667eea" opacity="0.8"/>
+    <path d="M 60,-30 L 60,30 L 0,40 L 0,-20 Z" fill="#764ba2" opacity="0.8"/>
+    <path d="M -60,-30 Q 0,-40 0,-20" stroke="#667eea" stroke-width="2" fill="none" opacity="0.6"/>
+    <path d="M 60,-30 Q 0,-40 0,-20" stroke="#764ba2" stroke-width="2" fill="none" opacity="0.6"/>
+    
+    <!-- 知识符号 -->
+    <circle cx="-80" cy="-60" r="15" fill="#667eea" opacity="0.6"/>
+    <text x="-80" y="-52" font-family="Arial" font-size="20" fill="#ffffff" text-anchor="middle" opacity="0.9">∫</text>
+    
+    <circle cx="80" cy="-70" r="15" fill="#764ba2" opacity="0.6"/>
+    <text x="80" y="-62" font-family="Arial" font-size="20" fill="#ffffff" text-anchor="middle" opacity="0.9">π</text>
+    
+    <circle cx="-90" cy="10" r="12" fill="#667eea" opacity="0.5"/>
+    <text x="-90" y="16" font-family="Arial" font-size="16" fill="#ffffff" text-anchor="middle" opacity="0.9">α</text>
+    
+    <circle cx="95" cy="5" r="12" fill="#764ba2" opacity="0.5"/>
+    <text x="95" y="11" font-family="Arial" font-size="16" fill="#ffffff" text-anchor="middle" opacity="0.9">β</text>
+    
+    <!-- 灯泡（创意符号） -->
+    <circle cx="0" cy="-80" r="18" fill="#fbbf24" opacity="0.6"/>
+    <path d="M -8,-80 L -8,-60 L 8,-60 L 8,-80" stroke="#fbbf24" stroke-width="3" fill="none" opacity="0.6"/>
+    <line x1="-25" y1="-80" x2="-30" y2="-80" stroke="#fbbf24" stroke-width="2" opacity="0.5"/>
+    <line x1="25" y1="-80" x2="30" y2="-80" stroke="#fbbf24" stroke-width="2" opacity="0.5"/>
+    <line x1="-18" y1="-95" x2="-22" y2="-100" stroke="#fbbf24" stroke-width="2" opacity="0.5"/>
+    <line x1="18" y1="-95" x2="22" y2="-100" stroke="#fbbf24" stroke-width="2" opacity="0.5"/>
+  </g>
+  
+  <!-- 装饰性数据流 -->
+  <g opacity="0.4">
+    <text x="200" y="250" font-family="Courier" font-size="12" fill="#667eea" opacity="0.6">01101001</text>
+    <text x="1600" y="400" font-family="Courier" font-size="12" fill="#764ba2" opacity="0.6">11010110</text>
+    <text x="400" y="850" font-family="Courier" font-size="12" fill="#667eea" opacity="0.6">10110101</text>
+  </g>
+  
+  <!-- 远景星云 -->
+  <ellipse cx="1350" cy="250" rx="160" ry="110" fill="#667eea" opacity="0.1"/>
+  <ellipse cx="550" cy="850" rx="130" ry="90" fill="#764ba2" opacity="0.1"/>
+</svg>
