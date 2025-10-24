@@ -1173,6 +1173,87 @@ window.addEventListener('DOMContentLoaded', async function() {
 
 // 初始化事件监听器
 function initializeEventListeners() {
+    // invite按钮事件监听
+    const inviteBtn = document.getElementById('invite');
+    if (inviteBtn) {
+        inviteBtn.addEventListener('click', function() {
+            console.log('邀请按钮被点击');
+            
+            // 生成二维码URL（使用在线二维码API）
+            const shareUrl = 'https://xiaoban.gaodun.com/';
+            const qrcodeUrl = `https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=${encodeURIComponent(shareUrl)}`;
+            
+            // 创建二维码显示容器
+            const qrcodeContainer = document.createElement('div');
+            qrcodeContainer.style.cssText = 'position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background: linear-gradient(135deg, #ffffff 0%, #f8f9ff 100%); padding: 40px; border-radius: 20px; box-shadow: 0 20px 60px rgba(102, 126, 234, 0.3), 0 0 0 1px rgba(102, 126, 234, 0.1); z-index: 10000; text-align: center; max-width: 90%; animation: fadeInScale 0.3s ease-out;';
+            
+            // 添加标题
+            const title = document.createElement('div');
+            title.innerHTML = '邀请好友即可获得100积分用于<strong style="color: #667eea; font-weight: 900;">会员充值</strong>';
+            title.style.cssText = 'font-size: 18px; font-weight: bold; margin-bottom: 20px; color: #333; line-height: 1.5;';
+            qrcodeContainer.appendChild(title);
+            
+            // 添加二维码容器（带装饰边框）
+            const qrcodeWrapper = document.createElement('div');
+            qrcodeWrapper.style.cssText = 'display: inline-block; padding: 15px; background: white; border-radius: 15px; box-shadow: 0 4px 20px rgba(102, 126, 234, 0.15); margin: 10px 0;';
+            
+            // 添加二维码图片
+            const qrcodeImg = document.createElement('img');
+            qrcodeImg.src = qrcodeUrl;
+            qrcodeImg.style.cssText = 'width: 280px; height: 280px; border-radius: 10px; display: block;';
+            qrcodeWrapper.appendChild(qrcodeImg);
+            qrcodeContainer.appendChild(qrcodeWrapper);
+            
+            // 添加提示文字
+            const hint = document.createElement('div');
+            hint.innerHTML = '📱 使用微信扫描二维码分享';
+            hint.style.cssText = 'margin-top: 20px; color: #666; font-size: 15px; font-weight: 500;';
+            qrcodeContainer.appendChild(hint);
+            
+            // 添加积分提示
+            const rewardHint = document.createElement('div');
+            rewardHint.innerHTML = '🎁 每成功邀请1位好友，立得 <strong style="color: #667eea;">100积分</strong>';
+            rewardHint.style.cssText = 'margin-top: 15px; padding: 12px 20px; background: linear-gradient(135deg, rgba(102, 126, 234, 0.1) 0%, rgba(118, 75, 162, 0.1) 100%); border-radius: 10px; color: #555; font-size: 14px; border: 1px solid rgba(102, 126, 234, 0.2);';
+            qrcodeContainer.appendChild(rewardHint);
+            
+            // 添加链接
+            const linkDiv = document.createElement('div');
+            linkDiv.textContent = shareUrl;
+            linkDiv.style.cssText = 'margin-top: 15px; color: #999; font-size: 12px; word-break: break-all;';
+            qrcodeContainer.appendChild(linkDiv);
+            
+            // 添加关闭按钮
+            const closeBtn = document.createElement('button');
+            closeBtn.textContent = '关闭';
+            closeBtn.style.cssText = 'margin-top: 25px; padding: 12px 40px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; border: none; border-radius: 25px; cursor: pointer; font-size: 15px; font-weight: 500; box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3); transition: all 0.3s ease;';
+            closeBtn.onmouseover = function() {
+                this.style.transform = 'translateY(-2px)';
+                this.style.boxShadow = '0 6px 20px rgba(102, 126, 234, 0.4)';
+            };
+            closeBtn.onmouseout = function() {
+                this.style.transform = 'translateY(0)';
+                this.style.boxShadow = '0 4px 15px rgba(102, 126, 234, 0.3)';
+            };
+            closeBtn.onclick = function() {
+                document.body.removeChild(overlay);
+                document.body.removeChild(qrcodeContainer);
+            };
+            qrcodeContainer.appendChild(closeBtn);
+            
+            // 创建遮罩层
+            const overlay = document.createElement('div');
+            overlay.style.cssText = 'position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.5); z-index: 9999;';
+            overlay.onclick = function() {
+                document.body.removeChild(overlay);
+                document.body.removeChild(qrcodeContainer);
+            };
+            
+            // 添加到页面
+            document.body.appendChild(overlay);
+            document.body.appendChild(qrcodeContainer);
+        });
+    }
+    
     // 录音按钮事件监听（单按钮切换录音状态）
     startBtn.addEventListener('click', function() {
         console.log('录音按钮被点击，当前录音状态:', isRecording);
@@ -1349,4 +1430,40 @@ window.addEventListener('load', function() {
             console.log('已显示开场白:', greeting);
         }
     }, 500); // 延迟500ms确保personality值已设置
+});
+
+// 监听下拉框选项变化,动态更新开场白
+window.addEventListener('load', function() {
+    const personalityDisplay = document.getElementById('personality-display');
+    if (personalityDisplay) {
+        personalityDisplay.addEventListener('change', function() {
+            const personality = this.value;
+            console.log('personality下拉框值已改变为:', personality);
+            
+            // 定义开场白映射
+            const greetingMap = {
+                'life': '嘿,同学!校园生活大管家时刻准备着~',
+                'learn': '你的同桌已上线,专注一下还是聊点学习那些事?',
+                'growth': '欢迎回到成长星球,今天打算解锁哪些新技能?',
+                'emotion': '嗨,我一直都在哦,想到什么就跟我说吧'
+            };
+            
+            // 获取对应的开场白
+            const greeting = greetingMap[personality] || greetingMap['life'];
+            
+            // 清空聊天记录
+            const messagesContainer = document.getElementById('messages');
+            if (messagesContainer) {
+                messagesContainer.innerHTML = '';
+            }
+            
+            // 显示新的开场白
+            addMessage('assistant', greeting);
+            console.log('已更新开场白为:', greeting);
+            
+            // 保存到localStorage
+            localStorage.setItem('userPersonality', personality);
+            console.log('已保存personality到localStorage:', personality);
+        });
+    }
 });
