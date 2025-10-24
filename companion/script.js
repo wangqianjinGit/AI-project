@@ -4,6 +4,12 @@ let startBtn = null;
 let manualInputContainer = null;
 let manualInput = null;
 let sendBtn = null;
+let responseTextarea = null;
+
+// 流式输出相关变量
+let isStreaming = false;
+let currentStreamingMessage = null;
+let abortController = null;
 
 // 语音识别初始化
 let recognition = null;
@@ -15,6 +21,11 @@ let speechSynthesisUtterance = null;
 let isSpeaking = false;
 let voicesLoaded = false;
 let voicesTimeout = null;
+
+// 实时语音播放相关变量
+let pendingSpeechText = ''; // 待播放的文本缓冲
+let speechQueue = []; // 语音队列
+let isPlayingQueue = false; // 是否正在播放队列
 
 // 配置
 // 请替换为您的API密钥
@@ -219,7 +230,34 @@ function setupRecognition(isMobile) {
     recognition.onstart = function() {
         console.log('语音识别已开始');
         isRecording = true;
-        startBtn.innerHTML = '⏹️ 停止录音';
+        startBtn.innerHTML = `
+            <svg width="24" height="24" viewBox="0 0 24 24" style="vertical-align: middle; margin-right: 8px;">
+                <defs>
+                    <linearGradient id="stopGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+                        <stop offset="0%" style="stop-color:#ff6b6b;stop-opacity:1" />
+                        <stop offset="100%" style="stop-color:#ee5a6f;stop-opacity:1" />
+                    </linearGradient>
+                    <filter id="stopShadow">
+                        <feGaussianBlur in="SourceAlpha" stdDeviation="1.5"/>
+                        <feOffset dx="0" dy="2" result="offsetblur"/>
+                        <feComponentTransfer>
+                            <feFuncA type="linear" slope="0.4"/>
+                        </feComponentTransfer>
+                        <feMerge>
+                            <feMergeNode/>
+                            <feMergeNode in="SourceGraphic"/>
+                        </feMerge>
+                    </filter>
+                </defs>
+                <!-- 停止按钮主体 -->
+                <rect x="7" y="7" width="10" height="10" rx="2" fill="url(#stopGradient)" filter="url(#stopShadow)"/>
+                <!-- 3D效果 - 顶部高光 -->
+                <rect x="8" y="8" width="8" height="2" rx="1" fill="rgba(255,255,255,0.4)"/>
+                <!-- 3D效果 - 侧面阴影 -->
+                <rect x="15" y="9" width="2" height="8" rx="1" fill="rgba(0,0,0,0.2)"/>
+                <rect x="9" y="15" width="8" height="2" rx="1" fill="rgba(0,0,0,0.2)"/>
+            </svg>
+        `;
         startBtn.disabled = false;
         
         // 清除之前的超时计时器（如果有）
@@ -552,6 +590,106 @@ function addMessage(role, content) {
 }
 
 // 将文本转换为语音并播放
+// 实时语音播放函数 - 处理流式文本并分句播放
+function speakTextRealtime(content) {
+    // 将内容添加到待播放缓冲区
+    pendingSpeechText += content;
+    
+    // 定义句子结束符号
+    const sentenceEndings = /[。!?!?;；\n]/;
+    
+    // 检查是否有完整的句子
+    const match = pendingSpeechText.match(sentenceEndings);
+    if (match) {
+        // 找到句子结束位置
+        const endIndex = match.index + 1;
+        const completeSentence = pendingSpeechText.substring(0, endIndex).trim();
+        
+        // 如果句子不为空,添加到语音队列
+        if (completeSentence) {
+            speechQueue.push(completeSentence);
+            console.log('添加句子到语音队列:', completeSentence);
+            
+            // 如果当前没有在播放队列,开始播放
+            if (!isPlayingQueue) {
+                playSpeechQueue();
+            }
+        }
+        
+        // 更新待播放文本,移除已处理的句子
+        pendingSpeechText = pendingSpeechText.substring(endIndex);
+    }
+}
+
+// 播放语音队列
+function playSpeechQueue() {
+    if (speechQueue.length === 0) {
+        isPlayingQueue = false;
+        return;
+    }
+    
+    isPlayingQueue = true;
+    const text = speechQueue.shift();
+    
+    // 使用修改后的speakText播放,并在播放完成后继续队列
+    speakTextWithCallback(text, () => {
+        // 播放完成后,继续播放队列中的下一个
+        playSpeechQueue();
+    });
+}
+
+// 带回调的语音播放函数
+function speakTextWithCallback(text, callback) {
+    if (!('speechSynthesis' in window) || !speechSynthesisUtterance) {
+        console.log('设备不支持语音合成');
+        if (callback) callback();
+        return;
+    }
+    
+    try {
+        const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+        
+        const utterance = new SpeechSynthesisUtterance();
+        utterance.text = text;
+        utterance.lang = 'zh-CN';
+        utterance.rate = isMobile ? 0.9 : 1;
+        utterance.pitch = isMobile ? 1.1 : 1;
+        utterance.volume = 1;
+        
+        // 选择中文语音
+        const voices = window.speechSynthesis.getVoices();
+        const chineseVoices = voices.filter(voice => 
+            voice.lang === 'zh-CN' || voice.lang === 'zh' || voice.name.includes('Chinese')
+        );
+        
+        if (chineseVoices.length > 0) {
+            const femaleVoice = chineseVoices.find(voice => 
+                voice.name.toLowerCase().includes('female') || 
+                voice.name.toLowerCase().includes('woman') || 
+                voice.name.toLowerCase().includes('girl') ||
+                voice.name.includes('女')
+            );
+            utterance.voice = femaleVoice || chineseVoices[0];
+        }
+        
+        utterance.onend = function() {
+            console.log('语音播放完成:', text.substring(0, 20) + '...');
+            if (callback) callback();
+        };
+        
+        utterance.onerror = function(event) {
+            console.error('语音播放错误:', event.error);
+            if (callback) callback();
+        };
+        
+        window.speechSynthesis.speak(utterance);
+        
+    } catch (error) {
+        console.error('语音播放失败:', error);
+        if (callback) callback();
+    }
+}
+
 function speakText(text) {
     // 检查是否支持语音合成
     if (!('speechSynthesis' in window) || !speechSynthesisUtterance) {
@@ -763,10 +901,47 @@ function processUserInput(input) {
     addMessage('assistant', response);
 }
 
-// 调用豆包API获取回复
+// 调用豆包API获取回复（流式输出）
 async function getDoubaoResponse(userMessage) {
-    // 显示正在思考的状态
-    addMessage('assistant', '正在思考...');
+    // 检查是否已经在流式输出中
+    if (isStreaming) {
+        console.log('已有流式输出正在进行中');
+        return;
+    }
+    
+    // 创建新的AbortController用于终止请求
+    abortController = new AbortController();
+    isStreaming = true;
+    
+    // 重置语音相关变量
+    pendingSpeechText = '';
+    speechQueue = [];
+    isPlayingQueue = false;
+    // 停止之前的语音播放
+    if (window.speechSynthesis) {
+        window.speechSynthesis.cancel();
+    }
+    
+    // 更新发送按钮为终止按钮
+    if (sendBtn) {
+        sendBtn.textContent = '终止';
+        sendBtn.style.backgroundColor = '#dc3545';
+        sendBtn.onclick = stopStreamingOutput;
+    }
+    
+    // 创建助手消息容器，显示"思考中......"
+    const messageDiv = document.createElement('div');
+    messageDiv.classList.add('message', 'assistant-message');
+    const contentDiv = document.createElement('div');
+    contentDiv.classList.add('message-content');
+    contentDiv.textContent = '思考中......';  // 初始显示思考中
+    messageDiv.appendChild(contentDiv);
+    chatMessages.appendChild(messageDiv);
+    currentStreamingMessage = contentDiv;
+    scrollToBottom();
+    
+    let fullResponse = '';
+    let isFirstContent = true;  // 标记是否是第一次收到内容
     
     try {
         const response = await fetch(DOBAO_API_URL, {
@@ -781,31 +956,130 @@ async function getDoubaoResponse(userMessage) {
                     { role: 'system', content: characterContent },
                     { role: 'user', content: userMessage }
                 ],
-                max_tokens: 150,
-                temperature: 0.7
-            })
+                max_tokens: 500,
+                temperature: 0.7,
+                stream: true  // 启用流式输出
+            }),
+            signal: abortController.signal  // 添加终止信号
         });
         
-        const data = await response.json();
-        
-        // 移除正在思考的消息
-        chatMessages.removeChild(chatMessages.lastChild);
-        
-        if (data.choices && data.choices.length > 0) {
-            const assistantResponse = data.choices[0].message.content;
-            addMessage('assistant', assistantResponse);
-        } else {
-            addMessage('assistant', '抱歉，我无法生成回复。请稍后再试。');
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
         }
-    } catch (error) {
-        console.error('豆包API 调用错误:', error);
-        // 移除正在思考的消息
-        chatMessages.removeChild(chatMessages.lastChild);
         
-        // 使用本地响应作为最终备选
-        processUserInput(userMessage);
-        addMessage('assistant', '（注意：API调用失败）');
+        const reader = response.body.getReader();
+        const decoder = new TextDecoder('utf-8');
+        let buffer = '';
+        
+        while (true) {
+            const { done, value } = await reader.read();
+            
+            if (done) {
+                console.log('流式输出完成');
+                break;
+            }
+            
+            // 解码数据块
+            buffer += decoder.decode(value, { stream: true });
+            
+            // 处理SSE格式的数据
+            const lines = buffer.split('\n');
+            buffer = lines.pop() || ''; // 保留不完整的行
+            
+            for (const line of lines) {
+                if (line.startsWith('data: ')) {
+                    const data = line.substring(6).trim();
+                    
+                    if (data === '[DONE]') {
+                        console.log('收到结束标记');
+                        continue;
+                    }
+                    
+                    try {
+                        const json = JSON.parse(data);
+                        if (json.choices && json.choices[0].delta && json.choices[0].delta.content) {
+                            const content = json.choices[0].delta.content;
+                            
+                            // 第一次收到内容时，清除"思考中......"提示
+                            if (isFirstContent) {
+                                fullResponse = content;
+                                isFirstContent = false;
+                            } else {
+                                fullResponse += content;
+                            }
+                            
+                            // 实时更新显示
+                            if (currentStreamingMessage) {
+                                currentStreamingMessage.textContent = fullResponse;
+                                
+                                // 同时更新文本区域
+                                if (responseTextarea) {
+                                    responseTextarea.value = fullResponse;
+                                }
+                                
+                                scrollToBottom();
+                            }
+                            
+                            // 实时语音播放:检查是否有完整的句子
+                            speakTextRealtime(content);
+                        }
+                    } catch (e) {
+                        console.error('解析SSE数据错误:', e, '数据:', data);
+                    }
+                }
+            }
+        }
+        
+        // 流式输出完成后，播放剩余的文本
+        if (pendingSpeechText && pendingSpeechText.trim()) {
+            speakText(pendingSpeechText);
+            pendingSpeechText = '';
+        }
+        
+    } catch (error) {
+        if (error.name === 'AbortError') {
+            console.log('流式输出已被用户终止');
+            if (currentStreamingMessage) {
+                currentStreamingMessage.textContent += '\n\n[已终止]';
+            }
+        } else {
+            console.error('豆包API流式调用错误:', error);
+            if (currentStreamingMessage) {
+                currentStreamingMessage.textContent = '抱歉，获取回复时出错了。';
+            }
+        }
+    } finally {
+        // 重置状态
+        isStreaming = false;
+        currentStreamingMessage = null;
+        abortController = null;
+        
+        // 恢复发送按钮
+        if (sendBtn) {
+            sendBtn.textContent = '发送';
+            sendBtn.style.backgroundColor = '#007bff';
+            sendBtn.onclick = sendManualMessage;
+        }
     }
+}
+
+// 终止流式输出
+function stopStreamingOutput() {
+    if (abortController) {
+        abortController.abort();
+        console.log('流式输出已终止');
+    }
+    
+    // 停止语音播放
+    if (window.speechSynthesis) {
+        window.speechSynthesis.cancel();
+        console.log('语音播放已停止');
+    }
+    
+    // 清空语音相关变量
+    pendingSpeechText = '';
+    speechQueue = [];
+    isPlayingQueue = false;
 }
 
 // 调用OpenAI API获取回复（作为备选）
@@ -859,6 +1133,7 @@ window.addEventListener('DOMContentLoaded', async function() {
     manualInputContainer = document.getElementById('manual-input-container');
     manualInput = document.getElementById('manual-input');
     sendBtn = document.getElementById('send-btn');
+    responseTextarea = document.getElementById('response-textarea');
     
     // 验证必要的DOM元素是否存在
     if (!chatMessages || !startBtn) {
@@ -1010,7 +1285,7 @@ function initializeEventListeners() {
         
         // 回车键发送
         manualInput.addEventListener('keypress', function(event) {
-            if (event.key === 'Enter') {
+            if (event.key === 'Enter' && !isStreaming) {
                 sendManualMessage();
             }
         });
