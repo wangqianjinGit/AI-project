@@ -64,11 +64,16 @@
             <h1>小伴</h1>
             <div style="display: flex; align-items: center; justify-content: space-between; width: 100%;">
                 <button id="grows" data-action="grows" style="background-color: transparent; border: none; cursor: pointer; padding: 8px; width: 75px; display: flex; align-items: center; justify-content: center;"><img src="growth-3d-icon.svg" alt="成长" style="width: 60px; height: 60px;"></button>
-                <div id="personality-info" class="personality-info" style="display: flex; justify-content: center; align-items: center; max-width: 250px;">
+                <div id="personality-info" class="personality-info" style="display: flex; justify-content: center; align-items: center; max-width: 300px;">
                     <div style="text-align: center;">
                         <span class="personality-label">性格特质: </span>
-                        <span id="personality-display" class="personality-value">加载中...</span>
-                    </div>
+                        <select id="personality-display" class="personality-value" style="padding: 8px 12px; border-radius: 12px; border: 2px solid #8B5CF6; background: linear-gradient(135deg, #f5f3ff 0%, #ffffff 100%); font-size: 16px; font-weight: 600; color: #2c3e50; cursor: pointer; box-shadow: 0 2px 8px rgba(139, 92, 246, 0.2); transition: all 0.3s ease;">
+                            <option value="life">全能校园NPC</option>
+                            <option value="learn">学搭子Pro</option>
+                            <option value="growth">成长合伙人</option>
+                            <option value="emotion">树洞小耳朵</option>
+                        </select>
+                    </div>        
                 </div>
                 <div style="display: flex; gap: 10px;">
                     <button id="found" data-action="found" style="background-color: transparent; border: none; cursor: pointer; padding: 8px; width: 75px; display: flex; align-items: center; justify-content: center;"><img src="discover-3d-icon.svg" alt="发现" style="width: 60px; height: 60px;"></button>
@@ -587,10 +592,22 @@
                     personality = await getPersonalityFromServer();
                 }
                 
+                console.log('获取到的personality值:', personality);
+                console.log('personality类型:', typeof personality);
+                
                 if (personality) {
-                    personalityDisplay.textContent = getPersonalityDisplayText(personality);
+                    // 验证personality值是否在有效选项中
+                    const validOptions = ['life', 'learn', 'growth', 'emotion'];
+                    if (validOptions.includes(personality)) {
+                        personalityDisplay.value = personality;
+                        console.log('设置select值为:', personality);
+                    } else {
+                        console.warn('无效的personality值:', personality);
+                        personalityDisplay.value = 'life';
+                    }
                 } else {
-                    personalityDisplay.textContent = '未设置';
+                    console.log('未获取到personality,使用默认值');
+                    personalityDisplay.value = 'life'; // 默认选中第一项
                 }
             }
             

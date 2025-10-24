@@ -64,7 +64,17 @@ function getApiBaseUrl() {
 // 从localStorage获取性格特质
 function getPersonalityFromLocalStorage() {
     try {
-        return localStorage.getItem('userPersonality') || 'life'; // 默认返回'life'
+        // 首先尝试从页面的下拉框获取当前选中的值
+        const personalityDisplay = document.getElementById('personality-display');
+        if (personalityDisplay && personalityDisplay.value) {
+            console.log('从下拉框获取到性格特质:', personalityDisplay.value);
+            return personalityDisplay.value;
+        }
+        
+        // 如果下拉框不存在或没有值,则从localStorage读取
+        const storedPersonality = localStorage.getItem('userPersonality') || 'life';
+        console.log('从localStorage获取到性格特质:', storedPersonality);
+        return storedPersonality;
     } catch (error) {
         console.error('从localStorage获取性格特质失败:', error);
         return 'life'; // 出错时也返回默认值
@@ -909,6 +919,10 @@ async function getDoubaoResponse(userMessage) {
         return;
     }
     
+    // 每次调用API前重新加载角色设定
+    await loadCharacterSetting();
+    console.log('已重新加载角色设定，当前characterContent长度:', characterContent.length);
+    
     // 创建新的AbortController用于终止请求
     abortController = new AbortController();
     isStreaming = true;
@@ -1308,4 +1322,31 @@ window.addEventListener('beforeunload', function() {
     if (voicesTimeout) {
         clearTimeout(voicesTimeout);
     }
+});
+
+// 页面加载完成后自动显示开场白
+window.addEventListener('load', function() {
+    // 等待一小段时间确保DOM完全加载和personality-display已设置
+    setTimeout(function() {
+        const personalityDisplay = document.getElementById('personality-display');
+        if (personalityDisplay) {
+            const personality = personalityDisplay.value;
+            console.log('当前personality值:', personality);
+            
+            // 定义开场白映射
+            const greetingMap = {
+                'life': '嘿，同学！校园生活大管家时刻准备着~',
+                'learn': '你的同桌已上线，专注一下还是聊点学习那些事？',
+                'growth': '欢迎回到成长星球，今天打算解锁哪些新技能？',
+                'emotion': '嗨，我一直都在哦，想到什么就跟我说吧'
+            };
+            
+            // 获取对应的开场白
+            const greeting = greetingMap[personality] || greetingMap['life'];
+            
+            // 显示开场白
+            addMessage('assistant', greeting);
+            console.log('已显示开场白:', greeting);
+        }
+    }, 500); // 延迟500ms确保personality值已设置
 });
