@@ -7,14 +7,27 @@
     <link rel="stylesheet" href="style.css">
     <style>
         /* 主页特有背景效果 */
-        body {
+        /* body {
             background: url('space-login-bg.svg') no-repeat center center fixed;
             background-size: cover;
             margin: 0;
             padding: 0;
             position: relative;
             overflow-x: hidden;
-        }
+        } */
+
+        body {
+    background: url('index.png') no-repeat center center fixed;
+    background-size: cover;
+    background-attachment: fixed; /* 背景固定 */
+    background-position: center center; /* 居中 */
+    background-repeat: no-repeat; /* 不平铺 */
+    margin: 0;
+    padding: 0;
+    position: relative;
+    overflow-x: hidden;
+}
+
 
         /* 动态波浪效果 */
         body::before {
@@ -66,8 +79,7 @@
                 <button id="grows" data-action="grows" style="background-color: transparent; border: none; cursor: pointer; padding: 8px; width: 75px; display: flex; align-items: center; justify-content: center;"><img src="growth-3d-icon.svg" alt="成长" style="width: 60px; height: 60px;"></button>
                 <div id="personality-info" class="personality-info" style="display: flex; justify-content: center; align-items: center; max-width: 300px;">
                     <div style="text-align: center;">
-                        <span class="personality-label">性格特质: </span>
-                        <select id="personality-display" class="personality-value" style="padding: 8px 12px; border-radius: 12px; border: 2px solid #8B5CF6; background: linear-gradient(135deg, #f5f3ff 0%, #ffffff 100%); font-size: 16px; font-weight: 600; color: #2c3e50; cursor: pointer; box-shadow: 0 2px 8px rgba(139, 92, 246, 0.2); transition: all 0.3s ease;">
+                         <select id="personality-display" class="personality-value" style="padding: 8px 12px; border-radius: 12px; border: 2px solid #8B5CF6; background: linear-gradient(135deg, #f5f3ff 0%, #ffffff 100%); font-size: 16px; font-weight: 600; color: #2c3e50; cursor: pointer; box-shadow: 0 2px 8px rgba(139, 92, 246, 0.2); transition: all 0.3s ease; ">
                             <option value="life">全能校园NPC</option>
                             <option value="learn">学搭子Pro</option>
                             <option value="growth">成长合伙人</option>
@@ -92,9 +104,22 @@
             <div id="chat-messages"></div>
             <!-- 快捷功能按钮区域 -->
             <div id="quick-actions" class="quick-actions">
-                <button class="quick-btn btn" data-action="class" style="background-color: transparent; padding: 4px;"><img src="course-3d-icon.svg" alt="上课" style="width: 76.8px; height: 76.8px;"></button>
-                <button class="quick-btn btn" data-action="note" style="background-color: transparent; padding: 4px;"><img src="note-3d-icon.svg" alt="笔记" style="width: 76.8px; height: 76.8px;"></button>
-                <button class="quick-btn btn" data-action="eating" style="background-color: transparent; padding: 4px;"><img src="food-3d-icon.svg" alt="吃饭" style="width: 76.8px; height: 76.8px;"></button>
+                <div style="display: inline-block; text-align: center; margin: 0 10px; position: relative;">
+                    <button class="quick-btn btn" data-action="class" style="background-color: transparent; padding: 4px; display: block;"><img src="course-3d-icon.svg" alt="上课" style="width: 76.8px; height: 76.8px;"></button>
+                    <span style="color: #000000; font-size: 14px; font-weight: 500; display: block; margin-top: 8px; font-family: 'Comic Sans MS', 'Marker Felt', Arial, sans-serif;">课表</span>
+                </div>
+                <div style="display: inline-block; text-align: center; margin: 0 10px; position: relative;">
+                    <button class="quick-btn btn" data-action="note" style="background-color: transparent; padding: 4px; display: block;"><img src="note-3d-icon.svg" alt="笔记" style="width: 76.8px; height: 76.8px;"></button>
+                    <span style="color: #000000; font-size: 14px; font-weight: 500; display: block; margin-top: 8px; font-family: 'Comic Sans MS', 'Marker Felt', Arial, sans-serif;">笔记</span>
+                </div>
+                <div style="display: inline-block; text-align: center; margin: 0 10px; position: relative;">
+                    <button class="quick-btn btn" data-action="eating" style="background-color: transparent; padding: 4px; display: block;"><img src="food-3d-icon.svg" alt="吃饭" style="width: 76.8px; height: 76.8px;"></button>
+                    <span style="color: #000000; font-size: 14px; font-weight: 500; display: block; margin-top: 8px; font-family: 'Comic Sans MS', 'Marker Felt', Arial, sans-serif;">美食</span>
+                </div>
+                <div style="display: inline-block; text-align: center; margin: 0 10px; position: relative;">
+                    <button class="quick-btn btn" data-action="activity" style="background-color: transparent; padding: 4px; display: block;"><img src="activity-3d-icon.svg" alt="活动" style="width: 76.8px; height: 76.8px;"></button>
+                    <span style="color: #000000; font-size: 14px; font-weight: 500; display: block; margin-top: 8px; font-family: 'Comic Sans MS', 'Marker Felt', Arial, sans-serif;">活动</span>
+                </div>
                 
                 
             </div>
