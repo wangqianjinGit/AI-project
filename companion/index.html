@@ -170,6 +170,9 @@
                             recommendContainer.className = 'message assistant-message';
                             recommendContainer.innerHTML = `
                                 <div class="message-content" style="padding: 15px;">
+                                    <div style="text-align: center; margin-bottom: 20px;">
+                                        <h3 style="font-size: 18px; color: #667eea; font-weight: bold; margin: 0; padding: 10px 0;">👥 “可能认识的人的小伴”</h3>
+                                    </div>
                                     <div style="background: linear-gradient(135deg, #FFE5F0 0%, #FFF5F8 100%); border-radius: 16px; padding: 20px; margin-bottom: 15px; box-shadow: 0 4px 12px rgba(255,182,193,0.3);">
                                         <div style="display: flex; align-items: center; gap: 15px;">
                                             <img src="user1_avatar.svg" alt="用户头像" style="width: 60px; height: 60px; border-radius: 50%; border: 3px solid #FFB6C1;">
@@ -182,7 +185,7 @@
                                                 <div style="margin-top: 12px; padding-top: 12px; border-top: 1px dashed #FFB6C1; color: #999; font-size: 13px;">📊 相似度: 年龄相仿、同专业、兴趣高度重合</div>
                                             </div>
                                             <div style="display: flex; flex-direction: column; gap: 10px;">
-                                                <button style="background: #FF69B4; color: white; border: none; padding: 8px 20px; border-radius: 20px; font-size: 14px; cursor: pointer; transition: all 0.3s;" onmouseover="this.style.background='#FF1493'" onmouseout="this.style.background='#FF69B4'" onclick="alert('已关注李小梦！')">+ 关注</button>
+                                                <button style="background: #FF69B4; color: white; border: none; padding: 8px 20px; border-radius: 20px; font-size: 14px; cursor: pointer; transition: all 0.3s;" onmouseover="if(!this.disabled) this.style.background='#FF1493'" onmouseout="if(!this.disabled) this.style.background='#FF69B4'" onclick="this.textContent='已关注'; this.style.background='#ccc'; this.style.cursor='not-allowed'; this.disabled=true; this.onmouseover=null; this.onmouseout=null;">+ 关注</button>
                                                 <button style="background: white; color: #FF69B4; border: 2px solid #FF69B4; padding: 8px 20px; border-radius: 20px; font-size: 14px; cursor: pointer; transition: all 0.3s;" onmouseover="this.style.background='#FFF0F5'" onmouseout="this.style.background='white'" onclick="openChat({name:'李小梦',avatar:'user1_avatar.svg',major:'计算机科学',grade:'大二',match:'相似度98%'})">💬 开聊</button>
                                             </div>
                                         </div>
@@ -199,7 +202,7 @@
                                                 <div style="margin-top: 12px; padding-top: 12px; border-top: 1px dashed #87CEEB; color: #999; font-size: 13px;">💝 匹配度: 性格互补、星座契合度98%</div>
                                             </div>
                                             <div style="display: flex; flex-direction: column; gap: 10px;">
-                                                <button style="background: #4169E1; color: white; border: none; padding: 8px 20px; border-radius: 20px; font-size: 14px; cursor: pointer; transition: all 0.3s;" onmouseover="this.style.background='#1E90FF'" onmouseout="this.style.background='#4169E1'" onclick="alert('已关注王浩然！')">+ 关注</button>
+                                                <button style="background: #FF69B4; color: white; border: none; padding: 8px 20px; border-radius: 20px; font-size: 14px; cursor: pointer; transition: all 0.3s;" onmouseover="if(!this.disabled) this.style.background='#FF1493'" onmouseout="if(!this.disabled) this.style.background='#FF69B4'" onclick="this.textContent='已关注'; this.style.background='#ccc'; this.style.cursor='not-allowed'; this.disabled=true; this.onmouseover=null; this.onmouseout=null;">+ 关注</button>
                                                 <button style="background: white; color: #4169E1; border: 2px solid #4169E1; padding: 8px 20px; border-radius: 20px; font-size: 14px; cursor: pointer; transition: all 0.3s;" onmouseover="this.style.background='#E6F3FF'" onmouseout="this.style.background='white'" onclick="openChat({name:'王浩然',avatar:'user2_avatar.svg',major:'工业设计',grade:'大三',match:'匹配度96%'})">💬 开聊</button>
                                             </div>
                                         </div>
@@ -216,7 +219,7 @@
                                                 <div style="margin-top: 12px; padding-top: 12px; border-top: 1px dashed #98FB98; color: #999; font-size: 13px;">🤝 默契度: 三观一致、人生态度相近</div>
                                             </div>
                                             <div style="display: flex; flex-direction: column; gap: 10px;">
-                                                <button style="background: #32CD32; color: white; border: none; padding: 8px 20px; border-radius: 20px; font-size: 14px; cursor: pointer; transition: all 0.3s;" onmouseover="this.style.background='#00FF00'" onmouseout="this.style.background='#32CD32'" onclick="alert('已关注张雨欣！')">+ 关注</button>
+                                                <button style="background: #FF69B4; color: white; border: none; padding: 8px 20px; border-radius: 20px; font-size: 14px; cursor: pointer; transition: all 0.3s;" onmouseover="if(!this.disabled) this.style.background='#FF1493'" onmouseout="if(!this.disabled) this.style.background='#FF69B4'" onclick="this.textContent='已关注'; this.style.background='#ccc'; this.style.cursor='not-allowed'; this.disabled=true; this.onmouseover=null; this.onmouseout=null;">+ 关注</button>
                                                 <button style="background: white; color: #32CD32; border: 2px solid #32CD32; padding: 8px 20px; border-radius: 20px; font-size: 14px; cursor: pointer; transition: all 0.3s;" onmouseover="this.style.background='#E8F5E8'" onmouseout="this.style.background='white'" onclick="openChat({name:'张雨欣',avatar:'user3_avatar.svg',major:'音乐表演',grade:'大二',match:'默契度95%'})">💬 开聊</button>
                                             </div>
                                         </div>
@@ -448,7 +451,7 @@
                                                     <div style="margin-top: 12px; padding-top: 12px; border-top: 1px dashed #FFB6C1; color: #999; font-size: 13px;">📊 相似度: 年龄相仿、同专业、兴趣高度重合</div>
                                                 </div>
                                                 <div style="display: flex; flex-direction: column; gap: 10px;">
-                                                    <button style="background: #FF69B4; color: white; border: none; padding: 8px 20px; border-radius: 20px; font-size: 14px; cursor: pointer; transition: all 0.3s;" onmouseover="this.style.background='#FF1493'" onmouseout="this.style.background='#FF69B4'" onclick="alert('已关注李小梦！')">+ 关注</button>
+                                                    <button style="background: #FF69B4; color: white; border: none; padding: 8px 20px; border-radius: 20px; font-size: 14px; cursor: pointer; transition: all 0.3s;" onmouseover="this.style.background='#FF1493'" onmouseout="this.style.background='#FF69B4'" onclick="this.textContent='已关注'; this.style.background='#CCCCCC'; this.style.cursor='not-allowed'; this.onmouseover=null; this.onmouseout=null; this.onclick=null;">+ 关注</button>
                                                     <button style="background: white; color: #FF69B4; border: 2px solid #FF69B4; padding: 8px 20px; border-radius: 20px; font-size: 14px; cursor: pointer; transition: all 0.3s;" onmouseover="this.style.background='#FFF0F5'" onmouseout="this.style.background='white'" onclick="openChat({name:'李小梦',avatar:'user1_avatar.svg',major:'计算机科学',grade:'大二',match:'相似度98%'})">💬 开聊</button>
                                                 </div>
                                             </div>
@@ -465,7 +468,7 @@
                                                     <div style="margin-top: 12px; padding-top: 12px; border-top: 1px dashed #87CEEB; color: #999; font-size: 13px;">💝 匹配度: 性格互补、星座契合度98%</div>
                                                 </div>
                                                 <div style="display: flex; flex-direction: column; gap: 10px;">
-                                                    <button style="background: #4169E1; color: white; border: none; padding: 8px 20px; border-radius: 20px; font-size: 14px; cursor: pointer; transition: all 0.3s;" onmouseover="this.style.background='#1E90FF'" onmouseout="this.style.background='#4169E1'" onclick="alert('已关注王浩然！')">+ 关注</button>
+                                                    <button style="background: #FF69B4; color: white; border: none; padding: 8px 20px; border-radius: 20px; font-size: 14px; cursor: pointer; transition: all 0.3s;" onmouseover="this.style.background='#FF1493'" onmouseout="this.style.background='#FF69B4'" onclick="this.textContent='已关注'; this.style.background='#CCCCCC'; this.style.cursor='not-allowed'; this.onmouseover=null; this.onmouseout=null; this.onclick=null;">+ 关注</button>
                                                     <button style="background: white; color: #4169E1; border: 2px solid #4169E1; padding: 8px 20px; border-radius: 20px; font-size: 14px; cursor: pointer; transition: all 0.3s;" onmouseover="this.style.background='#E6F3FF'" onmouseout="this.style.background='white'" onclick="openChat({name:'王浩然',avatar:'user2_avatar.svg',major:'工业设计',grade:'大三',match:'匹配度96%'})">💬 开聊</button>
                                                 </div>
                                             </div>
@@ -482,7 +485,7 @@
                                                     <div style="margin-top: 12px; padding-top: 12px; border-top: 1px dashed #98FB98; color: #999; font-size: 13px;">🤝 默契度: 三观一致、人生态度相近</div>
                                                 </div>
                                                 <div style="display: flex; flex-direction: column; gap: 10px;">
-                                                    <button style="background: #32CD32; color: white; border: none; padding: 8px 20px; border-radius: 20px; font-size: 14px; cursor: pointer; transition: all 0.3s;" onmouseover="this.style.background='#00FF00'" onmouseout="this.style.background='#32CD32'" onclick="alert('已关注张雨欣！')">+ 关注</button>
+                                                    <button style="background: #FF69B4; color: white; border: none; padding: 8px 20px; border-radius: 20px; font-size: 14px; cursor: pointer; transition: all 0.3s;" onmouseover="this.style.background='#FF1493'" onmouseout="this.style.background='#FF69B4'" onclick="this.textContent='已关注'; this.style.background='#CCCCCC'; this.style.cursor='not-allowed'; this.onmouseover=null; this.onmouseout=null; this.onclick=null;">+ 关注</button>
                                                     <button style="background: white; color: #32CD32; border: 2px solid #32CD32; padding: 8px 20px; border-radius: 20px; font-size: 14px; cursor: pointer; transition: all 0.3s;" onmouseover="this.style.background='#E8F5E8'" onmouseout="this.style.background='white'" onclick="openChat({name:'张雨欣',avatar:'user3_avatar.svg',major:'音乐表演',grade:'大二',match:'默契度95%'})">💬 开聊</button>
                                                 </div>
                                             </div>
@@ -497,11 +500,29 @@
                                 if (messagesContainer) {
                                     messagesContainer.appendChild(recommendContainer);
                                     
-                                    if (typeof window.scrollToBottom === 'function') {
-                                        window.scrollToBottom();
-                                    } else {
-                                        messagesContainer.scrollTop = messagesContainer.scrollHeight;
-                                    }
+                                    // 等待内容完全渲染后滚动到消息容器底部和页面底部
+                                    setTimeout(() => {
+                                        // 先滚动消息容器
+                                        if (typeof window.scrollToBottom === 'function') {
+                                            window.scrollToBottom();
+                                        } else {
+                                            messagesContainer.scrollTop = messagesContainer.scrollHeight;
+                                        }
+                                        console.log('滚动到消息容器底部,高度:', messagesContainer.scrollHeight);
+                                        
+                                        // 再滚动整个页面到底部
+                                        const scrollHeight = Math.max(
+                                            document.body.scrollHeight,
+                                            document.documentElement.scrollHeight,
+                                            document.body.offsetHeight,
+                                            document.documentElement.offsetHeight
+                                        );
+                                        window.scrollTo({
+                                            top: scrollHeight,
+                                            behavior: 'smooth'
+                                        });
+                                        console.log('滚动页面到底部,目标高度:', scrollHeight);
+                                    }, 500);
                                 }
                             }, 100);
                         } else {
