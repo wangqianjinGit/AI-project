@@ -56,6 +56,6 @@
   <ellipse cx="24" cy="7" rx="2" ry="2.5" fill="#C5E1A5" opacity="0.6"/>
   
   <!-- 向上箭头（成长符号）-->
-  <path d="M 38,16 L 38,26 L 36,26 L 40,30 L 44,26 L 42,26 L 42,16 Z" fill="#FFB74D" opacity="0.8"/>
-  <path d="M 38,16 L 38,26 L 36,26 L 40,30 L 44,26 L 42,26 L 42,16 Z" fill="none" stroke="#FF9800" stroke-width="1"/>
+  <path d="M 38,26 L 38,16 L 36,16 L 40,12 L 44,16 L 42,16 L 42,26 Z" fill="#FFB74D" opacity="0.8"/>
+  <path d="M 38,26 L 38,16 L 36,16 L 40,12 L 44,16 L 42,16 L 42,26 Z" fill="none" stroke="#FF9800" stroke-width="1"/>
 </svg>

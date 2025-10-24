@@ -93,7 +93,7 @@
                         <svg width="60" height="60" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
                             <circle cx="50" cy="35" r="15" fill="#6C63FF"/>
                             <path d="M30 70C30 58 38 50 50 50C62 50 70 58 70 70" stroke="#6C63FF" stroke-width="8" stroke-linecap="round"/>
-                            <path d="M50 45V60M43 52.5H57" stroke="white" stroke-width="4" stroke-linecap="round"/>
+                            <path d="M65 65V75M60 70H70" stroke="white" stroke-width="4" stroke-linecap="round"/>
                         </svg>
                     </button>
                 </div>
@@ -123,7 +123,7 @@
                 
                 
             </div>
-            <!-- 合并输入区域 -->
+    <!-- 合并输入区域 -->
             <div id="manual-input-container" class="input-area">
                 <button id="start-btn" class="btn">
                     <svg width="24" height="24" viewBox="0 0 24 24" style="vertical-align: middle; margin-right: 8px;">
@@ -166,7 +166,7 @@
             
         </div>
 
-    </div>
+            </div>
 
     <script>
         // 快捷功能按钮选择功能
@@ -177,7 +177,7 @@
             const growthBtn = document.querySelector('button[data-action="grows"]');
             if (growthBtn) {
                 growthBtn.addEventListener('click', function() {
-                    window.location.href = 'growth.html';
+                    window.open('growth.html', '_blank');
                 });
             }
             
