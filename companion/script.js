@@ -956,7 +956,7 @@ async function getDoubaoResponse(userMessage) {
                     { role: 'system', content: characterContent },
                     { role: 'user', content: userMessage }
                 ],
-                max_tokens: 500,
+                // max_tokens: 500,
                 temperature: 0.7,
                 stream: true  // 启用流式输出
             }),
