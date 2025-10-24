@@ -1168,8 +1168,106 @@ window.addEventListener('DOMContentLoaded', async function() {
     initializeEventListeners();
     checkBrowserSupport();
     
-    
+    // 初始化5分钟无输入自动推送课程表功能
+    initAutoCourseSchedule();
 });
+
+// 5分钟无输入自动推送课程表功能
+let userActivityTimer;
+
+function initAutoCourseSchedule() {
+    // 开始计时
+    resetActivityTimer();
+    
+    // 监听用户输入事件，重置计时器
+    document.addEventListener('keydown', resetActivityTimer);
+    document.addEventListener('click', resetActivityTimer);
+    document.addEventListener('touchstart', resetActivityTimer);
+    
+    // 如果有发送按钮，监听其点击事件
+    if (sendBtn) {
+        sendBtn.addEventListener('click', resetActivityTimer);
+    }
+    
+    // 如果有手动输入框，监听其输入事件
+    if (manualInput) {
+        manualInput.addEventListener('input', resetActivityTimer);
+    }
+}
+
+function resetActivityTimer() {
+    // 清除现有的计时器
+    if (userActivityTimer) {
+        clearTimeout(userActivityTimer);
+    }
+    
+    // 设置新的计时器（2分钟 = 120,000毫秒）
+    userActivityTimer = setTimeout(pushCourseSchedule, 120000);
+}
+
+function pushCourseSchedule() {
+    // 检查是否在index.html页面
+    if (window.location.pathname.includes('index.html') || window.location.pathname === '/') {
+        console.log('用户5分钟未活动，自动推送课程表');
+        
+        // 定义课程表内容
+        const schedule = `📚 本周课程表：
+
+周一：
+08:00-09:40 高等数学（教学楼A101）
+10:00-11:40 大学英语（语音楼B202）
+14:00-15:40 程序设计基础（计算机楼C303）
+
+周二：
+08:00-09:40 线性代数（教学楼A102）
+10:00-11:40 物理实验（实验楼D401）
+14:00-15:40 体育（操场）
+
+周三：
+08:00-09:40 数据库原理（计算机楼C304）
+10:00-11:40 马克思主义原理（教学楼A201）
+
+周四：
+08:00-09:40 概率论与数理统计（教学楼A103）
+10:00-11:40 数据结构（计算机楼C305）
+14:00-15:40 大学物理（教学楼A202）
+
+周五：
+08:00-09:40 软件工程导论（计算机楼C306）
+10:00-11:40 操作系统（计算机楼C307）
+
+✨ 温馨提示：
+- 记得提前5-10分钟到达教室
+- 带好相关教材和笔记本
+- 关注天气变化，合理安排出行时间`;
+        
+        // 调用全局的addMessage函数添加消息
+        if (window.addMessage) {
+            window.addMessage('assistant', schedule);
+            // 添加课程表图片
+            setTimeout(() => {
+                const messageContainer = document.createElement('div');
+                messageContainer.className = 'message assistant-message';
+                messageContainer.innerHTML = `
+                    <div class="message-content">
+                        <p>课程表图示：</p>
+                        <img src="schedule.svg" alt="课程表" style="max-width: 100%; height: auto; border-radius: 8px; margin-top: 10px;">
+                    </div>
+                `;
+                const messagesContainer = document.querySelector('#chat-messages');
+                if (messagesContainer) {
+                    messagesContainer.appendChild(messageContainer);
+                    // 滚动到底部
+                    if (typeof window.scrollToBottom === 'function') {
+                        window.scrollToBottom();
+                    } else {
+                        messagesContainer.scrollTop = messagesContainer.scrollHeight;
+                    }
+                }
+            }, 100);
+        }
+    }
+}
 
 // 初始化事件监听器
 function initializeEventListeners() {
