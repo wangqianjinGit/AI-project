@@ -140,6 +140,7 @@ h1 {
     flex: 1;
     display: flex;
     flex-direction: column;
+    padding-bottom: 120px; /* 为悬浮输入区域留出空间 */
 }
 
 /* 聊天消息区域样式 */
@@ -147,6 +148,7 @@ h1 {
     height: 100vh;
     overflow-y: auto;
     padding: 20px;
+    padding-bottom: 120px; /* 增加底部内边距，避免被悬浮的输入区域遮挡 */
     background-color: transparent;
     flex: 1;
     position: relative;
@@ -194,14 +196,24 @@ h1 {
     transition: all 0.3s ease;
 }
 
-/* 输入区域样式 */
-.input-area {
+/* 输入区域样式 - 悬浮在底部 */
+/* 输入区域样式 - 悬浮在底部 */
+#manual-input-container.input-area {
     display: flex;
     gap: 10px;
     padding: 20px;
-    background-color: rgba(255, 255, 255, 0.7);
-    border-top: 1px solid rgba(255, 255, 255, 0.3);
+    background-color: rgba(255, 255, 255, 0.95);
+    border-radius: 20px 20px 0 0;
+    box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.1);
     align-items: center;
+    position: fixed;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 100%;
+    max-width: 800px;
+    z-index: 1000;
+    background-color: rgba(255, 255, 255, 0.95) !important;
 }
 
 .input-area #manual-input {
@@ -304,8 +316,8 @@ h1 {
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
 }
 
-/* 手动输入区域样式 */
-.manual-input-container {
+/* 手动输入区域样式 - 为非悬浮状态准备，实际悬浮效果由ID选择器控制 */
+.manual-input-container:not(.input-area) {
     display: flex;
     gap: 10px;
     padding: 0 20px 20px;
@@ -385,6 +397,10 @@ h1 {
     
     .input-area {
         flex-direction: column;
+        padding: 15px;
+        width: 100%;
+        left: 0;
+        transform: none;
     }
     
     .btn {
