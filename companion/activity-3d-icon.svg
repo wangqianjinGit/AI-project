@@ -1,0 +1,60 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" width="48" height="48">
+  <defs>
+    <linearGradient id="dumbbellGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#42A5F5;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#1E88E5;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="handleGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#78909C;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#546E7A;stop-opacity:1" />
+    </linearGradient>
+    <filter id="activityShadow" x="-50%" y="-50%" width="200%" height="200%">
+      <feGaussianBlur in="SourceAlpha" stdDeviation="1.5"/>
+      <feOffset dx="1" dy="2" result="offsetblur"/>
+      <feComponentTransfer>
+        <feFuncA type="linear" slope="0.3"/>
+      </feComponentTransfer>
+      <feMerge>
+        <feMergeNode/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+  </defs>
+  
+  <!-- 底部阴影 -->
+  <ellipse cx="24" cy="38" rx="16" ry="2" fill="#000000" opacity="0.2"/>
+  
+  <!-- 哑铃主体 -->
+  <g filter="url(#activityShadow)">
+    <!-- 左侧重量盘 -->
+    <ellipse cx="12" cy="24" rx="5" ry="8" fill="url(#dumbbellGradient)"/>
+    <ellipse cx="12" cy="24" rx="4" ry="7" fill="#64B5F6" opacity="0.5"/>
+    <rect x="10" y="22" width="4" height="4" fill="#1976D2" opacity="0.3"/>
+    
+    <!-- 右侧重量盘 -->
+    <ellipse cx="36" cy="24" rx="5" ry="8" fill="url(#dumbbellGradient)"/>
+    <ellipse cx="36" cy="24" rx="4" ry="7" fill="#64B5F6" opacity="0.5"/>
+    <rect x="34" y="22" width="4" height="4" fill="#1976D2" opacity="0.3"/>
+    
+    <!-- 连接杆 -->
+    <rect x="17" y="22" width="14" height="4" rx="2" fill="url(#handleGradient)"/>
+    <rect x="17" y="22" width="14" height="1.5" rx="0.75" fill="#90A4AE" opacity="0.6"/>
+    
+    <!-- 握把纹理 -->
+    <line x1="20" y1="22" x2="20" y2="26" stroke="#455A64" stroke-width="0.5" opacity="0.4"/>
+    <line x1="22" y1="22" x2="22" y2="26" stroke="#455A64" stroke-width="0.5" opacity="0.4"/>
+    <line x1="24" y1="22" x2="24" y2="26" stroke="#455A64" stroke-width="0.5" opacity="0.4"/>
+    <line x1="26" y1="22" x2="26" y2="26" stroke="#455A64" stroke-width="0.5" opacity="0.4"/>
+    <line x1="28" y1="22" x2="28" y2="26" stroke="#455A64" stroke-width="0.5" opacity="0.4"/>
+  </g>
+  
+  <!-- 动感线条效果 -->
+  <path d="M 8 18 Q 6 16 4 14" stroke="#42A5F5" stroke-width="2" stroke-linecap="round" fill="none" opacity="0.4"/>
+  <path d="M 8 20 Q 6 19 4 18" stroke="#42A5F5" stroke-width="1.5" stroke-linecap="round" fill="none" opacity="0.3"/>
+  <path d="M 40 18 Q 42 16 44 14" stroke="#42A5F5" stroke-width="2" stroke-linecap="round" fill="none" opacity="0.4"/>
+  <path d="M 40 20 Q 42 19 44 18" stroke="#42A5F5" stroke-width="1.5" stroke-linecap="round" fill="none" opacity="0.3"/>
+  
+  <!-- 高光效果 -->
+  <ellipse cx="12" cy="22" rx="2" ry="3" fill="#FFFFFF" opacity="0.3"/>
+  <ellipse cx="36" cy="22" rx="2" ry="3" fill="#FFFFFF" opacity="0.3"/>
+</svg>
