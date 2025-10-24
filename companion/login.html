@@ -6,34 +6,56 @@
     <title>小伴 - 首页</title>
     <link rel="stylesheet" href="style.css">
     <style>
-        /* 登录页面特有背景 */
+        /* 登录页面视频背景容器 */
         body {
-            background-image: url('space-login-bg.svg');
-            background-size: cover;
-            background-position: center;
-            background-repeat: no-repeat;
-            background-attachment: fixed;
             position: relative;
             overflow: hidden;
+            margin: 0;
+            padding: 0;
         }
 
-        /* 添加微妙的动画效果 */
-        body::before {
-            content: '';
+        .logo-img {
+      /* width: 100px; */
+       width: 150px; /* 原来是100px，放大1.5倍 */
+      height: auto;
+      display: block;
+      /* margin: -0px auto 0 auto;  上移 10px，水平居中 */
+       margin: 0 auto;
+    }
+
+        /* 视频背景样式 */
+        .video-background {
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            background: radial-gradient(circle at 30% 40%, rgba(255, 255, 255, 0.05) 0%, transparent 50%);
-            animation: gentleFloat 6s ease-in-out infinite;
-            z-index: 0;
-            pointer-events: none;
+            z-index: -1;
+            overflow: hidden;
         }
 
-        @keyframes gentleFloat {
-            0%, 100% { opacity: 0.3; transform: translate(0, 0); }
-            50% { opacity: 0.5; transform: translate(20px, -20px); }
+        .video-background video {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            min-width: 100%;
+            min-height: 100%;
+            width: auto;
+            height: auto;
+            transform: translate(-50%, -50%);
+            object-fit: cover;
+        }
+
+        /* 视频遮罩层（可选，增强文字可读性） */
+        .video-background::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.3);
+            pointer-events: none;
         }
 
         /* 登录页面特有样式 - 垂直居中布局 */
@@ -53,7 +75,9 @@
             display: flex;
             flex-direction: column;
             align-items: center;
-            gap: 30px;
+            /* gap: 30px;*/
+            /* gap: 10px; */
+            gap:4px;
         }
 
         /* 应用名称样式 */
@@ -65,42 +89,50 @@
             font-weight: 300;
             font-family: 'FZFW_QINGQIAO', '方正FW轻俏颂体', 'Microsoft YaHei UI Light', 'PingFang SC', 'Helvetica Neue', Arial, sans-serif;
             letter-spacing: 8px;
+            text-shadow: none;
+            -webkit-text-stroke: 0;
         }
 
         /* 提示文案样式 */
         .login-subtitle {
             font-size: 1rem;
-            color: #b0b0b0;
+            color: #ffffff;
             margin: 0;
-            font-weight: 300;
+            font-weight: 500;
             font-family: 'Microsoft YaHei UI Light', 'PingFang SC', 'Helvetica Neue', Arial, sans-serif;
+            text-shadow: 0 2px 8px rgba(0, 0, 0, 0.5);
         }
 
         /* 输入框样式 */
         .nickname-input {
             width: 100%;
             max-width: 350px;
-            padding: 16px 20px;
+            padding: 14px 20px;
             font-size: 16px;
-            background: rgba(255, 255, 255, 0.1);
-            border: 1px solid rgba(0, 255, 255, 0.3);
+            /* background: transparent; */
+            background: rgba(255, 255, 255, 0.15);  /* 半透明白色背景 */
+            backdrop-filter: blur(4px);              /* 可选：增加模糊，提升可读性 */
+            border: 2px solid rgba(255, 255, 255, 0.3);
             border-radius: 12px;
             outline: none;
             transition: all 0.3s ease;
             box-sizing: border-box;
             color: #ffffff;
-            font-weight: 300;
-            box-shadow: 0 0 15px rgba(0, 255, 255, 0.2);
+            font-weight: 500;
+            text-shadow: 0 2px 8px rgba(0, 0, 0, 0.5);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
         }
 
         .nickname-input::placeholder {
-            color: #888888;
+            color: rgba(200, 200, 200, 0.8);
+            font-weight: 300;
         }
 
         .nickname-input:focus {
-            border-color: rgba(0, 255, 255, 0.6);
-            background: rgba(255, 255, 255, 0.15);
-            box-shadow: 0 0 20px rgba(0, 255, 255, 0.4);
+            border-color: rgba(255, 255, 255, 0.6);
+            background: transparent;
+            box-shadow: 0 0 15px rgba(255, 255, 255, 0.4), 0 2px 8px rgba(0, 0, 0, 0.3);
+            transform: translateY(-2px);
         }
 
         /* 确定按钮样式 */
@@ -113,11 +145,14 @@
             letter-spacing: 2px;
             border: none;
             border-radius: 12px;
-            background: linear-gradient(135deg, #5ec8e5 0%, #4a9fd8 100%);
+            /* background: linear-gradient(135deg, #5ec8e5 0%, #4a9fd8 100%); */
+            background: linear-gradient(135deg, #3a78b8 0%, #1f4f8b 100%);
+           /* background-color: #1f4f8b; */
             color: #ffffff;
             cursor: pointer;
             transition: all 0.3s ease;
             box-shadow: 0 4px 15px rgba(94, 200, 229, 0.3);
+           /* box-shadow: 0 6px 20px rgba(0, 0, 0, 0.5); */
             font-family: 'Microsoft YaHei UI', 'PingFang SC', 'Helvetica Neue', Arial, sans-serif;
         }
 
@@ -186,9 +221,23 @@
     </script>
 </head>
 <body>
+    <!-- 视频背景 -->
+    <div class="video-background">
+        <video id="bg-video" autoplay muted loop playsinline preload="auto">
+            <source src="login.mp4" type="video/mp4">
+            您的浏览器不支持视频播放
+        </video>
+    </div>
+
     <div class="container">
         <div class="login-container">
-            <h1 class="login-title">小伴</h1>
+            <!-- <h1 class="login-title">小伴</h1> -->
+<h1 class="logo-text">
+  <img src="xiaoban.png" alt="小伴" class="logo-img"/>
+</h1>
+            <!-- <h1 class="logo-text">
+  <img src="xiaoban.png" alt="小伴" />
+</h1> -->
             <p class="login-subtitle">请输入你的昵称</p>
             
             <input type="text" id="nickname-input" class="nickname-input" placeholder="昵称" autocomplete="off">
