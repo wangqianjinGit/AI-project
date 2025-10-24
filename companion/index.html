@@ -279,7 +279,7 @@
                     quickBtns.forEach(b => b.classList.remove('selected'));
                     // 添加当前按钮的选中状态
                     this.classList.add('selected');
-                      
+                       
                     // 获取按钮的data-action属性
                     const action = this.getAttribute('data-action');
                     
@@ -315,7 +315,7 @@
 - 记得提前5-10分钟到达教室
 - 带好相关教材和笔记本
 - 关注天气变化，合理安排出行时间`;
-                         
+                           
                         // 调用全局的addMessage函数添加消息
                         if (window.addMessage) {
                             window.addMessage('assistant', schedule);
@@ -346,8 +346,31 @@
                         }
                     }
                     
+                    // 如果是"活动"按钮，推送近期活动信息
+                    else if (action === 'activity') {
+                        // 定义活动信息内容
+                        const activityInfo = `🎉 近期活动一览：
+
+🏫 校内活动：
+- 校园科技节（11.20-11.25）
+- 冬季运动会（12.5-12.6）
+- 新年文艺晚会（12.30）
+
+🌆 校外实践：
+- 互联网企业参观（11.23）
+- 志愿者社区服务（每周六）
+- 创业交流会（12.10）
+
+✨ 参与活动可获得学分和社会实践小时哦！`;
+                           
+                        // 调用全局的addMessage函数添加消息
+                        if (window.addMessage) {
+                            window.addMessage('assistant', activityInfo);
+                        }
+                    }
+                    
                     // 如果是"笔记"按钮，显示上课摘要信息
-                    if (action === 'note') {
+                    else if (action === 'note') {
                         // 定义上课摘要信息（三行）
                         const noteSummary = `📝 今日课程摘要：
 
