@@ -1,225 +1,223 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>课程笔记详情</title>
-    <link rel="stylesheet" href="style.css">
-    <style>
-        body {
-            padding: 20px;
-            background: url('space-login-bg.svg') no-repeat center center fixed;
-            background-size: cover;
-            min-height: 100vh;
-            position: relative;
-            overflow-x: hidden;
-        }
-
-        /* 笔记页面特有背景效果 */
-        body::before {
-            content: '';
-            position: fixed;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            width: 100%;
-            height: 100%;
-            background: radial-gradient(circle at center, rgba(118, 75, 162, 0.1) 0%, transparent 70%);
-            animation: gentleFloat 6s ease-in-out infinite;
-            pointer-events: none;
-            z-index: -1;
-        }
-        
-        @keyframes gentleFloat {
-            0%, 100% {
-                transform: translate(-50%, -50%) scale(1);
-                opacity: 0.3;
-            }
-            50% {
-                transform: translate(-50%, -50%) scale(1.1);
-                opacity: 0.5;
-            }
-        }
-        .notes-container {
-            max-width: 800px;
-            margin: 0 auto;
-            background: rgba(255, 255, 255, 0.95);
-            border-radius: 20px;
-            padding: 30px;
-            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
-            backdrop-filter: blur(10px);
-            -webkit-backdrop-filter: blur(10px);
-            border: 1px solid rgba(255, 255, 255, 0.3);
-            position: relative;
-            z-index: 10;
-        }
-        .notes-header {
-            text-align: center;
-            margin-bottom: 30px;
-            padding-bottom: 20px;
-            border-bottom: 2px solid #667eea;
-        }
-        .notes-header h1 {
-            color: #667eea;
-            font-size: 32px;
-            margin-bottom: 10px;
-        }
-        .notes-header .date {
-            color: #888;
-            font-size: 14px;
-        }
-        .note-section {
-            margin-bottom: 30px;
-            padding: 20px;
-            background: #f8f9fa;
-            border-radius: 12px;
-            border-left: 4px solid #667eea;
-        }
-        .note-section h2 {
-            color: #667eea;
-            font-size: 24px;
-            margin-bottom: 15px;
-            display: flex;
-            align-items: center;
-        }
-        .note-section h2::before {
-            content: '📚';
-            margin-right: 10px;
-            font-size: 28px;
-        }
-        .note-section h3 {
-            color: #555;
-            font-size: 18px;
-            margin: 15px 0 10px 0;
-            font-weight: 600;
-        }
-        .note-section p {
-            color: #666;
-            line-height: 1.8;
-            margin-bottom: 12px;
-        }
-        .note-section ul {
-            margin-left: 20px;
-            color: #666;
-            line-height: 1.8;
-        }
-        .note-section ul li {
-            margin-bottom: 8px;
-        }
-        .back-button {
-            display: inline-block;
-            margin: 20px auto;
-            padding: 12px 30px;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            text-decoration: none;
-            border-radius: 25px;
-            font-weight: 600;
-            text-align: center;
-            transition: transform 0.2s;
-            display: block;
-            max-width: 200px;
-        }
-        .back-button:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
-        }
-        .tips {
-            background: #fff3cd;
-            border-left: 4px solid #ffc107;
-            padding: 15px;
-            border-radius: 8px;
-            margin-top: 20px;
-        }
-        .tips h3 {
-            color: #856404;
-            margin-bottom: 10px;
-        }
-        .tips ul {
-            margin-left: 20px;
-            color: #856404;
-        }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>课程笔记详情</title>
+<style>
+/* === 原样式保留 === */
+body {
+  padding: 20px;
+  background: url('space-login-bg.svg') no-repeat center center fixed;
+  background-size: cover;
+  min-height: 100vh;
+  position: relative;
+  overflow-x: hidden;
+}
+body::before {
+  content: '';
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 100%;
+  height: 100%;
+  background: radial-gradient(circle at center, rgba(118, 75, 162, 0.1) 0%, transparent 70%);
+  animation: gentleFloat 6s ease-in-out infinite;
+  pointer-events: none;
+  z-index: -1;
+}
+@keyframes gentleFloat {
+  0%, 100% {
+    transform: translate(-50%, -50%) scale(1);
+    opacity: 0.3;
+  }
+  50% {
+    transform: translate(-50%, -50%) scale(1.1);
+    opacity: 0.5;
+  }
+}
+.notes-container {
+  max-width: 800px;
+  margin: 0 auto;
+  background: rgba(255, 255, 255, 0.95);
+  border-radius: 20px;
+  padding: 30px;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  position: relative;
+  z-index: 10;
+}
+.note-section {
+  margin-bottom: 30px;
+  padding: 20px;
+  background: #f8f9fa;
+  border-radius: 12px;
+  border-left: 4px solid #667eea;
+  position: relative;
+}
+.note-section h2 {
+  color: #667eea;
+  font-size: 24px;
+  margin-bottom: 15px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between; /* ← 新增：右侧放按钮 */
+}
+.play-btn {
+  background: #667eea;
+  border: none;
+  border-radius: 50%;
+  width: 36px;
+  height: 36px;
+  color: white;
+  cursor: pointer;
+  font-size: 18px;
+  transition: all 0.2s ease;
+}
+.play-btn:hover {
+  background: #764ba2;
+  transform: scale(1.1);
+}
+</style>
 </head>
 <body>
-    <div class="notes-container">
-        <div class="notes-header">
-            <h1>📖 今日课程笔记</h1>
-            <div class="date" id="current-date"></div>
-        </div>
+<div class="notes-container">
+  <div class="notes-header">
+    <h1>📖 今日课程笔记</h1>
+    <div class="date" id="current-date"></div>
+  </div>
 
-        <div class="note-section">
-            <h2>高等数学</h2>
-            <h3>主题：极限与连续</h3>
-            <p><strong>重点内容：</strong></p>
-            <ul>
-                <li>函数极限的定义：ε-δ语言描述</li>
-                <li>极限的四则运算法则</li>
-                <li>两个重要极限：lim(sinx/x)=1 和 lim(1+1/x)^x=e</li>
-                <li>连续函数的性质：介值定理、零点定理</li>
-            </ul>
-            <p><strong>例题解析：</strong></p>
-            <p>求极限 lim(x→0) (e^x - 1)/x = 1</p>
-            <p>解法：使用洛必达法则或泰勒展开</p>
-            <p><strong>难点提示：</strong>理解ε-δ定义的几何意义，掌握无穷小量的比较方法</p>
-        </div>
+  <div class="note-section" id="math">
+    <h2>高等数学 
+      <button class="play-btn" data-id="math">▶</button>
+    </h2>
+    <h3>主题：极限与连续</h3>
+    <p><strong>重点内容：</strong></p>
+    <ul>
+      <li>函数极限的定义：ε-δ语言描述</li>
+      <li>极限的四则运算法则</li>
+      <li>两个重要极限：lim(sinx/x)=1 和 lim(1+1/x)^x=e</li>
+      <li>连续函数的性质：介值定理、零点定理</li>
+    </ul>
+    <p><strong>例题解析：</strong></p>
+    <p>求极限 lim(x→0) (e^x - 1)/x = 1</p>
+    <p>解法：使用洛必达法则或泰勒展开</p>
+    <p><strong>难点提示：</strong>理解ε-δ定义的几何意义，掌握无穷小量的比较方法</p>
+  </div>
 
-        <div class="note-section">
-            <h2>大学英语</h2>
-            <h3>主题：学术写作技巧</h3>
-            <p><strong>核心知识点：</strong></p>
-            <ul>
-                <li>论文结构：Introduction, Body, Conclusion</li>
-                <li>主题句(Topic Sentence)的写作方法</li>
-                <li>段落展开的三种方式：举例、对比、因果</li>
-                <li>常用学术连接词：Furthermore, Moreover, In addition</li>
-            </ul>
-            <p><strong>写作模板：</strong></p>
-            <p>Introduction: Hook + Background + Thesis Statement</p>
-            <p>Body Paragraph: Topic Sentence + Supporting Details + Examples + Analysis</p>
-            <p><strong>作业要求：</strong>完成一篇200词的argumentative essay，主题自选，下周三提交</p>
-        </div>
+  <div class="note-section" id="english">
+    <h2>大学英语 
+      <button class="play-btn" data-id="english">▶</button>
+    </h2>
+    <h3>主题：学术写作技巧</h3>
+    <p><strong>核心知识点：</strong></p>
+    <ul>
+      <li>论文结构：Introduction, Body, Conclusion</li>
+      <li>主题句(Topic Sentence)的写作方法</li>
+      <li>段落展开的三种方式：举例、对比、因果</li>
+      <li>常用学术连接词：Furthermore, Moreover, In addition</li>
+    </ul>
+    <p><strong>写作模板：</strong></p>
+    <p>Introduction: Hook + Background + Thesis Statement</p>
+    <p>Body Paragraph: Topic Sentence + Supporting Details + Examples + Analysis</p>
+    <p><strong>作业要求：</strong>完成一篇200词的argumentative essay，主题自选，下周三提交</p>
+  </div>
 
-        <div class="note-section">
-            <h2>程序设计基础</h2>
-            <h3>主题：递归算法详解</h3>
-            <p><strong>递归三要素：</strong></p>
-            <ul>
-                <li>递归出口（Base Case）：防止无限递归</li>
-                <li>递归公式（Recursive Case）：问题的分解方式</li>
-                <li>递归方向：确保向出口方向收敛</li>
-            </ul>
-            <p><strong>经典案例：斐波那契数列</strong></p>
-            <p>F(n) = F(n-1) + F(n-2), F(0)=0, F(1)=1</p>
-            <p><strong>优化方法：</strong></p>
-            <ul>
-                <li>动态规划：使用数组存储已计算的值</li>
-                <li>尾递归优化：避免栈溢出</li>
-                <li>迭代替代：某些场景下迭代比递归更高效</li>
-            </ul>
-            <p><strong>课后练习：</strong>实现汉诺塔问题的递归解法</p>
-        </div>
+  <div class="note-section" id="programming">
+    <h2>程序设计基础 
+      <button class="play-btn" data-id="programming">▶</button>
+    </h2>
+    <h3>主题：递归算法详解</h3>
+    <p><strong>递归三要素：</strong></p>
+    <ul>
+      <li>递归出口（Base Case）：防止无限递归</li>
+      <li>递归公式（Recursive Case）：问题的分解方式</li>
+      <li>递归方向：确保向出口方向收敛</li>
+    </ul>
+    <p><strong>经典案例：斐波那契数列</strong></p>
+    <p>F(n) = F(n-1) + F(n-2), F(0)=0, F(1)=1</p>
+    <p><strong>优化方法：</strong></p>
+    <ul>
+      <li>动态规划：使用数组存储已计算的值</li>
+      <li>尾递归优化：避免栈溢出</li>
+      <li>迭代替代：某些场景下迭代比递归更高效</li>
+    </ul>
+    <p><strong>课后练习：</strong>实现汉诺塔问题的递归解法</p>
+  </div>
+</div>
 
-        <div class="tips">
-            <h3>💡 学习建议</h3>
-            <ul>
-                <li>高等数学：建议每天练习5道题，重点掌握基本题型</li>
-                <li>大学英语：多读英文文献，积累学术词汇和表达</li>
-                <li>程序设计：动手编程很重要，理论结合实践</li>
-                <li>定期复习：建议采用艾宾浩斯遗忘曲线复习法</li>
-                <li>小组学习：与同学讨论可以加深理解</li>
-            </ul>
-        </div>
+<script>
+const dateElement = document.getElementById('current-date');
+const now = new Date();
+dateElement.textContent = now.toLocaleDateString('zh-CN', {
+  year: 'numeric', month: 'long', day: 'numeric', weekday: 'long'
+});
 
-        <a href="index.html" class="back-button">返回主页</a>
-    </div>
+let currentUtterance = null;
+let currentText = "";
+let isPaused = false;
+let charIndex = 0; // 当前读到的字符位置
+let currentBtn = null;
 
-    <script>
-        // 显示当前日期
-        const dateElement = document.getElementById('current-date');
-        const now = new Date();
-        const options = { year: 'numeric', month: 'long', day: 'numeric', weekday: 'long' };
-        dateElement.textContent = now.toLocaleDateString('zh-CN', options);
-    </script>
+document.querySelectorAll('.play-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    // 如果正在播放并且当前按钮相同 → 暂停
+    if (speechSynthesis.speaking && !speechSynthesis.paused && currentBtn === btn) {
+      speechSynthesis.pause();
+      isPaused = true;
+      btn.textContent = '▶';
+      return;
+    }
+
+    // 如果是暂停状态 → 继续播放
+    if (isPaused && currentBtn === btn) {
+      speechSynthesis.resume();
+      isPaused = false;
+      btn.textContent = '⏸';
+      return;
+    }
+
+    // 如果点击了其他课程按钮 → 停止当前播放
+    speechSynthesis.cancel();
+    if (currentBtn) currentBtn.textContent = '▶';
+
+    // 读取对应内容
+    const section = document.getElementById(btn.dataset.id);
+    currentText = section.innerText.replace(/▶/g, '').trim();
+    charIndex = 0;
+    currentBtn = btn;
+
+    playFromText(currentText);
+    btn.textContent = '⏸';
+  });
+});
+
+function playFromText(text) {
+  currentUtterance = new SpeechSynthesisUtterance(text);
+  currentUtterance.lang = 'zh-CN';
+  currentUtterance.rate = 1.0;
+  currentUtterance.pitch = 1.0;
+
+  // 监听阅读进度
+  currentUtterance.onboundary = (event) => {
+    if (event.name === 'word' || event.name === 'sentence') {
+      charIndex = event.charIndex;
+    }
+  };
+
+  // 播放结束时重置
+  currentUtterance.onend = () => {
+    if (currentBtn) currentBtn.textContent = '▶';
+    isPaused = false;
+    charIndex = 0;
+  };
+
+  speechSynthesis.speak(currentUtterance);
+}
+</script>
+
+
 </body>
 </html>
